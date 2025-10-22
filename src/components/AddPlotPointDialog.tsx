@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from './ui/dialog';
 import { Button } from './ui/button';
 import { Label } from './ui/label';
@@ -18,13 +18,13 @@ interface AddPlotPointDialogProps {
   nextOrder: number;
 }
 
-export function AddPlotPointDialog({ 
-  open, 
-  onOpenChange, 
-  onAdd, 
-  categories, 
+export function AddPlotPointDialog({
+  open,
+  onOpenChange,
+  onAdd,
+  categories,
   mythemes,
-  nextOrder 
+  nextOrder,
 }: AddPlotPointDialogProps) {
   const [text, setText] = useState('');
   const [category, setCategory] = useState('');
@@ -33,7 +33,7 @@ export function AddPlotPointDialog({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!text.trim() || !category) {
       return;
@@ -57,18 +57,16 @@ export function AddPlotPointDialog({
   };
 
   const toggleMytheme = (mythemeId: string) => {
-    setSelectedMythemes(prev =>
-      prev.includes(mythemeId)
-        ? prev.filter(id => id !== mythemeId)
-        : [...prev, mythemeId]
+    setSelectedMythemes((prev) =>
+      prev.includes(mythemeId) ? prev.filter((id) => id !== mythemeId) : [...prev, mythemeId],
     );
   };
 
   const removeMytheme = (mythemeId: string) => {
-    setSelectedMythemes(prev => prev.filter(id => id !== mythemeId));
+    setSelectedMythemes((prev) => prev.filter((id) => id !== mythemeId));
   };
 
-  const selectedMythemeObjects = mythemes.filter(m => selectedMythemes.includes(m.id));
+  const selectedMythemeObjects = mythemes.filter((m) => selectedMythemes.includes(m.id));
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -90,7 +88,7 @@ export function AddPlotPointDialog({
                 required
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="plot-category">Category</Label>
               <Select value={category} onValueChange={setCategory} required>
@@ -119,7 +117,7 @@ export function AddPlotPointDialog({
                   {showMythemeSelector ? 'Hide' : 'Select'} Mythemes
                 </Button>
               </div>
-              
+
               {selectedMythemeObjects.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {selectedMythemeObjects.map((mytheme) => (
@@ -149,10 +147,7 @@ export function AddPlotPointDialog({
                           checked={selectedMythemes.includes(mytheme.id)}
                           onCheckedChange={() => toggleMytheme(mytheme.id)}
                         />
-                        <Label
-                          htmlFor={`mytheme-${mytheme.id}`}
-                          className="flex-1 cursor-pointer"
-                        >
+                        <Label htmlFor={`mytheme-${mytheme.id}`} className="flex-1 cursor-pointer">
                           <span>{mytheme.name}</span>
                           <span className="text-gray-500 ml-2">({mytheme.type})</span>
                         </Label>
@@ -163,9 +158,7 @@ export function AddPlotPointDialog({
               )}
             </div>
           </div>
-          {error && (
-            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-          )}
+          {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { PlotPoint as PlotPointType, Mytheme } from '../types/myth';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from './ui/dialog';
 import { Button } from './ui/button';
@@ -44,18 +44,16 @@ export function EditPlotPointDialog({
   }, [open, plotPoint]);
 
   const toggleMytheme = (mythemeId: string) => {
-    setSelectedMythemes(prev =>
-      prev.includes(mythemeId)
-        ? prev.filter(id => id !== mythemeId)
-        : [...prev, mythemeId]
+    setSelectedMythemes((prev) =>
+      prev.includes(mythemeId) ? prev.filter((id) => id !== mythemeId) : [...prev, mythemeId],
     );
   };
 
   const removeMytheme = (mythemeId: string) => {
-    setSelectedMythemes(prev => prev.filter(id => id !== mythemeId));
+    setSelectedMythemes((prev) => prev.filter((id) => id !== mythemeId));
   };
 
-  const handleSubmit = async (event: React.FormEvent) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!plotPoint || !text.trim() || !category) {
       return;
@@ -78,13 +76,15 @@ export function EditPlotPointDialog({
     }
   };
 
-  const selectedMythemeObjects = mythemes.filter(m => selectedMythemes.includes(m.id));
+  const selectedMythemeObjects = mythemes.filter((m) => selectedMythemes.includes(m.id));
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Edit Plot Point {plotPoint ? `(Order #${plotPoint.order})` : ''}</DialogTitle>
+          <DialogTitle>
+            Edit Plot Point {plotPoint ? `(Order #${plotPoint.order})` : ''}
+          </DialogTitle>
         </DialogHeader>
         <p className="sr-only">Edit plot point content, category, and mytheme references</p>
         <form onSubmit={handleSubmit}>
@@ -103,11 +103,7 @@ export function EditPlotPointDialog({
 
             <div className="space-y-2">
               <Label htmlFor="edit-plot-category">Category</Label>
-              <Select
-                value={category}
-                onValueChange={setCategory}
-                required
-              >
+              <Select value={category} onValueChange={setCategory} required>
                 <SelectTrigger id="edit-plot-category">
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
@@ -178,9 +174,7 @@ export function EditPlotPointDialog({
             </div>
           </div>
 
-          {error && (
-            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-          )}
+          {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>

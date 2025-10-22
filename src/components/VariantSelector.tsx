@@ -44,9 +44,7 @@ export function VariantSelector({
             <FileText className="w-5 h-5 text-purple-600 dark:text-purple-400 mt-1 shrink-0" />
             <div className="flex-1">
               <h3>{variant.name}</h3>
-              <p className="text-gray-600 dark:text-gray-400 mt-1">
-                Source: {variant.source}
-              </p>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Source: {variant.source}</p>
               <Badge variant="outline" className="mt-2">
                 {variant.plotPoints.length} plot points
               </Badge>

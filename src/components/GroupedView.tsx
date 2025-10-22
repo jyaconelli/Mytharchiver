@@ -1,6 +1,5 @@
 import { PlotPoint as PlotPointType, Mytheme } from '../types/myth';
 import { PlotPoint } from './PlotPoint';
-import { Card } from './ui/card';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
@@ -28,7 +27,6 @@ const ITEM_TYPE = 'PLOT_POINT';
 function DraggablePlotPoint({
   plotPoint,
   mythemes,
-  onDrop,
   onDelete,
   onEdit,
   canEdit,
@@ -92,12 +90,12 @@ function CategoryDropZone({
 
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
-      'Introduction': 'border-slate-300 dark:border-slate-700',
-      'Conflict': 'border-red-300 dark:border-red-700',
-      'Journey': 'border-amber-300 dark:border-amber-700',
-      'Transformation': 'border-purple-300 dark:border-purple-700',
-      'Resolution': 'border-green-300 dark:border-green-700',
-      'Aftermath': 'border-blue-300 dark:border-blue-700',
+      Introduction: 'border-slate-300 dark:border-slate-700',
+      Conflict: 'border-red-300 dark:border-red-700',
+      Journey: 'border-amber-300 dark:border-amber-700',
+      Transformation: 'border-purple-300 dark:border-purple-700',
+      Resolution: 'border-green-300 dark:border-green-700',
+      Aftermath: 'border-blue-300 dark:border-blue-700',
     };
     return colors[category] || 'border-gray-300';
   };
@@ -149,10 +147,13 @@ export function GroupedView({
     }
   };
 
-  const groupedPoints = categories.reduce((acc, category) => {
-    acc[category] = plotPoints.filter(p => p.category === category);
-    return acc;
-  }, {} as Record<string, PlotPointType[]>);
+  const groupedPoints = categories.reduce(
+    (acc, category) => {
+      acc[category] = plotPoints.filter((p) => p.category === category);
+      return acc;
+    },
+    {} as Record<string, PlotPointType[]>,
+  );
 
   return (
     <DndProvider backend={HTML5Backend}>

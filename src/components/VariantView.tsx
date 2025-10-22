@@ -61,8 +61,8 @@ export function VariantView({
 
   const handleUpdatePlotPoint = async (id: string, updates: Partial<PlotPointType>) => {
     if (!canEdit) return;
-    const updatedPlotPoints = variant.plotPoints.map(point =>
-      point.id === id ? { ...point, ...updates } : point
+    const updatedPlotPoints = variant.plotPoints.map((point) =>
+      point.id === id ? { ...point, ...updates } : point,
     );
     await persistVariant({ ...variant, plotPoints: updatedPlotPoints });
   };
@@ -85,7 +85,11 @@ export function VariantView({
     setShowEditPlotPoint(true);
   };
 
-  const handleSavePlotPoint = async (updates: { text: string; category: string; mythemeRefs: string[] }) => {
+  const handleSavePlotPoint = async (updates: {
+    text: string;
+    category: string;
+    mythemeRefs: string[];
+  }) => {
     if (!canEdit || !plotPointBeingEdited) {
       return;
     }
@@ -94,8 +98,8 @@ export function VariantView({
       return;
     }
 
-    const updatedPlotPoints = variant.plotPoints.map(point =>
-      point.id === plotPointBeingEdited.id ? { ...point, ...updates } : point
+    const updatedPlotPoints = variant.plotPoints.map((point) =>
+      point.id === plotPointBeingEdited.id ? { ...point, ...updates } : point,
     );
 
     await persistVariant({ ...variant, plotPoints: updatedPlotPoints });
@@ -112,7 +116,7 @@ export function VariantView({
 
   const handleDeletePlotPoint = async (id: string) => {
     if (!canEdit) return;
-    const remaining = variant.plotPoints.filter(point => point.id !== id);
+    const remaining = variant.plotPoints.filter((point) => point.id !== id);
     const reindexed = remaining.map((point, index) => ({
       ...point,
       order: index + 1,
@@ -135,9 +139,7 @@ export function VariantView({
                 Saving…
               </span>
             )}
-            <Badge variant="outline">
-              {variant.plotPoints.length} plot points
-            </Badge>
+            <Badge variant="outline">{variant.plotPoints.length} plot points</Badge>
             {canEdit && (
               <Button onClick={() => setShowAddPlotPoint(true)} size="sm">
                 <Plus className="w-4 h-4 mr-2" />
@@ -213,9 +215,9 @@ export function VariantView({
         </TabsContent>
 
         <TabsContent value="grid" className="mt-4">
-          <GridView 
-            plotPoints={variant.plotPoints} 
-            mythemes={mythemes} 
+          <GridView
+            plotPoints={variant.plotPoints}
+            mythemes={mythemes}
             categories={categories}
             onDeletePlotPoint={canEdit ? handleDeletePlotPoint : undefined}
             onEditPlotPoint={canEdit ? handleRequestEditPlotPoint : undefined}

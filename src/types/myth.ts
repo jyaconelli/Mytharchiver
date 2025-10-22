@@ -34,7 +34,7 @@ export const DEFAULT_CATEGORIES = [
   'Journey',
   'Transformation',
   'Resolution',
-  'Aftermath'
+  'Aftermath',
 ];
 
 export type CollaboratorRole = 'viewer' | 'editor' | 'owner';

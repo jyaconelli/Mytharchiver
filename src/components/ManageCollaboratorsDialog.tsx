@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, FormEvent } from 'react';
 import { Myth, MythCollaborator, CollaboratorRole } from '../types/myth';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from './ui/dialog';
 import { Button } from './ui/button';
@@ -72,7 +72,7 @@ export function ManageCollaboratorsDialog({
     });
   }, [myth]);
 
-  const handleAdd = async (event: React.FormEvent) => {
+  const handleAdd = async (event: FormEvent) => {
     event.preventDefault();
     if (!myth) {
       return;
@@ -139,7 +139,10 @@ export function ManageCollaboratorsDialog({
             </div>
 
             {canManage ? (
-              <form onSubmit={handleAdd} className="space-y-3 rounded-lg border border-dashed border-gray-300 p-4 dark:border-gray-600">
+              <form
+                onSubmit={handleAdd}
+                className="space-y-3 rounded-lg border border-dashed border-gray-300 p-4 dark:border-gray-600"
+              >
                 <div className="grid gap-3 sm:grid-cols-[2fr,1fr]">
                   <div className="space-y-1">
                     <Label htmlFor="collaborator-email">Email</Label>
@@ -164,7 +167,7 @@ export function ManageCollaboratorsDialog({
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {ADDABLE_ROLES.map(option => (
+                        {ADDABLE_ROLES.map((option) => (
                           <SelectItem key={option} value={option}>
                             {option.charAt(0).toUpperCase() + option.slice(1)}
                           </SelectItem>
@@ -173,9 +176,7 @@ export function ManageCollaboratorsDialog({
                     </Select>
                   </div>
                 </div>
-                {formError && (
-                  <p className="text-sm text-red-600 dark:text-red-400">{formError}</p>
-                )}
+                {formError && <p className="text-sm text-red-600 dark:text-red-400">{formError}</p>}
                 <Button type="submit" disabled={submitting}>
                   {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Add Collaborator
@@ -209,7 +210,7 @@ export function ManageCollaboratorsDialog({
                 </p>
               ) : (
                 <ul className="space-y-3">
-                  {collaborators.map(collaborator => {
+                  {collaborators.map((collaborator) => {
                     const isOwner = collaborator.role === 'owner';
                     const isCurrentUser = collaborator.email === currentUserEmail;
 
@@ -236,7 +237,8 @@ export function ManageCollaboratorsDialog({
                           >
                             {isOwner
                               ? 'Owner'
-                              : collaborator.role.charAt(0).toUpperCase() + collaborator.role.slice(1)}
+                              : collaborator.role.charAt(0).toUpperCase() +
+                                collaborator.role.slice(1)}
                           </Badge>
                         </div>
                         {canManage && !isOwner && (
@@ -252,7 +254,7 @@ export function ManageCollaboratorsDialog({
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
-                                {ADDABLE_ROLES.map(option => (
+                                {ADDABLE_ROLES.map((option) => (
                                   <SelectItem key={option} value={option}>
                                     {option.charAt(0).toUpperCase() + option.slice(1)}
                                   </SelectItem>

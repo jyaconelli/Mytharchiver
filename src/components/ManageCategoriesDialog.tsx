@@ -13,11 +13,11 @@ interface ManageCategoriesDialogProps {
   onUpdateCategories: (categories: string[]) => Promise<void>;
 }
 
-export function ManageCategoriesDialog({ 
-  open, 
-  onOpenChange, 
-  categories, 
-  onUpdateCategories 
+export function ManageCategoriesDialog({
+  open,
+  onOpenChange,
+  categories,
+  onUpdateCategories,
 }: ManageCategoriesDialogProps) {
   const [localCategories, setLocalCategories] = useState<string[]>(categories);
   const [newCategory, setNewCategory] = useState('');
@@ -40,7 +40,7 @@ export function ManageCategoriesDialog({
   };
 
   const handleRemoveCategory = (category: string) => {
-    setLocalCategories(localCategories.filter(c => c !== category));
+    setLocalCategories(localCategories.filter((c) => c !== category));
   };
 
   const handleSave = async () => {
@@ -93,7 +93,7 @@ export function ManageCategoriesDialog({
               )}
             </div>
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="new-category">Add New Category</Label>
             <div className="flex gap-2">
@@ -115,9 +115,7 @@ export function ManageCategoriesDialog({
             </div>
           </div>
         </div>
-        {error && (
-          <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-        )}
+        {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
         <DialogFooter>
           <Button type="button" variant="outline" onClick={handleCancel}>
             Cancel

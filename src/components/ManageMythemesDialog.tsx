@@ -14,12 +14,12 @@ interface ManageMythemesDialogProps {
   onAdd: () => void;
 }
 
-export function ManageMythemesDialog({ 
-  open, 
-  onOpenChange, 
-  mythemes, 
+export function ManageMythemesDialog({
+  open,
+  onOpenChange,
+  mythemes,
   onDelete,
-  onAdd
+  onAdd,
 }: ManageMythemesDialogProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -31,15 +31,23 @@ export function ManageMythemesDialog({
     }
   }, [open]);
 
-  const groupedByType = mythemes.reduce((acc, mytheme) => {
-    if (!acc[mytheme.type]) {
-      acc[mytheme.type] = [];
-    }
-    acc[mytheme.type].push(mytheme);
-    return acc;
-  }, {} as Record<string, Mytheme[]>);
+  const groupedByType = mythemes.reduce(
+    (acc, mytheme) => {
+      if (!acc[mytheme.type]) {
+        acc[mytheme.type] = [];
+      }
+      acc[mytheme.type].push(mytheme);
+      return acc;
+    },
+    {} as Record<string, Mytheme[]>,
+  );
 
-  const types: Array<'character' | 'event' | 'place' | 'object'> = ['character', 'event', 'place', 'object'];
+  const types: Array<'character' | 'event' | 'place' | 'object'> = [
+    'character',
+    'event',
+    'place',
+    'object',
+  ];
 
   const handleDelete = async (id: string) => {
     setDeletingId(id);
@@ -82,21 +90,21 @@ export function ManageMythemesDialog({
                     groupedByType[type].map((mytheme) => (
                       <Badge key={mytheme.id} variant="secondary" className="gap-1">
                         {mytheme.name}
-                      <button
-                        type="button"
-                        onClick={() => handleDelete(mytheme.id)}
-                        className="ml-1 hover:text-red-600"
-                        disabled={deletingId === mytheme.id}
-                      >
-                        {deletingId === mytheme.id ? (
-                          <Loader2 className="w-3 h-3 animate-spin" />
-                        ) : (
-                          <X className="w-3 h-3" />
-                        )}
-                      </button>
-                    </Badge>
-                  ))
-                ) : (
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(mytheme.id)}
+                          className="ml-1 hover:text-red-600"
+                          disabled={deletingId === mytheme.id}
+                        >
+                          {deletingId === mytheme.id ? (
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                          ) : (
+                            <X className="w-3 h-3" />
+                          )}
+                        </button>
+                      </Badge>
+                    ))
+                  ) : (
                     <p className="text-gray-400">No {type}s</p>
                   )}
                 </div>

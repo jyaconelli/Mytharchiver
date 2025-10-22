@@ -52,8 +52,12 @@ export function MythList({ myths, selectedMythId, onSelectMyth, onAddMyth }: Myt
                 <div className="mt-2 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                   <Users className="h-4 w-4" />
                   <div className="flex flex-wrap gap-1">
-                    {myth.collaborators.slice(0, 3).map(collaborator => (
-                      <Badge key={collaborator.id} variant="outline" className="text-[0.65rem] uppercase">
+                    {myth.collaborators.slice(0, 3).map((collaborator) => (
+                      <Badge
+                        key={collaborator.id}
+                        variant="outline"
+                        className="text-[0.65rem] uppercase"
+                      >
                         {collaborator.role === 'owner'
                           ? 'Owner'
                           : collaborator.role.charAt(0).toUpperCase() + collaborator.role.slice(1)}

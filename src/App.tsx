@@ -138,10 +138,7 @@ export default function App() {
         .order('created_at', { ascending: true });
 
       const collaboratorLinksQuery = normalizedEmail
-        ? supabase
-            .from('myth_collaborators')
-            .select('myth_id')
-            .eq('email', normalizedEmail)
+        ? supabase.from('myth_collaborators').select('myth_id').eq('email', normalizedEmail)
         : Promise.resolve({ data: [], error: null } as {
             data: { myth_id: string }[];
             error: null;
@@ -160,12 +157,7 @@ export default function App() {
         .maybeSingle();
 
       const [ownedMythsResult, collaboratorLinksResult, mythemesResult, settingsResult] =
-        await Promise.all([
-          ownedMythsQuery,
-          collaboratorLinksQuery,
-          mythemesQuery,
-          settingsQuery,
-        ]);
+        await Promise.all([ownedMythsQuery, collaboratorLinksQuery, mythemesQuery, settingsQuery]);
 
       if (ownedMythsResult.error) throw ownedMythsResult.error;
       const collaboratorLinksData = collaboratorLinksResult as {
@@ -181,7 +173,7 @@ export default function App() {
       }
 
       const ownedMythRows = (ownedMythsResult.data as MythRow[] | null) ?? [];
-      const collaboratorMythIds = collaboratorLinksData.data?.map(link => link.myth_id) ?? [];
+      const collaboratorMythIds = collaboratorLinksData.data?.map((link) => link.myth_id) ?? [];
 
       let collaboratorMythRows: MythRow[] = [];
       if (collaboratorMythIds.length > 0) {
@@ -198,17 +190,17 @@ export default function App() {
       }
 
       const allMythRowsMap = new Map<string, MythRow>();
-      ownedMythRows.forEach(row => {
+      ownedMythRows.forEach((row) => {
         allMythRowsMap.set(row.id, row);
       });
-      collaboratorMythRows.forEach(row => {
+      collaboratorMythRows.forEach((row) => {
         if (!allMythRowsMap.has(row.id)) {
           allMythRowsMap.set(row.id, row);
         }
       });
 
       const allMythRows = Array.from(allMythRowsMap.values());
-      const mythIds = allMythRows.map(row => row.id);
+      const mythIds = allMythRows.map((row) => row.id);
 
       let collaboratorRows: CollaboratorRow[] = [];
       if (mythIds.length > 0) {
@@ -226,7 +218,7 @@ export default function App() {
       }
 
       const collaboratorsByMyth = new Map<string, MythCollaborator[]>();
-      collaboratorRows.forEach(row => {
+      collaboratorRows.forEach((row) => {
         const collaborator: MythCollaborator = {
           id: row.id,
           mythId: row.myth_id,
@@ -242,7 +234,7 @@ export default function App() {
       const categoriesValue =
         (settingsResult.data as ProfileSettingsRow | null)?.categories ?? null;
 
-      const finalMyths = allMythRows.map(row => {
+      const finalMyths = allMythRows.map((row) => {
         const myth = parseMythRow(row);
         myth.collaborators = collaboratorsByMyth.get(row.id) ?? [];
         return myth;
@@ -253,15 +245,13 @@ export default function App() {
       setCategories(
         Array.isArray(categoriesValue) && categoriesValue.length > 0
           ? categoriesValue
-          : DEFAULT_CATEGORIES
+          : DEFAULT_CATEGORIES,
       );
       setSelectedMythId(null);
       setSelectedVariantId(null);
     } catch (error) {
       console.error(error);
-      setDataError(
-        error instanceof Error ? error.message : 'Unable to load your myth archive.'
-      );
+      setDataError(error instanceof Error ? error.message : 'Unable to load your myth archive.');
     } finally {
       setDataLoading(false);
     }
@@ -283,8 +273,8 @@ export default function App() {
   const sessionUserId = session?.user.id ?? '';
   const currentUserEmail = session?.user.email?.toLowerCase() ?? '';
   const selectedMyth = useMemo(
-    () => myths.find(m => m.id === selectedMythId) ?? null,
-    [myths, selectedMythId]
+    () => myths.find((m) => m.id === selectedMythId) ?? null,
+    [myths, selectedMythId],
   );
   const selectedMythRole = useMemo<CollaboratorRole | 'owner' | null>(() => {
     if (!selectedMyth) {
@@ -294,24 +284,23 @@ export default function App() {
       return 'owner';
     }
     const collaborator = selectedMyth.collaborators.find(
-      person => person.email === currentUserEmail
+      (person) => person.email === currentUserEmail,
     );
     return collaborator?.role ?? null;
   }, [selectedMyth, sessionUserId, currentUserEmail]);
-  const canEditSelectedMyth =
-    selectedMythRole === 'owner' || selectedMythRole === 'editor';
+  const canEditSelectedMyth = selectedMythRole === 'owner' || selectedMythRole === 'editor';
   useEffect(() => {
     if (!canEditSelectedMyth) {
       setShowAddVariant(false);
     }
   }, [canEditSelectedMyth]);
   const selectedVariant = useMemo(
-    () => selectedMyth?.variants.find(v => v.id === selectedVariantId) ?? null,
-    [selectedMyth, selectedVariantId]
+    () => selectedMyth?.variants.find((v) => v.id === selectedVariantId) ?? null,
+    [selectedMyth, selectedVariantId],
   );
   const manageCollaboratorsMyth = useMemo(
-    () => myths.find(m => m.id === manageCollaboratorsMythId) ?? null,
-    [myths, manageCollaboratorsMythId]
+    () => myths.find((m) => m.id === manageCollaboratorsMythId) ?? null,
+    [myths, manageCollaboratorsMythId],
   );
   const selectedMythCollaboratorsForDisplay = useMemo(() => {
     if (!selectedMyth) {
@@ -319,7 +308,7 @@ export default function App() {
     }
 
     const collaborators = [...selectedMyth.collaborators];
-    const hasOwnerEntry = collaborators.some(collaborator => collaborator.role === 'owner');
+    const hasOwnerEntry = collaborators.some((collaborator) => collaborator.role === 'owner');
 
     if (!hasOwnerEntry && selectedMyth.ownerId === sessionUserId && currentUserEmail) {
       collaborators.push({
@@ -375,12 +364,12 @@ export default function App() {
         throw new Error('Email is required.');
       }
 
-      const myth = myths.find(m => m.id === mythId);
+      const myth = myths.find((m) => m.id === mythId);
       if (!myth) {
         throw new Error('Myth not found.');
       }
 
-      if (myth.collaborators.some(collaborator => collaborator.email === normalizedEmail)) {
+      if (myth.collaborators.some((collaborator) => collaborator.email === normalizedEmail)) {
         throw new Error('This collaborator has already been added.');
       }
 
@@ -406,13 +395,13 @@ export default function App() {
         role: collaboratorRow.role,
       };
 
-      setMyths(prev =>
-        prev.map(m =>
-          m.id === mythId ? { ...m, collaborators: [...m.collaborators, collaborator] } : m
-        )
+      setMyths((prev) =>
+        prev.map((m) =>
+          m.id === mythId ? { ...m, collaborators: [...m.collaborators, collaborator] } : m,
+        ),
       );
     },
-    [session, myths]
+    [session, myths],
   );
 
   const handleUpdateCollaboratorRole = useCallback(
@@ -430,22 +419,22 @@ export default function App() {
 
       const updatedRow = data as CollaboratorRow;
 
-      setMyths(prev =>
-        prev.map(m =>
+      setMyths((prev) =>
+        prev.map((m) =>
           m.id === updatedRow.myth_id
             ? {
                 ...m,
-                collaborators: m.collaborators.map(collaborator =>
+                collaborators: m.collaborators.map((collaborator) =>
                   collaborator.id === collaboratorId
                     ? { ...collaborator, role: updatedRow.role }
-                    : collaborator
+                    : collaborator,
                 ),
               }
-            : m
-        )
+            : m,
+        ),
       );
     },
-    []
+    [],
   );
 
   const handleRemoveCollaborator = useCallback(async (collaboratorId: string) => {
@@ -462,12 +451,17 @@ export default function App() {
 
     const removedRow = data as { myth_id: string };
 
-    setMyths(prev =>
-      prev.map(m =>
+    setMyths((prev) =>
+      prev.map((m) =>
         m.id === removedRow.myth_id
-          ? { ...m, collaborators: m.collaborators.filter(collaborator => collaborator.id !== collaboratorId) }
-          : m
-      )
+          ? {
+              ...m,
+              collaborators: m.collaborators.filter(
+                (collaborator) => collaborator.id !== collaboratorId,
+              ),
+            }
+          : m,
+      ),
     );
   }, []);
 
@@ -477,22 +471,22 @@ export default function App() {
         throw new Error('Select a myth before updating variants.');
       }
 
-      const myth = myths.find(m => m.id === selectedMythId);
+      const myth = myths.find((m) => m.id === selectedMythId);
       if (!myth) {
         throw new Error('Selected myth could not be found.');
       }
 
       const isOwner = myth.ownerId === sessionUserId;
       const isEditor = myth.collaborators.some(
-        collaborator => collaborator.email === currentUserEmail && collaborator.role !== 'viewer'
+        (collaborator) => collaborator.email === currentUserEmail && collaborator.role !== 'viewer',
       );
 
       if (!isOwner && !isEditor) {
         throw new Error('You do not have permission to edit this myth.');
       }
 
-      const updatedVariants = myth.variants.map(v =>
-        v.id === updatedVariant.id ? updatedVariant : v
+      const updatedVariants = myth.variants.map((v) =>
+        v.id === updatedVariant.id ? updatedVariant : v,
       );
 
       const { error } = await supabase
@@ -504,13 +498,11 @@ export default function App() {
         throw new Error(error.message);
       }
 
-      setMyths(prevMyths =>
-        prevMyths.map(m =>
-          m.id === selectedMythId ? { ...m, variants: updatedVariants } : m
-        )
+      setMyths((prevMyths) =>
+        prevMyths.map((m) => (m.id === selectedMythId ? { ...m, variants: updatedVariants } : m)),
       );
     },
-    [session, selectedMythId, myths, sessionUserId, currentUserEmail]
+    [session, selectedMythId, myths, sessionUserId, currentUserEmail],
   );
 
   const handleBack = () => {
@@ -573,9 +565,9 @@ export default function App() {
 
       myth.collaborators = collaborators;
 
-      setMyths(prev => [...prev, myth]);
+      setMyths((prev) => [...prev, myth]);
     },
-    [session, currentUserEmail]
+    [session, currentUserEmail],
   );
 
   const handleAddVariant = useCallback(
@@ -584,19 +576,19 @@ export default function App() {
         throw new Error('Select a myth before adding variants.');
       }
 
-      const myth = myths.find(m => m.id === selectedMythId);
+      const myth = myths.find((m) => m.id === selectedMythId);
       if (!myth) {
         throw new Error('Selected myth could not be found.');
       }
 
-       const isOwner = myth.ownerId === sessionUserId;
-       const isEditor = myth.collaborators.some(
-         collaborator => collaborator.email === currentUserEmail && collaborator.role !== 'viewer'
-       );
+      const isOwner = myth.ownerId === sessionUserId;
+      const isEditor = myth.collaborators.some(
+        (collaborator) => collaborator.email === currentUserEmail && collaborator.role !== 'viewer',
+      );
 
-       if (!isOwner && !isEditor) {
-         throw new Error('You do not have permission to modify this myth.');
-       }
+      if (!isOwner && !isEditor) {
+        throw new Error('You do not have permission to modify this myth.');
+      }
 
       const newVariant: MythVariant = {
         id: createLocalId(),
@@ -616,13 +608,11 @@ export default function App() {
         throw new Error(error.message);
       }
 
-      setMyths(prevMyths =>
-        prevMyths.map(m =>
-          m.id === selectedMythId ? { ...m, variants: updatedVariants } : m
-        )
+      setMyths((prevMyths) =>
+        prevMyths.map((m) => (m.id === selectedMythId ? { ...m, variants: updatedVariants } : m)),
       );
     },
-    [session, selectedMythId, myths, sessionUserId, currentUserEmail]
+    [session, selectedMythId, myths, sessionUserId, currentUserEmail],
   );
 
   const handleAddMytheme = useCallback(
@@ -645,23 +635,20 @@ export default function App() {
         throw new Error(error.message);
       }
 
-      setMythemes(prev => [...prev, data as MythemeRow]);
+      setMythemes((prev) => [...prev, data as MythemeRow]);
     },
-    [session]
+    [session],
   );
 
-  const handleDeleteMytheme = useCallback(
-    async (id: string) => {
-      const { error } = await supabase.from('mythemes').delete().eq('id', id);
+  const handleDeleteMytheme = useCallback(async (id: string) => {
+    const { error } = await supabase.from('mythemes').delete().eq('id', id);
 
-      if (error) {
-        throw new Error(error.message);
-      }
+    if (error) {
+      throw new Error(error.message);
+    }
 
-      setMythemes(prev => prev.filter(m => m.id !== id));
-    },
-    []
-  );
+    setMythemes((prev) => prev.filter((m) => m.id !== id));
+  }, []);
 
   const handleUpdateCategories = useCallback(
     async (updatedCategories: string[]) => {
@@ -677,7 +664,7 @@ export default function App() {
           user_id: session.user.id,
           categories: updatedCategories,
         },
-        { onConflict: 'user_id' }
+        { onConflict: 'user_id' },
       );
 
       if (error) {
@@ -685,7 +672,7 @@ export default function App() {
         throw new Error(error.message);
       }
     },
-    [session, categories]
+    [session, categories],
   );
 
   if (authLoading) {
@@ -721,8 +708,8 @@ export default function App() {
                     {selectedVariant
                       ? `${selectedMyth?.name} / ${selectedVariant.name}`
                       : selectedMyth
-                      ? selectedMyth.name
-                      : 'Structural Taxonomy System'}
+                        ? selectedMyth.name
+                        : 'Structural Taxonomy System'}
                   </p>
                 </div>
               </div>
@@ -813,7 +800,7 @@ export default function App() {
                       No collaborators yet.
                     </span>
                   ) : (
-                    selectedMythCollaboratorsForDisplay.map(collaborator => (
+                    selectedMythCollaboratorsForDisplay.map((collaborator) => (
                       <Badge
                         key={collaborator.id}
                         variant="outline"
@@ -822,7 +809,8 @@ export default function App() {
                         <span className="font-semibold">
                           {collaborator.role === 'owner'
                             ? 'Owner'
-                            : collaborator.role.charAt(0).toUpperCase() + collaborator.role.slice(1)}
+                            : collaborator.role.charAt(0).toUpperCase() +
+                              collaborator.role.slice(1)}
                         </span>
                         <span className="normal-case text-[0.7rem] text-gray-600 dark:text-gray-200">
                           {collaborator.email}
@@ -862,9 +850,7 @@ export default function App() {
                   variants={selectedMyth.variants}
                   selectedVariantId={selectedVariantId}
                   onSelectVariant={handleSelectVariant}
-                  onAddVariant={
-                    canEditSelectedMyth ? () => setShowAddVariant(true) : undefined
-                  }
+                  onAddVariant={canEditSelectedMyth ? () => setShowAddVariant(true) : undefined}
                   canEdit={canEditSelectedMyth}
                 />
               </div>
@@ -884,11 +870,7 @@ export default function App() {
       </main>
 
       {/* Dialogs */}
-      <AddMythDialog
-        open={showAddMyth}
-        onOpenChange={setShowAddMyth}
-        onAdd={handleAddMyth}
-      />
+      <AddMythDialog open={showAddMyth} onOpenChange={setShowAddMyth} onAdd={handleAddMyth} />
       <AddVariantDialog
         open={showAddVariant}
         onOpenChange={setShowAddVariant}
@@ -964,7 +946,8 @@ export default function App() {
                   <span className="inline-block px-1 mx-0.5 rounded bg-blue-100 text-blue-900 dark:bg-blue-900 dark:text-blue-100">
                     Highlighted terms
                   </span>{' '}
-                  in plot points are tagged mythemes (canonical characters, events, places, or objects)
+                  in plot points are tagged mythemes (canonical characters, events, places, or
+                  objects)
                 </p>
               </div>
             </div>

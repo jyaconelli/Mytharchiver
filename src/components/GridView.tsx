@@ -73,12 +73,12 @@ export function GridView({
 
   const getCategoryHeaderColor = (category: string) => {
     const colors: Record<string, string> = {
-      'Introduction': 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
-      'Conflict': 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
-      'Journey': 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300',
-      'Transformation': 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300',
-      'Resolution': 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
-      'Aftermath': 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
+      Introduction: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
+      Conflict: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
+      Journey: 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300',
+      Transformation: 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300',
+      Resolution: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
+      Aftermath: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
     };
     return colors[category] || 'bg-gray-100 text-gray-700';
   };
@@ -121,7 +121,7 @@ export function GridView({
                     <div className="h-full border-2 border-dashed border-gray-200 rounded-lg dark:border-gray-700" />
                   )}
                 </div>
-              ))
+              )),
             )
           )}
         </div>
