@@ -1,5 +1,1 @@
-#!/bin/sh
-
-export PATH="$(pwd)/node_modules/.bin:$PATH"
-
-yarn lint-staged
+yarn test

@@ -1,0 +1,286 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`VariantSelector > hides add variant button when read only 1`] = `
+<div
+  class="space-y-3"
+>
+  <div
+    class="flex items-center justify-between"
+  >
+    <h3
+      class="text-gray-600 dark:text-gray-400"
+    >
+      Select a variant to view:
+    </h3>
+  </div>
+  <div
+    class="text-card-foreground flex flex-col gap-6 rounded-xl border p-4 cursor-pointer transition-all hover:shadow-md border-purple-500 dark:border-purple-400 bg-purple-50 dark:bg-purple-950"
+    data-slot="card"
+  >
+    <div
+      class="flex items-start gap-3"
+    >
+      <svg
+        class="lucide lucide-file-text w-5 h-5 text-purple-600 dark:text-purple-400 mt-1 shrink-0"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+        />
+        <path
+          d="M14 2v4a2 2 0 0 0 2 2h4"
+        />
+        <path
+          d="M10 9H8"
+        />
+        <path
+          d="M16 13H8"
+        />
+        <path
+          d="M16 17H8"
+        />
+      </svg>
+      <div
+        class="flex-1"
+      >
+        <h3>
+          Hesiod's Version
+        </h3>
+        <p
+          class="text-gray-600 dark:text-gray-400 mt-1"
+        >
+          Source: 
+          Theogony
+        </p>
+        <span
+          class="inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground mt-2"
+          data-slot="badge"
+        >
+          0
+           plot points
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border p-4 cursor-pointer transition-all hover:shadow-md"
+    data-slot="card"
+  >
+    <div
+      class="flex items-start gap-3"
+    >
+      <svg
+        class="lucide lucide-file-text w-5 h-5 text-purple-600 dark:text-purple-400 mt-1 shrink-0"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+        />
+        <path
+          d="M14 2v4a2 2 0 0 0 2 2h4"
+        />
+        <path
+          d="M10 9H8"
+        />
+        <path
+          d="M16 13H8"
+        />
+        <path
+          d="M16 17H8"
+        />
+      </svg>
+      <div
+        class="flex-1"
+      >
+        <h3>
+          Aeschylus's Version
+        </h3>
+        <p
+          class="text-gray-600 dark:text-gray-400 mt-1"
+        >
+          Source: 
+          Prometheus Bound
+        </p>
+        <span
+          class="inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground mt-2"
+          data-slot="badge"
+        >
+          0
+           plot points
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`VariantSelector > shows add variant button and calls handler when editable 1`] = `
+<div
+  class="space-y-3"
+>
+  <div
+    class="flex items-center justify-between"
+  >
+    <h3
+      class="text-gray-600 dark:text-gray-400"
+    >
+      Select a variant to view:
+    </h3>
+    <button
+      class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-primary text-primary-foreground hover:bg-primary/90 h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5"
+      data-slot="button"
+    >
+      <svg
+        class="lucide lucide-plus w-4 h-4 mr-2"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M5 12h14"
+        />
+        <path
+          d="M12 5v14"
+        />
+      </svg>
+      Add Variant
+    </button>
+  </div>
+  <div
+    class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border p-4 cursor-pointer transition-all hover:shadow-md"
+    data-slot="card"
+  >
+    <div
+      class="flex items-start gap-3"
+    >
+      <svg
+        class="lucide lucide-file-text w-5 h-5 text-purple-600 dark:text-purple-400 mt-1 shrink-0"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+        />
+        <path
+          d="M14 2v4a2 2 0 0 0 2 2h4"
+        />
+        <path
+          d="M10 9H8"
+        />
+        <path
+          d="M16 13H8"
+        />
+        <path
+          d="M16 17H8"
+        />
+      </svg>
+      <div
+        class="flex-1"
+      >
+        <h3>
+          Hesiod's Version
+        </h3>
+        <p
+          class="text-gray-600 dark:text-gray-400 mt-1"
+        >
+          Source: 
+          Theogony
+        </p>
+        <span
+          class="inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground mt-2"
+          data-slot="badge"
+        >
+          0
+           plot points
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border p-4 cursor-pointer transition-all hover:shadow-md"
+    data-slot="card"
+  >
+    <div
+      class="flex items-start gap-3"
+    >
+      <svg
+        class="lucide lucide-file-text w-5 h-5 text-purple-600 dark:text-purple-400 mt-1 shrink-0"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+        />
+        <path
+          d="M14 2v4a2 2 0 0 0 2 2h4"
+        />
+        <path
+          d="M10 9H8"
+        />
+        <path
+          d="M16 13H8"
+        />
+        <path
+          d="M16 17H8"
+        />
+      </svg>
+      <div
+        class="flex-1"
+      >
+        <h3>
+          Aeschylus's Version
+        </h3>
+        <p
+          class="text-gray-600 dark:text-gray-400 mt-1"
+        >
+          Source: 
+          Prometheus Bound
+        </p>
+        <span
+          class="inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground mt-2"
+          data-slot="badge"
+        >
+          0
+           plot points
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;

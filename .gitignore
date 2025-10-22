@@ -27,3 +27,6 @@ yarn-error.log*
 
 # Local overrides
 *.local
+
+# Test coverage
+coverage/
