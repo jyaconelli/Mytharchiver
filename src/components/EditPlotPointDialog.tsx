@@ -1,31 +1,31 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { PlotPoint as PlotPointType, Mytheme } from '../types/myth';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from './ui/dialog';
 import { Button } from './ui/button';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Mytheme } from '../types/myth';
 import { Checkbox } from './ui/checkbox';
 import { Badge } from './ui/badge';
-import { X, Loader2 } from 'lucide-react';
+import { Loader2, X } from 'lucide-react';
 
-interface AddPlotPointDialogProps {
+interface EditPlotPointDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onAdd: (text: string, category: string, mythemeRefs: string[]) => Promise<void>;
+  plotPoint: PlotPointType | null;
   categories: string[];
   mythemes: Mytheme[];
-  nextOrder: number;
+  onSave: (updates: { text: string; category: string; mythemeRefs: string[] }) => Promise<void>;
 }
 
-export function AddPlotPointDialog({ 
-  open, 
-  onOpenChange, 
-  onAdd, 
-  categories, 
+export function EditPlotPointDialog({
+  open,
+  onOpenChange,
+  plotPoint,
+  categories,
   mythemes,
-  nextOrder 
-}: AddPlotPointDialogProps) {
+  onSave,
+}: EditPlotPointDialogProps) {
   const [text, setText] = useState('');
   const [category, setCategory] = useState('');
   const [selectedMythemes, setSelectedMythemes] = useState<string[]>([]);
@@ -33,28 +33,15 @@ export function AddPlotPointDialog({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!text.trim() || !category) {
-      return;
-    }
-
-    setSubmitting(true);
-    setError(null);
-
-    try {
-      await onAdd(text, category, selectedMythemes);
-      setText('');
-      setCategory('');
-      setSelectedMythemes([]);
+  useEffect(() => {
+    if (open && plotPoint) {
+      setText(plotPoint.text);
+      setCategory(plotPoint.category);
+      setSelectedMythemes(plotPoint.mythemeRefs ?? []);
       setShowMythemeSelector(false);
-      onOpenChange(false);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unable to add the plot point.');
-    } finally {
-      setSubmitting(false);
+      setError(null);
     }
-  };
+  }, [open, plotPoint]);
 
   const toggleMytheme = (mythemeId: string) => {
     setSelectedMythemes(prev =>
@@ -68,33 +55,60 @@ export function AddPlotPointDialog({
     setSelectedMythemes(prev => prev.filter(id => id !== mythemeId));
   };
 
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!plotPoint || !text.trim() || !category) {
+      return;
+    }
+
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      await onSave({
+        text,
+        category,
+        mythemeRefs: selectedMythemes,
+      });
+      onOpenChange(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unable to update the plot point.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const selectedMythemeObjects = mythemes.filter(m => selectedMythemes.includes(m.id));
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Add New Plot Point (Order #{nextOrder})</DialogTitle>
+          <DialogTitle>Edit Plot Point {plotPoint ? `(Order #${plotPoint.order})` : ''}</DialogTitle>
         </DialogHeader>
-        <p className="sr-only">Create a new plot point with category and mytheme references</p>
+        <p className="sr-only">Edit plot point content, category, and mytheme references</p>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="plot-text">Plot Point Text</Label>
+              <Label htmlFor="edit-plot-text">Plot Point Text</Label>
               <Textarea
-                id="plot-text"
+                id="edit-plot-text"
                 value={text}
-                onChange={(e) => setText(e.target.value)}
-                placeholder="e.g., Prometheus observes humanity struggling without fire"
+                onChange={(event) => setText(event.target.value)}
+                placeholder="Update the narrative detail…"
                 rows={3}
                 required
               />
             </div>
-            
+
             <div className="space-y-2">
-              <Label htmlFor="plot-category">Category</Label>
-              <Select value={category} onValueChange={setCategory} required>
-                <SelectTrigger id="plot-category">
+              <Label htmlFor="edit-plot-category">Category</Label>
+              <Select
+                value={category}
+                onValueChange={setCategory}
+                required
+              >
+                <SelectTrigger id="edit-plot-category">
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -119,7 +133,7 @@ export function AddPlotPointDialog({
                   {showMythemeSelector ? 'Hide' : 'Select'} Mythemes
                 </Button>
               </div>
-              
+
               {selectedMythemeObjects.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {selectedMythemeObjects.map((mytheme) => (
@@ -145,12 +159,12 @@ export function AddPlotPointDialog({
                     mythemes.map((mytheme) => (
                       <div key={mytheme.id} className="flex items-center space-x-2">
                         <Checkbox
-                          id={`mytheme-${mytheme.id}`}
+                          id={`edit-mytheme-${mytheme.id}`}
                           checked={selectedMythemes.includes(mytheme.id)}
                           onCheckedChange={() => toggleMytheme(mytheme.id)}
                         />
                         <Label
-                          htmlFor={`mytheme-${mytheme.id}`}
+                          htmlFor={`edit-mytheme-${mytheme.id}`}
                           className="flex-1 cursor-pointer"
                         >
                           <span>{mytheme.name}</span>
@@ -163,16 +177,18 @@ export function AddPlotPointDialog({
               )}
             </div>
           </div>
+
           {error && (
             <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
           )}
+
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={submitting}>
+            <Button type="submit" disabled={submitting || !plotPoint}>
               {submitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              Add Plot Point
+              Save Changes
             </Button>
           </DialogFooter>
         </form>

@@ -1,16 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from './ui/dialog';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Badge } from './ui/badge';
-import { X, Plus } from 'lucide-react';
+import { X, Plus, Loader2 } from 'lucide-react';
 
 interface ManageCategoriesDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   categories: string[];
-  onUpdateCategories: (categories: string[]) => void;
+  onUpdateCategories: (categories: string[]) => Promise<void>;
 }
 
 export function ManageCategoriesDialog({ 
@@ -21,6 +21,16 @@ export function ManageCategoriesDialog({
 }: ManageCategoriesDialogProps) {
   const [localCategories, setLocalCategories] = useState<string[]>(categories);
   const [newCategory, setNewCategory] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (open) {
+      setLocalCategories(categories);
+      setNewCategory('');
+      setError(null);
+    }
+  }, [open, categories]);
 
   const handleAddCategory = () => {
     if (newCategory.trim() && !localCategories.includes(newCategory.trim())) {
@@ -33,14 +43,24 @@ export function ManageCategoriesDialog({
     setLocalCategories(localCategories.filter(c => c !== category));
   };
 
-  const handleSave = () => {
-    onUpdateCategories(localCategories);
-    onOpenChange(false);
+  const handleSave = async () => {
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      await onUpdateCategories(localCategories);
+      onOpenChange(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unable to update categories.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleCancel = () => {
     setLocalCategories(categories);
     setNewCategory('');
+    setError(null);
     onOpenChange(false);
   };
 
@@ -95,11 +115,15 @@ export function ManageCategoriesDialog({
             </div>
           </div>
         </div>
+        {error && (
+          <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+        )}
         <DialogFooter>
           <Button type="button" variant="outline" onClick={handleCancel}>
             Cancel
           </Button>
-          <Button type="button" onClick={handleSave}>
+          <Button type="button" onClick={handleSave} disabled={submitting}>
+            {submitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
             Save Categories
           </Button>
         </DialogFooter>

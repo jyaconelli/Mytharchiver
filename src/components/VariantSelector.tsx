@@ -8,18 +8,27 @@ interface VariantSelectorProps {
   variants: MythVariant[];
   selectedVariantId: string | null;
   onSelectVariant: (variantId: string) => void;
-  onAddVariant: () => void;
+  onAddVariant?: () => void;
+  canEdit?: boolean;
 }
 
-export function VariantSelector({ variants, selectedVariantId, onSelectVariant, onAddVariant }: VariantSelectorProps) {
+export function VariantSelector({
+  variants,
+  selectedVariantId,
+  onSelectVariant,
+  onAddVariant,
+  canEdit = true,
+}: VariantSelectorProps) {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="text-gray-600 dark:text-gray-400">Select a variant to view:</h3>
-        <Button onClick={onAddVariant} size="sm">
-          <Plus className="w-4 h-4 mr-2" />
-          Add Variant
-        </Button>
+        {canEdit && onAddVariant && (
+          <Button onClick={onAddVariant} size="sm">
+            <Plus className="w-4 h-4 mr-2" />
+            Add Variant
+          </Button>
+        )}
       </div>
       {variants.map((variant) => (
         <Card

@@ -3,24 +3,38 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
+import { Loader2 } from 'lucide-react';
 
 interface AddVariantDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onAdd: (name: string, source: string) => void;
+  onAdd: (name: string, source: string) => Promise<void>;
 }
 
 export function AddVariantDialog({ open, onOpenChange, onAdd }: AddVariantDialogProps) {
   const [name, setName] = useState('');
   const [source, setSource] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (name.trim() && source.trim()) {
-      onAdd(name, source);
+    if (!name.trim() || !source.trim()) {
+      return;
+    }
+
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      await onAdd(name, source);
       setName('');
       setSource('');
       onOpenChange(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unable to add the variant.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -54,11 +68,17 @@ export function AddVariantDialog({ open, onOpenChange, onAdd }: AddVariantDialog
               />
             </div>
           </div>
+          {error && (
+            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+          )}
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit">Add Variant</Button>
+            <Button type="submit" disabled={submitting}>
+              {submitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Add Variant
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

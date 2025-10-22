@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { PlotPoint as PlotPointType, Mytheme } from '../types/myth';
 import { PlotPoint } from './PlotPoint';
 import { Card } from './ui/card';
@@ -9,29 +8,50 @@ interface GroupedViewProps {
   plotPoints: PlotPointType[];
   mythemes: Mytheme[];
   categories: string[];
-  onUpdatePlotPoint: (id: string, updates: Partial<PlotPointType>) => void;
+  onUpdatePlotPoint?: (id: string, updates: Partial<PlotPointType>) => Promise<void>;
+  onDeletePlotPoint?: (id: string) => void;
+  onEditPlotPoint?: (plotPoint: PlotPointType) => void;
+  canEdit?: boolean;
 }
 
 interface DraggablePlotPointProps {
   plotPoint: PlotPointType;
   mythemes: Mytheme[];
   onDrop: (id: string, newCategory: string) => void;
+  onDelete?: (id: string) => void;
+  onEdit?: (plotPoint: PlotPointType) => void;
+  canEdit: boolean;
 }
 
 const ITEM_TYPE = 'PLOT_POINT';
 
-function DraggablePlotPoint({ plotPoint, mythemes, onDrop }: DraggablePlotPointProps) {
+function DraggablePlotPoint({
+  plotPoint,
+  mythemes,
+  onDrop,
+  onDelete,
+  onEdit,
+  canEdit,
+}: DraggablePlotPointProps) {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: ITEM_TYPE,
     item: { id: plotPoint.id, currentCategory: plotPoint.category },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
+    canDrag: canEdit,
   }));
 
   return (
-    <div ref={drag} className="cursor-move">
-      <PlotPoint plotPoint={plotPoint} mythemes={mythemes} showCategory={false} isDragging={isDragging} />
+    <div ref={canEdit ? drag : undefined} className={canEdit ? 'cursor-move' : ''}>
+      <PlotPoint
+        plotPoint={plotPoint}
+        mythemes={mythemes}
+        showCategory={false}
+        isDragging={isDragging}
+        onDelete={onDelete}
+        onEdit={onEdit}
+      />
     </div>
   );
 }
@@ -41,12 +61,26 @@ interface CategoryDropZoneProps {
   plotPoints: PlotPointType[];
   mythemes: Mytheme[];
   onDrop: (id: string, newCategory: string) => void;
+  onDelete?: (id: string) => void;
+  onEdit?: (plotPoint: PlotPointType) => void;
+  canEdit: boolean;
 }
 
-function CategoryDropZone({ category, plotPoints, mythemes, onDrop }: CategoryDropZoneProps) {
+function CategoryDropZone({
+  category,
+  plotPoints,
+  mythemes,
+  onDrop,
+  onDelete,
+  onEdit,
+  canEdit,
+}: CategoryDropZoneProps) {
   const [{ isOver }, drop] = useDrop(() => ({
     accept: ITEM_TYPE,
     drop: (item: { id: string; currentCategory: string }) => {
+      if (!canEdit || item.currentCategory === category) {
+        return;
+      }
       if (item.currentCategory !== category) {
         onDrop(item.id, category);
       }
@@ -72,7 +106,7 @@ function CategoryDropZone({ category, plotPoints, mythemes, onDrop }: CategoryDr
 
   return (
     <div
-      ref={drop}
+      ref={canEdit ? drop : undefined}
       className={`border-2 rounded-lg p-4 min-h-[200px] ${getCategoryColor(category)} ${
         isOver ? 'bg-blue-50 dark:bg-blue-950' : ''
       }`}
@@ -85,19 +119,34 @@ function CategoryDropZone({ category, plotPoints, mythemes, onDrop }: CategoryDr
             plotPoint={point}
             mythemes={mythemes}
             onDrop={onDrop}
+            onDelete={onDelete}
+            onEdit={onEdit}
+            canEdit={canEdit}
           />
         ))}
         {sortedPlotPoints.length === 0 && (
-          <p className="text-gray-400 text-center py-8">Drop plot points here</p>
+          <p className="text-gray-400 text-center py-8">
+            {canEdit ? 'Drop plot points here' : 'No plot points in this category'}
+          </p>
         )}
       </div>
     </div>
   );
 }
 
-export function GroupedView({ plotPoints, mythemes, categories, onUpdatePlotPoint }: GroupedViewProps) {
+export function GroupedView({
+  plotPoints,
+  mythemes,
+  categories,
+  onUpdatePlotPoint,
+  onDeletePlotPoint,
+  onEditPlotPoint,
+  canEdit = true,
+}: GroupedViewProps) {
   const handleDrop = (id: string, newCategory: string) => {
-    onUpdatePlotPoint(id, { category: newCategory });
+    if (canEdit && onUpdatePlotPoint) {
+      void onUpdatePlotPoint(id, { category: newCategory });
+    }
   };
 
   const groupedPoints = categories.reduce((acc, category) => {
@@ -115,6 +164,9 @@ export function GroupedView({ plotPoints, mythemes, categories, onUpdatePlotPoin
             plotPoints={groupedPoints[category] || []}
             mythemes={mythemes}
             onDrop={handleDrop}
+            onDelete={onDeletePlotPoint}
+            onEdit={onEditPlotPoint}
+            canEdit={canEdit && Boolean(onUpdatePlotPoint)}
           />
         ))}
       </div>

@@ -4,24 +4,38 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
+import { Loader2 } from 'lucide-react';
 
 interface AddMythDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onAdd: (name: string, description: string) => void;
+  onAdd: (name: string, description: string) => Promise<void>;
 }
 
 export function AddMythDialog({ open, onOpenChange, onAdd }: AddMythDialogProps) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (name.trim()) {
-      onAdd(name, description);
+    if (!name.trim()) {
+      return;
+    }
+
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      await onAdd(name, description);
       setName('');
       setDescription('');
       onOpenChange(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unable to add the myth folder.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -55,11 +69,17 @@ export function AddMythDialog({ open, onOpenChange, onAdd }: AddMythDialogProps)
               />
             </div>
           </div>
+          {error && (
+            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+          )}
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit">Add Myth</Button>
+            <Button type="submit" disabled={submitting}>
+              {submitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Add Myth
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

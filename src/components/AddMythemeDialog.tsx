@@ -4,24 +4,38 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Loader2 } from 'lucide-react';
 
 interface AddMythemeDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onAdd: (name: string, type: 'character' | 'event' | 'place' | 'object') => void;
+  onAdd: (name: string, type: 'character' | 'event' | 'place' | 'object') => Promise<void>;
 }
 
 export function AddMythemeDialog({ open, onOpenChange, onAdd }: AddMythemeDialogProps) {
   const [name, setName] = useState('');
   const [type, setType] = useState<'character' | 'event' | 'place' | 'object'>('character');
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (name.trim()) {
-      onAdd(name, type);
+    if (!name.trim()) {
+      return;
+    }
+
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      await onAdd(name, type);
       setName('');
       setType('character');
       onOpenChange(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unable to add the mytheme.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -59,11 +73,17 @@ export function AddMythemeDialog({ open, onOpenChange, onAdd }: AddMythemeDialog
               </Select>
             </div>
           </div>
+          {error && (
+            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+          )}
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit">Add Mytheme</Button>
+            <Button type="submit" disabled={submitting}>
+              {submitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Add Mytheme
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

@@ -5,30 +5,71 @@ interface GridViewProps {
   plotPoints: PlotPointType[];
   mythemes: Mytheme[];
   categories: string[];
+  onDeletePlotPoint?: (id: string) => void;
+  onEditPlotPoint?: (plotPoint: PlotPointType) => void;
+  canEdit?: boolean;
 }
 
-export function GridView({ plotPoints, mythemes, categories }: GridViewProps) {
-  // Sort plot points chronologically
+export function GridView({
+  plotPoints,
+  mythemes,
+  categories,
+  onDeletePlotPoint,
+  onEditPlotPoint,
+  canEdit = true,
+}: GridViewProps) {
   const sortedPlotPoints = [...plotPoints].sort((a, b) => a.order - b.order);
-  
-  // Create grid structure: arrange chronologically left-to-right, top-to-bottom
-  // Each row can hold as many categories as we have
-  const numColumns = categories.length;
-  
-  // Calculate how many rows we need
-  const numRows = Math.ceil(sortedPlotPoints.length / numColumns);
-  
-  // Create a 2D array to hold the grid
-  const grid: (PlotPointType | null)[][] = Array(numRows)
-    .fill(null)
-    .map(() => Array(numColumns).fill(null));
-  
-  // Fill the grid left-to-right, top-to-bottom
-  sortedPlotPoints.forEach((point, index) => {
-    const row = Math.floor(index / numColumns);
-    const col = index % numColumns;
-    grid[row][col] = point;
-  });
+
+  const baseCategories = Array.from(new Set(categories));
+  const categorySet = new Set(baseCategories);
+
+  for (const point of sortedPlotPoints) {
+    if (!categorySet.has(point.category)) {
+      categorySet.add(point.category);
+      baseCategories.push(point.category);
+    }
+  }
+
+  if (baseCategories.length === 0) {
+    baseCategories.push('Uncategorized');
+  }
+
+  const numColumns = Math.max(baseCategories.length, 1);
+  const categoryIndexMap = new Map(baseCategories.map((category, index) => [category, index]));
+
+  const grid: (PlotPointType | null)[][] = [];
+  let lastPosition = -1;
+
+  const ensureRow = (rowIndex: number) => {
+    if (!grid[rowIndex]) {
+      grid[rowIndex] = Array.from({ length: numColumns }, () => null);
+    }
+  };
+
+  for (const point of sortedPlotPoints) {
+    const columnIndex = categoryIndexMap.get(point.category) ?? 0;
+    let rowIndex = 0;
+
+    while (true) {
+      const positionIndex = rowIndex * numColumns + columnIndex;
+
+      if (positionIndex <= lastPosition) {
+        rowIndex += 1;
+        continue;
+      }
+
+      ensureRow(rowIndex);
+
+      if (grid[rowIndex][columnIndex]) {
+        rowIndex += 1;
+        continue;
+      }
+
+      grid[rowIndex][columnIndex] = point;
+      lastPosition = positionIndex;
+      break;
+    }
+  }
 
   const getCategoryHeaderColor = (category: string) => {
     const colors: Record<string, string> = {
@@ -45,9 +86,12 @@ export function GridView({ plotPoints, mythemes, categories }: GridViewProps) {
   return (
     <div className="overflow-x-auto">
       <div className="inline-block min-w-full">
-        <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${numColumns}, minmax(250px, 1fr))` }}>
+        <div
+          className="grid gap-3"
+          style={{ gridTemplateColumns: `repeat(${numColumns}, minmax(250px, 1fr))` }}
+        >
           {/* Header row */}
-          {categories.map((category) => (
+          {baseCategories.map((category) => (
             <div
               key={category}
               className={`p-3 rounded-t-lg text-center ${getCategoryHeaderColor(category)}`}
@@ -55,19 +99,31 @@ export function GridView({ plotPoints, mythemes, categories }: GridViewProps) {
               {category}
             </div>
           ))}
-          
+
           {/* Data rows */}
-          {grid.map((row, rowIndex) => (
-            row.map((point, colIndex) => (
-              <div key={`${rowIndex}-${colIndex}`} className="min-h-[100px]">
-                {point ? (
-                  <PlotPoint plotPoint={point} mythemes={mythemes} showCategory={false} />
-                ) : (
-                  <div className="h-full border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg" />
-                )}
-              </div>
-            ))
-          ))}
+          {grid.length === 0 ? (
+            <div className="col-span-full rounded-lg border-2 border-dashed border-gray-200 p-6 text-center text-sm text-gray-500 dark:border-gray-700 dark:text-gray-400">
+              {canEdit ? 'No plot points yet.' : 'No plot points to display.'}
+            </div>
+          ) : (
+            grid.map((row, rowIndex) =>
+              row.map((point, colIndex) => (
+                <div key={`${rowIndex}-${colIndex}`} className="min-h-[100px]">
+                  {point ? (
+                    <PlotPoint
+                      plotPoint={point}
+                      mythemes={mythemes}
+                      showCategory={false}
+                      onDelete={canEdit ? onDeletePlotPoint : undefined}
+                      onEdit={canEdit ? onEditPlotPoint : undefined}
+                    />
+                  ) : (
+                    <div className="h-full border-2 border-dashed border-gray-200 rounded-lg dark:border-gray-700" />
+                  )}
+                </div>
+              ))
+            )
+          )}
         </div>
       </div>
     </div>

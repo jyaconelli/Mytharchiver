@@ -2,7 +2,7 @@ import { Myth } from '../types/myth';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
-import { Folder, ChevronRight, Plus } from 'lucide-react';
+import { Folder, ChevronRight, Plus, Users } from 'lucide-react';
 
 interface MythListProps {
   myths: Myth[];
@@ -48,6 +48,28 @@ export function MythList({ myths, selectedMythId, onSelectMyth, onAddMyth }: Myt
                   {myth.variants.reduce((sum, v) => sum + v.plotPoints.length, 0)} total plot points
                 </Badge>
               </div>
+              {myth.collaborators.length > 0 && (
+                <div className="mt-2 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                  <Users className="h-4 w-4" />
+                  <div className="flex flex-wrap gap-1">
+                    {myth.collaborators.slice(0, 3).map(collaborator => (
+                      <Badge key={collaborator.id} variant="outline" className="text-[0.65rem] uppercase">
+                        {collaborator.role === 'owner'
+                          ? 'Owner'
+                          : collaborator.role.charAt(0).toUpperCase() + collaborator.role.slice(1)}
+                        <span className="ml-1 normal-case text-gray-600 dark:text-gray-300">
+                          {collaborator.email}
+                        </span>
+                      </Badge>
+                    ))}
+                    {myth.collaborators.length > 3 && (
+                      <Badge variant="secondary" className="text-[0.65rem]">
+                        +{myth.collaborators.length - 3}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </Card>

@@ -24,6 +24,8 @@ export interface Myth {
   name: string;
   description: string;
   variants: MythVariant[];
+  ownerId: string;
+  collaborators: MythCollaborator[];
 }
 
 export const DEFAULT_CATEGORIES = [
@@ -34,3 +36,12 @@ export const DEFAULT_CATEGORIES = [
   'Resolution',
   'Aftermath'
 ];
+
+export type CollaboratorRole = 'viewer' | 'editor' | 'owner';
+
+export interface MythCollaborator {
+  id: string;
+  mythId: string;
+  email: string;
+  role: CollaboratorRole;
+}

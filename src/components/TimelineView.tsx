@@ -4,9 +4,16 @@ import { PlotPoint } from './PlotPoint';
 interface TimelineViewProps {
   plotPoints: PlotPointType[];
   mythemes: Mytheme[];
+  onDeletePlotPoint?: (id: string) => void;
+  onEditPlotPoint?: (plotPoint: PlotPointType) => void;
 }
 
-export function TimelineView({ plotPoints, mythemes }: TimelineViewProps) {
+export function TimelineView({
+  plotPoints,
+  mythemes,
+  onDeletePlotPoint,
+  onEditPlotPoint,
+}: TimelineViewProps) {
   const sortedPlotPoints = [...plotPoints].sort((a, b) => a.order - b.order);
 
   return (
@@ -17,7 +24,12 @@ export function TimelineView({ plotPoints, mythemes }: TimelineViewProps) {
           {sortedPlotPoints.map((point) => (
             <div key={point.id} className="relative pl-10">
               <div className="absolute left-2.5 top-4 w-3 h-3 rounded-full bg-blue-500 border-2 border-white dark:border-gray-900" />
-              <PlotPoint plotPoint={point} mythemes={mythemes} />
+              <PlotPoint
+                plotPoint={point}
+                mythemes={mythemes}
+                onDelete={onDeletePlotPoint}
+                onEdit={onEditPlotPoint}
+              />
             </div>
           ))}
         </div>

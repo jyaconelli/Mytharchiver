@@ -1,18 +1,25 @@
 import { PlotPoint as PlotPointType, Mytheme } from '../types/myth';
 import { Badge } from './ui/badge';
 import { Card } from './ui/card';
+import { Pencil, Trash2 } from 'lucide-react';
 
 interface PlotPointProps {
   plotPoint: PlotPointType;
   mythemes: Mytheme[];
   showCategory?: boolean;
   isDragging?: boolean;
+  onDelete?: (id: string) => void;
+  onEdit?: (plotPoint: PlotPointType) => void;
 }
 
-export function PlotPoint({ plotPoint, mythemes, showCategory = true, isDragging = false }: PlotPointProps) {
-  // Create a map of mytheme names to their data
-  const mythemeMap = new Map(mythemes.map(m => [m.name.toLowerCase(), m]));
-  
+export function PlotPoint({
+  plotPoint,
+  mythemes,
+  showCategory = true,
+  isDragging = false,
+  onDelete,
+  onEdit,
+}: PlotPointProps) {
   // Function to highlight mytheme references in text
   const renderTextWithHighlights = (text: string) => {
     const referencedMythemes = mythemes.filter(m => plotPoint.mythemeRefs.includes(m.id));
@@ -105,6 +112,30 @@ export function PlotPoint({ plotPoint, mythemes, showCategory = true, isDragging
             </Badge>
           )}
         </div>
+        {(onEdit || onDelete) && (
+          <div className="flex items-center gap-1">
+            {onEdit && (
+              <button
+                type="button"
+                onClick={() => onEdit(plotPoint)}
+                className="text-gray-400 hover:text-blue-600 transition-colors"
+                aria-label="Edit plot point"
+              >
+                <Pencil className="w-4 h-4" />
+              </button>
+            )}
+            {onDelete && (
+              <button
+                type="button"
+                onClick={() => onDelete(plotPoint.id)}
+                className="text-gray-400 hover:text-red-600 transition-colors"
+                aria-label="Delete plot point"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </Card>
   );
