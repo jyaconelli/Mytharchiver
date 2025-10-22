@@ -1,18 +1,19 @@
-import { PlotPoint as PlotPointType, Mytheme, CATEGORIES } from '../types/myth';
+import { PlotPoint as PlotPointType, Mytheme } from '../types/myth';
 import { PlotPoint } from './PlotPoint';
 
 interface GridViewProps {
   plotPoints: PlotPointType[];
   mythemes: Mytheme[];
+  categories: string[];
 }
 
-export function GridView({ plotPoints, mythemes }: GridViewProps) {
+export function GridView({ plotPoints, mythemes, categories }: GridViewProps) {
   // Sort plot points chronologically
   const sortedPlotPoints = [...plotPoints].sort((a, b) => a.order - b.order);
   
   // Create grid structure: arrange chronologically left-to-right, top-to-bottom
   // Each row can hold as many categories as we have
-  const numColumns = CATEGORIES.length;
+  const numColumns = categories.length;
   
   // Calculate how many rows we need
   const numRows = Math.ceil(sortedPlotPoints.length / numColumns);
@@ -46,7 +47,7 @@ export function GridView({ plotPoints, mythemes }: GridViewProps) {
       <div className="inline-block min-w-full">
         <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${numColumns}, minmax(250px, 1fr))` }}>
           {/* Header row */}
-          {CATEGORIES.map((category) => (
+          {categories.map((category) => (
             <div
               key={category}
               className={`p-3 rounded-t-lg text-center ${getCategoryHeaderColor(category)}`}

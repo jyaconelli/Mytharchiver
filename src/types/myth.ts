@@ -26,13 +26,11 @@ export interface Myth {
   variants: MythVariant[];
 }
 
-export const CATEGORIES = [
+export const DEFAULT_CATEGORIES = [
   'Introduction',
   'Conflict',
   'Journey',
   'Transformation',
   'Resolution',
   'Aftermath'
-] as const;
-
-export type Category = typeof CATEGORIES[number];
+];

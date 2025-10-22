@@ -1,18 +1,26 @@
 import { MythVariant } from '../types/myth';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
-import { FileText } from 'lucide-react';
+import { Button } from './ui/button';
+import { FileText, Plus } from 'lucide-react';
 
 interface VariantSelectorProps {
   variants: MythVariant[];
   selectedVariantId: string | null;
   onSelectVariant: (variantId: string) => void;
+  onAddVariant: () => void;
 }
 
-export function VariantSelector({ variants, selectedVariantId, onSelectVariant }: VariantSelectorProps) {
+export function VariantSelector({ variants, selectedVariantId, onSelectVariant, onAddVariant }: VariantSelectorProps) {
   return (
     <div className="space-y-3">
-      <h3 className="text-gray-600 dark:text-gray-400">Select a variant to view:</h3>
+      <div className="flex items-center justify-between">
+        <h3 className="text-gray-600 dark:text-gray-400">Select a variant to view:</h3>
+        <Button onClick={onAddVariant} size="sm">
+          <Plus className="w-4 h-4 mr-2" />
+          Add Variant
+        </Button>
+      </div>
       {variants.map((variant) => (
         <Card
           key={variant.id}

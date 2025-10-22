@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { PlotPoint as PlotPointType, Mytheme, CATEGORIES } from '../types/myth';
+import { PlotPoint as PlotPointType, Mytheme } from '../types/myth';
 import { PlotPoint } from './PlotPoint';
 import { Card } from './ui/card';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
@@ -8,6 +8,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 interface GroupedViewProps {
   plotPoints: PlotPointType[];
   mythemes: Mytheme[];
+  categories: string[];
   onUpdatePlotPoint: (id: string, updates: Partial<PlotPointType>) => void;
 }
 
@@ -94,12 +95,12 @@ function CategoryDropZone({ category, plotPoints, mythemes, onDrop }: CategoryDr
   );
 }
 
-export function GroupedView({ plotPoints, mythemes, onUpdatePlotPoint }: GroupedViewProps) {
+export function GroupedView({ plotPoints, mythemes, categories, onUpdatePlotPoint }: GroupedViewProps) {
   const handleDrop = (id: string, newCategory: string) => {
     onUpdatePlotPoint(id, { category: newCategory });
   };
 
-  const groupedPoints = CATEGORIES.reduce((acc, category) => {
+  const groupedPoints = categories.reduce((acc, category) => {
     acc[category] = plotPoints.filter(p => p.category === category);
     return acc;
   }, {} as Record<string, PlotPointType[]>);
@@ -107,7 +108,7 @@ export function GroupedView({ plotPoints, mythemes, onUpdatePlotPoint }: Grouped
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {CATEGORIES.map((category) => (
+        {categories.map((category) => (
           <CategoryDropZone
             key={category}
             category={category}

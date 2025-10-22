@@ -1,17 +1,25 @@
 import { Myth } from '../types/myth';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
-import { Folder, ChevronRight } from 'lucide-react';
+import { Button } from './ui/button';
+import { Folder, ChevronRight, Plus } from 'lucide-react';
 
 interface MythListProps {
   myths: Myth[];
   selectedMythId: string | null;
   onSelectMyth: (mythId: string) => void;
+  onAddMyth: () => void;
 }
 
-export function MythList({ myths, selectedMythId, onSelectMyth }: MythListProps) {
+export function MythList({ myths, selectedMythId, onSelectMyth, onAddMyth }: MythListProps) {
   return (
     <div className="space-y-3">
+      <div className="flex justify-end">
+        <Button onClick={onAddMyth} size="sm">
+          <Plus className="w-4 h-4 mr-2" />
+          Add Myth Folder
+        </Button>
+      </div>
       {myths.map((myth) => (
         <Card
           key={myth.id}
