@@ -1,0 +1,10 @@
+{
+  "framework": "vite",
+  "buildCommand": "yarn build",
+  "outputDirectory": "dist",
+  "git": {
+    "deploymentEnabled": {
+      "main": true
+    }
+  }
+}
