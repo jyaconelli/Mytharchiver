@@ -1,7 +1,7 @@
 {
   "framework": "vite",
   "buildCommand": "yarn build",
-  "outputDirectory": "dist",
+  "outputDirectory": "build",
   "git": {
     "deploymentEnabled": {
       "main": true
