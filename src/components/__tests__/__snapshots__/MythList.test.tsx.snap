@@ -1,0 +1,268 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`MythList > renders myths and handles selection and addition 1`] = `
+<div
+  class="space-y-3"
+>
+  <div
+    class="flex justify-end"
+  >
+    <button
+      class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-primary text-primary-foreground hover:bg-primary/90 h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5"
+      data-slot="button"
+    >
+      <svg
+        class="lucide lucide-plus w-4 h-4 mr-2"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M5 12h14"
+        />
+        <path
+          d="M12 5v14"
+        />
+      </svg>
+      Add Myth Folder
+    </button>
+  </div>
+  <div
+    class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border p-4 cursor-pointer transition-all hover:shadow-md"
+    data-slot="card"
+  >
+    <div
+      class="flex items-start gap-3"
+    >
+      <svg
+        class="lucide lucide-folder w-5 h-5 text-blue-600 dark:text-blue-400 mt-1 shrink-0"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"
+        />
+      </svg>
+      <div
+        class="flex-1 min-w-0"
+      >
+        <div
+          class="flex items-start justify-between gap-2"
+        >
+          <h3
+            class="truncate"
+          >
+            Creation Myth
+          </h3>
+          <svg
+            class="lucide lucide-chevron-right w-5 h-5 shrink-0 text-gray-400"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m9 18 6-6-6-6"
+            />
+          </svg>
+        </div>
+        <p
+          class="text-gray-600 dark:text-gray-400 mt-1 line-clamp-2"
+        >
+          How everything began.
+        </p>
+        <div
+          class="flex items-center gap-2 mt-2"
+        >
+          <span
+            class="inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90"
+            data-slot="badge"
+          >
+            1
+             
+            variant
+          </span>
+          <span
+            class="inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground"
+            data-slot="badge"
+          >
+            1
+             total plot points
+          </span>
+        </div>
+        <div
+          class="mt-2 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400"
+        >
+          <svg
+            class="lucide lucide-users h-4 w-4"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+            />
+            <circle
+              cx="9"
+              cy="7"
+              r="4"
+            />
+            <path
+              d="M22 21v-2a4 4 0 0 0-3-3.87"
+            />
+            <path
+              d="M16 3.13a4 4 0 0 1 0 7.75"
+            />
+          </svg>
+          <div
+            class="flex flex-wrap gap-1"
+          >
+            <span
+              class="inline-flex items-center justify-center rounded-md border px-2 py-0.5 font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground text-[0.65rem] uppercase"
+              data-slot="badge"
+            >
+              Owner
+              <span
+                class="ml-1 normal-case text-gray-600 dark:text-gray-300"
+              >
+                owner@example.com
+              </span>
+            </span>
+            <span
+              class="inline-flex items-center justify-center rounded-md border px-2 py-0.5 font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground text-[0.65rem] uppercase"
+              data-slot="badge"
+            >
+              Editor
+              <span
+                class="ml-1 normal-case text-gray-600 dark:text-gray-300"
+              >
+                scribe@example.com
+              </span>
+            </span>
+            <span
+              class="inline-flex items-center justify-center rounded-md border px-2 py-0.5 font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground text-[0.65rem] uppercase"
+              data-slot="badge"
+            >
+              Viewer
+              <span
+                class="ml-1 normal-case text-gray-600 dark:text-gray-300"
+              >
+                viewer@example.com
+              </span>
+            </span>
+            <span
+              class="inline-flex items-center justify-center rounded-md border px-2 py-0.5 font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90 text-[0.65rem]"
+              data-slot="badge"
+            >
+              +
+              1
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="text-card-foreground flex flex-col gap-6 rounded-xl border p-4 cursor-pointer transition-all hover:shadow-md border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-950"
+    data-slot="card"
+  >
+    <div
+      class="flex items-start gap-3"
+    >
+      <svg
+        class="lucide lucide-folder w-5 h-5 text-blue-600 dark:text-blue-400 mt-1 shrink-0"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"
+        />
+      </svg>
+      <div
+        class="flex-1 min-w-0"
+      >
+        <div
+          class="flex items-start justify-between gap-2"
+        >
+          <h3
+            class="truncate"
+          >
+            Flood Myth
+          </h3>
+          <svg
+            class="lucide lucide-chevron-right w-5 h-5 shrink-0 text-gray-400"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m9 18 6-6-6-6"
+            />
+          </svg>
+        </div>
+        <p
+          class="text-gray-600 dark:text-gray-400 mt-1 line-clamp-2"
+        >
+          A great flood reshapes the world.
+        </p>
+        <div
+          class="flex items-center gap-2 mt-2"
+        >
+          <span
+            class="inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90"
+            data-slot="badge"
+          >
+            0
+             
+            variants
+          </span>
+          <span
+            class="inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground"
+            data-slot="badge"
+          >
+            0
+             total plot points
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

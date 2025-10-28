@@ -24,6 +24,7 @@ export interface Myth {
   name: string;
   description: string;
   variants: MythVariant[];
+  categories: string[];
   ownerId: string;
   collaborators: MythCollaborator[];
 }

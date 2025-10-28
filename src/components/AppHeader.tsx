@@ -21,6 +21,7 @@ type AppHeaderProps = {
   onOpenManageMythemes: () => void;
   onSignOut: () => Promise<void>;
   actions?: ReactNode;
+  canManageCategories: boolean;
 };
 
 export function AppHeader({
@@ -33,6 +34,7 @@ export function AppHeader({
   onOpenManageCategories,
   onOpenManageMythemes,
   onSignOut,
+  canManageCategories,
 }: AppHeaderProps) {
   return (
     <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
@@ -68,7 +70,7 @@ export function AppHeader({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={onOpenManageCategories}>
+                <DropdownMenuItem onClick={onOpenManageCategories} disabled={!canManageCategories}>
                   Manage Categories
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={onOpenManageMythemes}>Manage Mythemes</DropdownMenuItem>

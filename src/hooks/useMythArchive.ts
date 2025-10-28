@@ -17,6 +17,7 @@ type MythRow = {
   description: string | null;
   variants: MythVariant[] | null;
   user_id: string;
+  categories: string[] | null;
 };
 
 type CollaboratorRow = {
@@ -46,6 +47,10 @@ const parseMythRow = (row: MythRow): Myth => ({
   name: row.name ?? '',
   description: row.description ?? '',
   variants: Array.isArray(row.variants) ? row.variants : [],
+  categories:
+    Array.isArray(row.categories) && row.categories.length > 0
+      ? row.categories
+      : [...DEFAULT_CATEGORIES],
   ownerId: row.user_id,
   collaborators: [],
 });
@@ -55,7 +60,6 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
   const [dataError, setDataError] = useState<string | null>(null);
   const [myths, setMyths] = useState<Myth[]>([]);
   const [mythemes, setMythemes] = useState<Mytheme[]>([]);
-  const [categories, setCategories] = useState<string[]>(DEFAULT_CATEGORIES);
 
   const loadArchiveData = useCallback(async () => {
     if (!session) {
@@ -70,7 +74,7 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
 
       const ownedMythsQuery = supabase
         .from('myth_folders')
-        .select('id, name, description, variants, user_id')
+        .select('id, name, description, variants, user_id, categories')
         .eq('user_id', session.user.id)
         .order('created_at', { ascending: true });
 
@@ -116,7 +120,7 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
       if (collaboratorMythIds.length > 0) {
         const collaboratorMythsResult = await supabase
           .from('myth_folders')
-          .select('id, name, description, variants, user_id')
+          .select('id, name, description, variants, user_id, categories')
           .in('id', collaboratorMythIds)
           .order('created_at', { ascending: true });
 
@@ -173,16 +177,18 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
       const finalMyths = Array.from(allMythRowsMap.values()).map((row) => {
         const myth = parseMythRow(row);
         myth.collaborators = collaboratorsByMyth.get(row.id) ?? [];
+        if (
+          myth.categories.length === 0 &&
+          Array.isArray(categoriesValue) &&
+          categoriesValue.length > 0
+        ) {
+          myth.categories = [...categoriesValue];
+        }
         return myth;
       });
 
       setMyths(finalMyths);
       setMythemes(mythemeRows);
-      setCategories(
-        Array.isArray(categoriesValue) && categoriesValue.length > 0
-          ? categoriesValue
-          : DEFAULT_CATEGORIES,
-      );
     } catch (error) {
       console.error(error);
       setDataError(error instanceof Error ? error.message : 'Unable to load your myth archive.');
@@ -195,7 +201,6 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
     if (!session) {
       setMyths([]);
       setMythemes([]);
-      setCategories(DEFAULT_CATEGORIES);
       setDataLoading(false);
       setDataError(null);
       return;
@@ -216,6 +221,7 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
           name,
           description,
           variants: [],
+          categories: DEFAULT_CATEGORIES,
           user_id: session.user.id,
         })
         .select('id, name, description, variants, user_id')
@@ -363,29 +369,31 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
     setMythemes((prev) => prev.filter((mytheme) => mytheme.id !== id));
   }, []);
 
-  const updateCategories = useCallback(
-    async (updatedCategories: string[]) => {
+  const updateMythCategories = useCallback(
+    async (mythId: string, updatedCategories: string[]) => {
       if (!session) {
         throw new Error('You must be signed in to update categories.');
       }
 
-      const previous = categories;
-      setCategories(updatedCategories);
+      const myth = myths.find((m) => m.id === mythId);
+      if (!myth) {
+        throw new Error('Myth not found.');
+      }
 
-      const { error } = await supabase.from('profile_settings').upsert(
-        {
-          user_id: session.user.id,
-          categories: updatedCategories,
-        },
-        { onConflict: 'user_id' },
-      );
+      const { error } = await supabase
+        .from('myth_folders')
+        .update({ categories: updatedCategories })
+        .eq('id', mythId);
 
       if (error) {
-        setCategories(previous);
         throw new Error(error.message);
       }
+
+      setMyths((prev) =>
+        prev.map((m) => (m.id === mythId ? { ...m, categories: [...updatedCategories] } : m)),
+      );
     },
-    [session, categories],
+    [session, myths],
   );
 
   const addCollaborator = useCallback(
@@ -500,14 +508,13 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
     dataError,
     myths,
     mythemes,
-    categories,
     loadArchiveData,
     addMyth,
     addVariant,
     updateVariant,
     addMytheme,
     deleteMytheme,
-    updateCategories,
+    updateMythCategories,
     addCollaborator,
     updateCollaboratorRole,
     removeCollaborator,

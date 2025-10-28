@@ -1,0 +1,2764 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`UI component snapshots > Accordion 1`] = `
+<DocumentFragment>
+  <div
+    data-orientation="vertical"
+    data-slot="accordion"
+  >
+    <div
+      class="border-b last:border-b-0"
+      data-orientation="vertical"
+      data-slot="accordion-item"
+      data-state="open"
+    >
+      <h3
+        class="flex"
+        data-orientation="vertical"
+        data-state="open"
+      >
+        <button
+          aria-controls="radix-:r1:"
+          aria-disabled="true"
+          aria-expanded="true"
+          class="focus-visible:border-ring focus-visible:ring-ring/50 flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none hover:underline focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180"
+          data-orientation="vertical"
+          data-radix-collection-item=""
+          data-slot="accordion-trigger"
+          data-state="open"
+          id="radix-:r0:"
+          type="button"
+        >
+          Accordion Item 1
+          <svg
+            class="lucide lucide-chevron-down text-muted-foreground pointer-events-none size-4 shrink-0 translate-y-0.5 transition-transform duration-200"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m6 9 6 6 6-6"
+            />
+          </svg>
+        </button>
+      </h3>
+      <div
+        aria-labelledby="radix-:r0:"
+        class="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden text-sm"
+        data-orientation="vertical"
+        data-slot="accordion-content"
+        data-state="open"
+        id="radix-:r1:"
+        role="region"
+        style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width); transition-duration: 0s; animation-name: none;"
+      >
+        <div
+          class="pt-0 pb-4"
+        >
+          Accordion Content 1
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Alert 1`] = `
+<DocumentFragment>
+  <div
+    class="relative w-full rounded-lg border px-4 py-3 text-sm grid has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] grid-cols-[0_1fr] has-[>svg]:gap-x-3 gap-y-0.5 items-start [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current bg-card text-card-foreground"
+    data-slot="alert"
+    role="alert"
+  >
+    <div
+      class="col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight"
+      data-slot="alert-title"
+    >
+      Heads up!
+    </div>
+    <div
+      class="text-muted-foreground col-start-2 grid justify-items-start gap-1 text-sm [&_p]:leading-relaxed"
+      data-slot="alert-description"
+    >
+      Something went wrong, please try again.
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Alert dialog 1`] = `
+<DocumentFragment>
+  <button
+    aria-controls="radix-:r2:"
+    aria-expanded="true"
+    aria-haspopup="dialog"
+    class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 has-[>svg]:px-3"
+    data-slot="alert-dialog-trigger"
+    data-state="open"
+    type="button"
+  >
+    Open Alert Dialog
+  </button>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Aspect ratio 1`] = `
+<DocumentFragment>
+  <div
+    style="width: 200px;"
+  >
+    <div
+      data-radix-aspect-ratio-wrapper=""
+      style="position: relative; width: 100%; padding-bottom: 56.25%;"
+    >
+      <div
+        data-slot="aspect-ratio"
+        style="position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px;"
+      >
+        <img
+          alt="Preview"
+          src="https://placehold.co/300x200"
+        />
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Avatar 1`] = `
+<DocumentFragment>
+  <span
+    class="relative flex size-10 shrink-0 overflow-hidden rounded-full"
+    data-slot="avatar"
+  >
+    <span
+      class="bg-muted flex size-full items-center justify-center rounded-full"
+      data-slot="avatar-fallback"
+    >
+      JD
+    </span>
+  </span>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Badge 1`] = `
+<DocumentFragment>
+  <span
+    class="inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90"
+    data-slot="badge"
+  >
+    Beta
+  </span>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Breadcrumb 1`] = `
+<DocumentFragment>
+  <nav
+    aria-label="breadcrumb"
+    data-slot="breadcrumb"
+  >
+    <ol
+      class="text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5"
+      data-slot="breadcrumb-list"
+    >
+      <li
+        class="inline-flex items-center gap-1.5"
+        data-slot="breadcrumb-item"
+      >
+        <a
+          class="hover:text-foreground transition-colors"
+          data-slot="breadcrumb-link"
+          href="#"
+        >
+          Home
+        </a>
+      </li>
+      <li
+        aria-hidden="true"
+        class="[&>svg]:size-3.5"
+        data-slot="breadcrumb-separator"
+        role="presentation"
+      >
+        <svg
+          class="lucide lucide-chevron-right"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="m9 18 6-6-6-6"
+          />
+        </svg>
+      </li>
+      <li
+        class="inline-flex items-center gap-1.5"
+        data-slot="breadcrumb-item"
+      >
+        <a
+          class="hover:text-foreground transition-colors"
+          data-slot="breadcrumb-link"
+          href="#"
+        >
+          Library
+        </a>
+      </li>
+      <li
+        aria-hidden="true"
+        class="[&>svg]:size-3.5"
+        data-slot="breadcrumb-separator"
+        role="presentation"
+      >
+        <svg
+          class="lucide lucide-chevron-right"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="m9 18 6-6-6-6"
+          />
+        </svg>
+      </li>
+      <li
+        class="inline-flex items-center gap-1.5"
+        data-slot="breadcrumb-item"
+      >
+        <span
+          aria-current="page"
+          aria-disabled="true"
+          class="text-foreground font-normal"
+          data-slot="breadcrumb-page"
+          role="link"
+        >
+          Data
+        </span>
+      </li>
+      <span
+        aria-hidden="true"
+        class="flex size-9 items-center justify-center"
+        data-slot="breadcrumb-ellipsis"
+        role="presentation"
+      >
+        <svg
+          class="lucide lucide-ellipsis size-4"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="1"
+          />
+          <circle
+            cx="19"
+            cy="12"
+            r="1"
+          />
+          <circle
+            cx="5"
+            cy="12"
+            r="1"
+          />
+        </svg>
+        <span
+          class="sr-only"
+        >
+          More
+        </span>
+      </span>
+    </ol>
+  </nav>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Button 1`] = `
+<DocumentFragment>
+  <button
+    class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border bg-background text-foreground hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 h-9 px-4 py-2 has-[>svg]:px-3"
+    data-slot="button"
+  >
+    Outline Button
+  </button>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Calendar 1`] = `
+<DocumentFragment>
+  <div
+    class="rdp p-3"
+  >
+    <div
+      class="flex flex-col sm:flex-row gap-2"
+    >
+      <div
+        class="flex flex-col gap-4 rdp-caption_start rdp-caption_end"
+      >
+        <div
+          class="flex justify-center pt-1 relative items-center w-full"
+        >
+          <div
+            aria-live="polite"
+            class="text-sm font-medium"
+            id="react-day-picker-1"
+            role="presentation"
+          >
+            December 2023
+          </div>
+          <div
+            class="flex items-center gap-1"
+          >
+            <button
+              aria-label="Go to previous month"
+              class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border text-foreground hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 has-[>svg]:px-3 size-7 bg-transparent p-0 opacity-50 hover:opacity-100 absolute left-1"
+              name="previous-month"
+              type="button"
+            >
+              <svg
+                class="lucide lucide-chevron-left size-4 rdp-nav_icon"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m15 18-6-6 6-6"
+                />
+              </svg>
+            </button>
+            <button
+              aria-label="Go to next month"
+              class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border text-foreground hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 has-[>svg]:px-3 size-7 bg-transparent p-0 opacity-50 hover:opacity-100 absolute right-1"
+              name="next-month"
+              type="button"
+            >
+              <svg
+                class="lucide lucide-chevron-right size-4 rdp-nav_icon"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m9 18 6-6-6-6"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <table
+          aria-labelledby="react-day-picker-1"
+          class="w-full border-collapse space-x-1"
+          role="grid"
+        >
+          <thead
+            class="rdp-head"
+          >
+            <tr
+              class="flex"
+            >
+              <th
+                aria-label="Sunday"
+                class="text-muted-foreground rounded-md w-8 font-normal text-[0.8rem]"
+                scope="col"
+              >
+                Su
+              </th>
+              <th
+                aria-label="Monday"
+                class="text-muted-foreground rounded-md w-8 font-normal text-[0.8rem]"
+                scope="col"
+              >
+                Mo
+              </th>
+              <th
+                aria-label="Tuesday"
+                class="text-muted-foreground rounded-md w-8 font-normal text-[0.8rem]"
+                scope="col"
+              >
+                Tu
+              </th>
+              <th
+                aria-label="Wednesday"
+                class="text-muted-foreground rounded-md w-8 font-normal text-[0.8rem]"
+                scope="col"
+              >
+                We
+              </th>
+              <th
+                aria-label="Thursday"
+                class="text-muted-foreground rounded-md w-8 font-normal text-[0.8rem]"
+                scope="col"
+              >
+                Th
+              </th>
+              <th
+                aria-label="Friday"
+                class="text-muted-foreground rounded-md w-8 font-normal text-[0.8rem]"
+                scope="col"
+              >
+                Fr
+              </th>
+              <th
+                aria-label="Saturday"
+                class="text-muted-foreground rounded-md w-8 font-normal text-[0.8rem]"
+                scope="col"
+              >
+                Sa
+              </th>
+            </tr>
+          </thead>
+          <tbody
+            class="rdp-tbody"
+          >
+            <tr
+              class="flex w-full mt-2"
+            >
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100 day-outside text-muted-foreground aria-selected:text-muted-foreground"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  26
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100 day-outside text-muted-foreground aria-selected:text-muted-foreground"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  27
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100 day-outside text-muted-foreground aria-selected:text-muted-foreground"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  28
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100 day-outside text-muted-foreground aria-selected:text-muted-foreground"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  29
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100 day-outside text-muted-foreground aria-selected:text-muted-foreground"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  30
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="0"
+                  type="button"
+                >
+                  1
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  2
+                </button>
+              </td>
+            </tr>
+            <tr
+              class="flex w-full mt-2"
+            >
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  3
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  4
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  5
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  6
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  7
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  8
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  9
+                </button>
+              </td>
+            </tr>
+            <tr
+              class="flex w-full mt-2"
+            >
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  10
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  11
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  12
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  13
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  14
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  15
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  16
+                </button>
+              </td>
+            </tr>
+            <tr
+              class="flex w-full mt-2"
+            >
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  17
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  18
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  19
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  20
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  21
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  22
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  23
+                </button>
+              </td>
+            </tr>
+            <tr
+              class="flex w-full mt-2"
+            >
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  24
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  25
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  26
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  27
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  28
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  29
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  30
+                </button>
+              </td>
+            </tr>
+            <tr
+              class="flex w-full mt-2"
+            >
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  31
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100 day-outside text-muted-foreground aria-selected:text-muted-foreground"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  1
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100 day-outside text-muted-foreground aria-selected:text-muted-foreground"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  2
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100 day-outside text-muted-foreground aria-selected:text-muted-foreground"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  3
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100 day-outside text-muted-foreground aria-selected:text-muted-foreground"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  4
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100 day-outside text-muted-foreground aria-selected:text-muted-foreground"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  5
+                </button>
+              </td>
+              <td
+                class="relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected])]:rounded-md"
+                role="presentation"
+              >
+                <button
+                  class="rdp-button_reset rdp-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 has-[>svg]:px-3 size-8 p-0 font-normal aria-selected:opacity-100 day-outside text-muted-foreground aria-selected:text-muted-foreground"
+                  name="day"
+                  role="gridcell"
+                  tabindex="-1"
+                  type="button"
+                >
+                  6
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Card 1`] = `
+<DocumentFragment>
+  <div
+    class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border"
+    data-slot="card"
+  >
+    <div
+      class="@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 pt-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6"
+      data-slot="card-header"
+    >
+      <h4
+        class="leading-none"
+        data-slot="card-title"
+      >
+        Sample card
+      </h4>
+      <p
+        class="text-muted-foreground"
+        data-slot="card-description"
+      >
+        A short description.
+      </p>
+      <div
+        class="col-start-2 row-span-2 row-start-1 self-start justify-self-end"
+        data-slot="card-action"
+      >
+        <button
+          class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-primary text-primary-foreground hover:bg-primary/90 h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5"
+          data-slot="button"
+        >
+          Action
+        </button>
+      </div>
+    </div>
+    <div
+      class="px-6 [&:last-child]:pb-6"
+      data-slot="card-content"
+    >
+      Body content goes here.
+    </div>
+    <div
+      class="flex items-center px-6 pb-6 [.border-t]:pt-6"
+      data-slot="card-footer"
+    >
+      <button
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-secondary text-secondary-foreground hover:bg-secondary/80 h-9 px-4 py-2 has-[>svg]:px-3"
+        data-slot="button"
+      >
+        Footer button
+      </button>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Carousel 1`] = `
+<DocumentFragment>
+  <div
+    aria-roledescription="carousel"
+    class="relative"
+    data-slot="carousel"
+    role="region"
+  >
+    <div
+      class="overflow-hidden"
+      data-slot="carousel-content"
+    >
+      <div
+        class="flex -ml-4"
+      >
+        <div
+          aria-roledescription="slide"
+          class="min-w-0 shrink-0 grow-0 basis-full pl-4"
+          data-slot="carousel-item"
+          role="group"
+        >
+          Slide 1
+        </div>
+        <div
+          aria-roledescription="slide"
+          class="min-w-0 shrink-0 grow-0 basis-full pl-4"
+          data-slot="carousel-item"
+          role="group"
+        >
+          Slide 2
+        </div>
+      </div>
+    </div>
+    <button
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border bg-background text-foreground hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 absolute size-8 rounded-full top-1/2 -left-12 -translate-y-1/2"
+      data-slot="carousel-previous"
+    >
+      <svg
+        class="lucide lucide-arrow-left"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="m12 19-7-7 7-7"
+        />
+        <path
+          d="M19 12H5"
+        />
+      </svg>
+      <span
+        class="sr-only"
+      >
+        Previous slide
+      </span>
+    </button>
+    <button
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border bg-background text-foreground hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 absolute size-8 rounded-full top-1/2 -right-12 -translate-y-1/2"
+      data-slot="carousel-next"
+    >
+      <svg
+        class="lucide lucide-arrow-right"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M5 12h14"
+        />
+        <path
+          d="m12 5 7 7-7 7"
+        />
+      </svg>
+      <span
+        class="sr-only"
+      >
+        Next slide
+      </span>
+    </button>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Chart 1`] = `
+<DocumentFragment>
+  <div
+    class="[&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/50 [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border [&_.recharts-radial-bar-background-sector]:fill-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&_.recharts-reference-line_[stroke='#ccc']]:stroke-border flex aspect-video justify-center text-xs [&_.recharts-dot[stroke='#fff']]:stroke-transparent [&_.recharts-layer]:outline-hidden [&_.recharts-sector]:outline-hidden [&_.recharts-sector[stroke='#fff']]:stroke-transparent [&_.recharts-surface]:outline-hidden"
+    data-chart="chart-r5"
+    data-slot="chart"
+  >
+    <style>
+      
+ [data-chart=chart-r5] {
+  --color-visitors: #ff0000;
+}
+
+
+.dark [data-chart=chart-r5] {
+  --color-visitors: #ff0000;
+}
+
+    </style>
+    <div
+      data-recharts-responsive-container="true"
+    >
+      <div>
+        Mock Chart Body
+      </div>
+      <div
+        class="border-border/50 bg-background grid min-w-[8rem] items-start gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs shadow-xl"
+      >
+        <div
+          class="font-medium"
+        >
+          Visitors
+        </div>
+        <div
+          class="grid gap-1.5"
+        >
+          <div
+            class="[&>svg]:text-muted-foreground flex w-full flex-wrap gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5 items-center"
+          >
+            <div
+              class="shrink-0 rounded-[2px] border-(--color-border) bg-(--color-bg) h-2.5 w-2.5"
+              style="--color-bg: #ff0000; --color-border: #ff0000;"
+            />
+            <div
+              class="flex flex-1 justify-between leading-none items-center"
+            >
+              <div
+                class="grid gap-1.5"
+              >
+                <span
+                  class="text-muted-foreground"
+                >
+                  Visitors
+                </span>
+              </div>
+              <span
+                class="text-foreground font-mono font-medium tabular-nums"
+              >
+                120
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex items-center justify-center gap-4 pt-3"
+      >
+        <div
+          class="[&>svg]:text-muted-foreground flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3"
+        >
+          <div
+            class="h-2 w-2 shrink-0 rounded-[2px]"
+            style="background-color: rgb(255, 0, 0);"
+          />
+          Visitors
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Checkbox 1`] = `
+<DocumentFragment>
+  <button
+    aria-checked="true"
+    class="peer bg-input-background dark:bg-input/30 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground dark:data-[state=checked]:bg-primary data-[state=checked]:border-primary focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive size-4 shrink-0 rounded-[4px] border shadow-xs transition-shadow outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
+    data-slot="checkbox"
+    data-state="checked"
+    id="accept"
+    role="checkbox"
+    type="button"
+    value="on"
+  >
+    <span
+      class="flex items-center justify-center text-current transition-none"
+      data-slot="checkbox-indicator"
+      data-state="checked"
+      style="pointer-events: none;"
+    >
+      <svg
+        class="lucide lucide-check size-3.5"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M20 6 9 17l-5-5"
+        />
+      </svg>
+    </span>
+  </button>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Collapsible 1`] = `
+<DocumentFragment>
+  <div
+    data-slot="collapsible"
+    data-state="open"
+  >
+    <button
+      aria-controls="radix-:r6:"
+      aria-expanded="true"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 h-9 px-4 py-2 has-[>svg]:px-3"
+      data-slot="collapsible-trigger"
+      data-state="open"
+      type="button"
+    >
+      Toggle
+    </button>
+    <div
+      data-slot="collapsible-content"
+      data-state="open"
+      id="radix-:r6:"
+      style="transition-duration: 0s; animation-name: none;"
+    >
+      Collapsible content
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Command 1`] = `
+<DocumentFragment>
+  <div
+    class="flex flex-col gap-2 text-center sm:text-left sr-only"
+    data-slot="dialog-header"
+  >
+    <h2
+      class="text-lg leading-none font-semibold"
+      data-slot="dialog-title"
+      id="radix-:r8:"
+    >
+      Palette
+    </h2>
+    <p
+      class="text-muted-foreground text-sm"
+      data-slot="dialog-description"
+      id="radix-:r9:"
+    >
+      Quick actions
+    </p>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Context menu 1`] = `
+<DocumentFragment>
+  <button
+    class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 h-9 px-4 py-2 has-[>svg]:px-3"
+    data-slot="context-menu-trigger"
+    data-state="closed"
+  >
+    Right click me
+  </button>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Dialog 1`] = `
+<DocumentFragment>
+  <button
+    aria-controls="radix-:rm:"
+    aria-expanded="true"
+    aria-haspopup="dialog"
+    class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 has-[>svg]:px-3"
+    data-slot="dialog-trigger"
+    data-state="open"
+    type="button"
+  >
+    Open Dialog
+  </button>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Drawer 1`] = `
+<DocumentFragment>
+  <div
+    data-slot="drawer"
+    data-vaul-slot="root"
+    open=""
+  >
+    <button
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 has-[>svg]:px-3"
+      data-slot="drawer-trigger"
+      data-vaul-slot="trigger"
+    >
+      Open Drawer
+    </button>
+    <div
+      data-slot="drawer-portal"
+      data-vaul-slot="portal"
+    >
+      <div
+        class="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50"
+        data-slot="drawer-overlay"
+        data-vaul-slot="overlay"
+      />
+      <div
+        class="group/drawer-content bg-background fixed z-50 flex h-auto flex-col data-[vaul-drawer-direction=top]:inset-x-0 data-[vaul-drawer-direction=top]:top-0 data-[vaul-drawer-direction=top]:mb-24 data-[vaul-drawer-direction=top]:max-h-[80vh] data-[vaul-drawer-direction=top]:rounded-b-lg data-[vaul-drawer-direction=top]:border-b data-[vaul-drawer-direction=bottom]:inset-x-0 data-[vaul-drawer-direction=bottom]:bottom-0 data-[vaul-drawer-direction=bottom]:mt-24 data-[vaul-drawer-direction=bottom]:max-h-[80vh] data-[vaul-drawer-direction=bottom]:rounded-t-lg data-[vaul-drawer-direction=bottom]:border-t data-[vaul-drawer-direction=right]:inset-y-0 data-[vaul-drawer-direction=right]:right-0 data-[vaul-drawer-direction=right]:w-3/4 data-[vaul-drawer-direction=right]:border-l data-[vaul-drawer-direction=right]:sm:max-w-sm data-[vaul-drawer-direction=left]:inset-y-0 data-[vaul-drawer-direction=left]:left-0 data-[vaul-drawer-direction=left]:w-3/4 data-[vaul-drawer-direction=left]:border-r data-[vaul-drawer-direction=left]:sm:max-w-sm"
+        data-slot="drawer-content"
+        data-vaul-slot="content"
+      >
+        <div
+          class="bg-muted mx-auto mt-4 hidden h-2 w-[100px] shrink-0 rounded-full group-data-[vaul-drawer-direction=bottom]/drawer-content:block"
+        />
+        <div
+          class="flex flex-col gap-1.5 p-4"
+          data-slot="drawer-header"
+        >
+          <h2
+            class="text-foreground font-semibold"
+            data-slot="drawer-title"
+            data-vaul-slot="title"
+          >
+            Drawer title
+          </h2>
+          <p
+            class="text-muted-foreground text-sm"
+            data-slot="drawer-description"
+            data-vaul-slot="description"
+          >
+            Supporting description.
+          </p>
+        </div>
+        <div
+          class="p-4"
+        >
+          Drawer content body
+        </div>
+        <div
+          class="mt-auto flex flex-col gap-2 p-4"
+          data-slot="drawer-footer"
+        >
+          <button
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border bg-background text-foreground hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 h-9 px-4 py-2 has-[>svg]:px-3"
+            data-slot="button"
+          >
+            Cancel
+          </button>
+          <button
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 has-[>svg]:px-3"
+            data-slot="button"
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Dropdown menu 1`] = `
+<DocumentFragment>
+  <button
+    aria-controls="radix-:rq:"
+    aria-expanded="true"
+    aria-haspopup="menu"
+    class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 has-[>svg]:px-3"
+    data-slot="dropdown-menu-trigger"
+    data-state="open"
+    id="radix-:rp:"
+    type="button"
+  >
+    Open menu
+  </button>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Form 1`] = `
+<DocumentFragment>
+  <form>
+    <div
+      class="grid gap-2"
+      data-slot="form-item"
+    >
+      <label
+        class="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 data-[error=true]:text-destructive"
+        data-error="false"
+        data-slot="form-label"
+        for=":r13:-form-item"
+      >
+        Email
+      </label>
+      <input
+        aria-describedby=":r13:-form-item-description"
+        aria-invalid="false"
+        class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border px-3 py-1 text-base bg-input-background transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive"
+        data-slot="form-control"
+        id=":r13:-form-item"
+        name="email"
+        placeholder="you@example.com"
+        type="email"
+        value="test@example.com"
+      />
+      <p
+        class="text-muted-foreground text-sm"
+        data-slot="form-description"
+        id=":r13:-form-item-description"
+      >
+        We will never share your email.
+      </p>
+    </div>
+  </form>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Hover card 1`] = `
+<DocumentFragment>
+  <button
+    class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive text-primary underline-offset-4 hover:underline h-9 px-4 py-2 has-[>svg]:px-3"
+    data-slot="hover-card-trigger"
+    data-state="open"
+  >
+    Hover me
+  </button>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Input 1`] = `
+<DocumentFragment>
+  <input
+    class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border px-3 py-1 text-base bg-input-background transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive"
+    data-slot="input"
+    placeholder="Type here"
+  />
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Input OTP 1`] = `
+<DocumentFragment>
+  <noscript />
+  <div
+    class="flex items-center gap-2 has-disabled:opacity-50"
+    data-input-otp-container="true"
+    style="position: relative; cursor: text; user-select: none; pointer-events: none; --root-height: 0px;"
+  >
+    <div
+      class="flex items-center gap-1"
+      data-slot="input-otp-group"
+    >
+      <div
+        class="data-[active=true]:border-ring data-[active=true]:ring-ring/50 data-[active=true]:aria-invalid:ring-destructive/20 dark:data-[active=true]:aria-invalid:ring-destructive/40 aria-invalid:border-destructive data-[active=true]:aria-invalid:border-destructive dark:bg-input/30 border-input relative flex h-9 w-9 items-center justify-center border-y border-r text-sm bg-input-background transition-all outline-none first:rounded-l-md first:border-l last:rounded-r-md data-[active=true]:z-10 data-[active=true]:ring-[3px]"
+        data-active="false"
+        data-slot="input-otp-slot"
+      >
+        1
+      </div>
+      <div
+        class="data-[active=true]:border-ring data-[active=true]:ring-ring/50 data-[active=true]:aria-invalid:ring-destructive/20 dark:data-[active=true]:aria-invalid:ring-destructive/40 aria-invalid:border-destructive data-[active=true]:aria-invalid:border-destructive dark:bg-input/30 border-input relative flex h-9 w-9 items-center justify-center border-y border-r text-sm bg-input-background transition-all outline-none first:rounded-l-md first:border-l last:rounded-r-md data-[active=true]:z-10 data-[active=true]:ring-[3px]"
+        data-active="false"
+        data-slot="input-otp-slot"
+      >
+        2
+      </div>
+      <div
+        class="data-[active=true]:border-ring data-[active=true]:ring-ring/50 data-[active=true]:aria-invalid:ring-destructive/20 dark:data-[active=true]:aria-invalid:ring-destructive/40 aria-invalid:border-destructive data-[active=true]:aria-invalid:border-destructive dark:bg-input/30 border-input relative flex h-9 w-9 items-center justify-center border-y border-r text-sm bg-input-background transition-all outline-none first:rounded-l-md first:border-l last:rounded-r-md data-[active=true]:z-10 data-[active=true]:ring-[3px]"
+        data-active="false"
+        data-slot="input-otp-slot"
+      >
+        3
+      </div>
+    </div>
+    <div
+      data-slot="input-otp-separator"
+      role="separator"
+    >
+      <svg
+        class="lucide lucide-minus"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M5 12h14"
+        />
+      </svg>
+    </div>
+    <div
+      class="flex items-center gap-1"
+      data-slot="input-otp-group"
+    >
+      <div
+        class="data-[active=true]:border-ring data-[active=true]:ring-ring/50 data-[active=true]:aria-invalid:ring-destructive/20 dark:data-[active=true]:aria-invalid:ring-destructive/40 aria-invalid:border-destructive data-[active=true]:aria-invalid:border-destructive dark:bg-input/30 border-input relative flex h-9 w-9 items-center justify-center border-y border-r text-sm bg-input-background transition-all outline-none first:rounded-l-md first:border-l last:rounded-r-md data-[active=true]:z-10 data-[active=true]:ring-[3px]"
+        data-active="false"
+        data-slot="input-otp-slot"
+      >
+        4
+      </div>
+      <div
+        class="data-[active=true]:border-ring data-[active=true]:ring-ring/50 data-[active=true]:aria-invalid:ring-destructive/20 dark:data-[active=true]:aria-invalid:ring-destructive/40 aria-invalid:border-destructive data-[active=true]:aria-invalid:border-destructive dark:bg-input/30 border-input relative flex h-9 w-9 items-center justify-center border-y border-r text-sm bg-input-background transition-all outline-none first:rounded-l-md first:border-l last:rounded-r-md data-[active=true]:z-10 data-[active=true]:ring-[3px]"
+        data-active="false"
+        data-slot="input-otp-slot"
+      >
+        5
+      </div>
+      <div
+        class="data-[active=true]:border-ring data-[active=true]:ring-ring/50 data-[active=true]:aria-invalid:ring-destructive/20 dark:data-[active=true]:aria-invalid:ring-destructive/40 aria-invalid:border-destructive data-[active=true]:aria-invalid:border-destructive dark:bg-input/30 border-input relative flex h-9 w-9 items-center justify-center border-y border-r text-sm bg-input-background transition-all outline-none first:rounded-l-md first:border-l last:rounded-r-md data-[active=true]:z-10 data-[active=true]:ring-[3px]"
+        data-active="false"
+        data-slot="input-otp-slot"
+      >
+        6
+      </div>
+    </div>
+    <div
+      style="position: absolute; inset: 0; pointer-events: none;"
+    >
+      <input
+        autocomplete="one-time-code"
+        class="disabled:cursor-not-allowed"
+        data-input-otp="true"
+        data-slot="input-otp"
+        inputmode="numeric"
+        maxlength="6"
+        style="position: absolute; inset: 0; width: 100%; height: 100%; display: flex; text-align: left; opacity: 1; color: transparent; pointer-events: all; background: transparent; caret-color: transparent; border: 0px solid transparent; outline: 0 solid transparent; box-shadow: none; line-height: 1; letter-spacing: -.5em; font-family: monospace; font-variant-numeric: tabular-nums;"
+        value="123456"
+      />
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Label 1`] = `
+<DocumentFragment>
+  <label
+    class="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+    data-slot="label"
+    for="field"
+  >
+    Email
+  </label>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Menubar 1`] = `
+<DocumentFragment>
+  <div
+    class="bg-background flex h-9 items-center gap-1 rounded-md border p-1 shadow-xs"
+    data-orientation="horizontal"
+    data-slot="menubar"
+    role="menubar"
+    style="outline: none;"
+    tabindex="0"
+  >
+    <button
+      aria-expanded="false"
+      aria-haspopup="menu"
+      class="focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground flex items-center rounded-sm px-2 py-1 text-sm font-medium outline-hidden select-none"
+      data-orientation="horizontal"
+      data-radix-collection-item=""
+      data-slot="menubar-trigger"
+      data-state="closed"
+      id="radix-:r15:"
+      role="menuitem"
+      tabindex="-1"
+      type="button"
+    >
+      File
+    </button>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Navigation menu 1`] = `
+<DocumentFragment>
+  <nav
+    aria-label="Main"
+    class="group/navigation-menu relative flex max-w-max flex-1 items-center justify-center"
+    data-orientation="horizontal"
+    data-slot="navigation-menu"
+    data-viewport="true"
+    dir="ltr"
+  >
+    <div
+      style="position: relative;"
+    >
+      <ul
+        class="group flex flex-1 list-none items-center justify-center gap-1"
+        data-orientation="horizontal"
+        data-slot="navigation-menu-list"
+        dir="ltr"
+      >
+        <li
+          class="relative"
+          data-slot="navigation-menu-item"
+        >
+          <button
+            aria-controls="radix-:r18:-content-radix-:r19:"
+            aria-expanded="false"
+            class="group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=open]:hover:bg-accent data-[state=open]:text-accent-foreground data-[state=open]:focus:bg-accent data-[state=open]:bg-accent/50 focus-visible:ring-ring/50 outline-none transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1 group"
+            data-radix-collection-item=""
+            data-slot="navigation-menu-trigger"
+            data-state="closed"
+            id="radix-:r18:-trigger-radix-:r19:"
+          >
+            Getting started 
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-chevron-down relative top-[1px] ml-1 size-3 transition duration-300 group-data-[state=open]:rotate-180"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m6 9 6 6 6-6"
+              />
+            </svg>
+          </button>
+        </li>
+        <li
+          class="relative"
+          data-slot="navigation-menu-item"
+        >
+          <a
+            class="data-[active=true]:focus:bg-accent data-[active=true]:hover:bg-accent data-[active=true]:bg-accent/50 data-[active=true]:text-accent-foreground [&_svg:not([class*='text-'])]:text-muted-foreground flex-col gap-1 p-2 [&_svg:not([class*='size-'])]:size-4 group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=open]:hover:bg-accent data-[state=open]:text-accent-foreground data-[state=open]:focus:bg-accent data-[state=open]:bg-accent/50 focus-visible:ring-ring/50 outline-none transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1"
+            data-radix-collection-item=""
+            data-slot="navigation-menu-link"
+          >
+            Documentation
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div
+      class="absolute top-full left-0 isolate z-50 flex justify-center"
+    />
+  </nav>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Pagination 1`] = `
+<DocumentFragment>
+  <nav
+    aria-label="pagination"
+    class="mx-auto flex w-full justify-center"
+    data-slot="pagination"
+    role="navigation"
+  >
+    <ul
+      class="flex flex-row items-center gap-1"
+      data-slot="pagination-content"
+    >
+      <li
+        data-slot="pagination-item"
+      >
+        <a
+          aria-current="page"
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border bg-background text-foreground hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 size-9 rounded-md"
+          data-active="true"
+          data-slot="pagination-link"
+          href="#"
+        >
+          1
+        </a>
+      </li>
+      <li
+        data-slot="pagination-item"
+      >
+        <a
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 size-9 rounded-md"
+          data-slot="pagination-link"
+          href="#"
+        >
+          2
+        </a>
+      </li>
+      <li
+        data-slot="pagination-item"
+      >
+        <span
+          aria-hidden="true"
+          class="flex size-9 items-center justify-center"
+          data-slot="pagination-ellipsis"
+        >
+          <svg
+            class="lucide lucide-ellipsis size-4"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="1"
+            />
+            <circle
+              cx="19"
+              cy="12"
+              r="1"
+            />
+            <circle
+              cx="5"
+              cy="12"
+              r="1"
+            />
+          </svg>
+          <span
+            class="sr-only"
+          >
+            More pages
+          </span>
+        </span>
+      </li>
+    </ul>
+  </nav>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Popover 1`] = `
+<DocumentFragment>
+  <button
+    aria-controls="radix-:r1b:"
+    aria-expanded="true"
+    aria-haspopup="dialog"
+    class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border bg-background text-foreground hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 h-9 px-4 py-2 has-[>svg]:px-3"
+    data-slot="popover-trigger"
+    data-state="open"
+    type="button"
+  >
+    Open popover
+  </button>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Progress 1`] = `
+<DocumentFragment>
+  <div
+    aria-valuemax="100"
+    aria-valuemin="0"
+    class="bg-primary/20 relative h-2 w-full overflow-hidden rounded-full"
+    data-max="100"
+    data-slot="progress"
+    data-state="indeterminate"
+    role="progressbar"
+  >
+    <div
+      class="bg-primary h-full w-full flex-1 transition-all"
+      data-max="100"
+      data-slot="progress-indicator"
+      data-state="indeterminate"
+      style="transform: translateX(-55%);"
+    />
+  </div>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Radio group 1`] = `
+<DocumentFragment>
+  <div
+    aria-required="false"
+    class="grid gap-3"
+    data-slot="radio-group"
+    dir="ltr"
+    role="radiogroup"
+    style="outline: none;"
+    tabindex="0"
+  >
+    <button
+      aria-checked="true"
+      class="border-input text-primary focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 aspect-square size-4 shrink-0 rounded-full border shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
+      data-radix-collection-item=""
+      data-slot="radio-group-item"
+      data-state="checked"
+      id="option-1"
+      role="radio"
+      tabindex="-1"
+      type="button"
+      value="option-1"
+    >
+      <span
+        class="relative flex items-center justify-center"
+        data-slot="radio-group-indicator"
+        data-state="checked"
+      >
+        <svg
+          class="lucide lucide-circle fill-primary absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="10"
+          />
+        </svg>
+      </span>
+    </button>
+    <label
+      class="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+      data-slot="label"
+      for="option-1"
+    >
+      Option 1
+    </label>
+    <button
+      aria-checked="false"
+      class="border-input text-primary focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 aspect-square size-4 shrink-0 rounded-full border shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
+      data-radix-collection-item=""
+      data-slot="radio-group-item"
+      data-state="unchecked"
+      id="option-2"
+      role="radio"
+      tabindex="-1"
+      type="button"
+      value="option-2"
+    />
+    <label
+      class="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+      data-slot="label"
+      for="option-2"
+    >
+      Option 2
+    </label>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Resizable 1`] = `
+<DocumentFragment>
+  <div
+    class="flex h-full w-full data-[panel-group-direction=vertical]:flex-col"
+    data-panel-group=""
+    data-panel-group-direction="horizontal"
+    data-panel-group-id=":r1e:"
+    data-slot="resizable-panel-group"
+    style="display: flex; flex-direction: row; height: 100%; overflow: hidden; width: 100%;"
+  >
+    <div
+      class=""
+      data-panel=""
+      data-panel-group-id=":r1e:"
+      data-panel-id=":r1f:"
+      data-panel-size="1.0"
+      data-slot="resizable-panel"
+      id=":r1f:"
+      style="flex-basis: 0px; flex-grow: 1; flex-shrink: 1; overflow: hidden;"
+    >
+      <div>
+        Panel 1
+      </div>
+    </div>
+    <div
+      class="bg-border focus-visible:ring-ring relative flex w-px items-center justify-center after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:ring-1 focus-visible:ring-offset-1 focus-visible:outline-hidden data-[panel-group-direction=vertical]:h-px data-[panel-group-direction=vertical]:w-full data-[panel-group-direction=vertical]:after:left-0 data-[panel-group-direction=vertical]:after:h-1 data-[panel-group-direction=vertical]:after:w-full data-[panel-group-direction=vertical]:after:-translate-y-1/2 data-[panel-group-direction=vertical]:after:translate-x-0 [&[data-panel-group-direction=vertical]>div]:rotate-90"
+      data-panel-group-direction="horizontal"
+      data-panel-group-id=":r1e:"
+      data-panel-resize-handle-enabled="true"
+      data-panel-resize-handle-id=":r1g:"
+      data-resize-handle=""
+      data-resize-handle-state="inactive"
+      data-slot="resizable-handle"
+      role="separator"
+      style="user-select: none;"
+      tabindex="0"
+    >
+      <div
+        class="bg-border z-10 flex h-4 w-3 items-center justify-center rounded-xs border"
+      >
+        <svg
+          class="lucide lucide-grip-vertical size-2.5"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="9"
+            cy="12"
+            r="1"
+          />
+          <circle
+            cx="9"
+            cy="5"
+            r="1"
+          />
+          <circle
+            cx="9"
+            cy="19"
+            r="1"
+          />
+          <circle
+            cx="15"
+            cy="12"
+            r="1"
+          />
+          <circle
+            cx="15"
+            cy="5"
+            r="1"
+          />
+          <circle
+            cx="15"
+            cy="19"
+            r="1"
+          />
+        </svg>
+      </div>
+    </div>
+    <div
+      class=""
+      data-panel=""
+      data-panel-group-id=":r1e:"
+      data-panel-id=":r1h:"
+      data-panel-size="1.0"
+      data-slot="resizable-panel"
+      id=":r1h:"
+      style="flex-basis: 0px; flex-grow: 1; flex-shrink: 1; overflow: hidden;"
+    >
+      <div>
+        Panel 2
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Scroll area 1`] = `
+<DocumentFragment>
+  <div
+    class="relative"
+    data-slot="scroll-area"
+    dir="ltr"
+    style="position: relative; --radix-scroll-area-corner-width: 0px; --radix-scroll-area-corner-height: 0px; height: 80px;"
+  >
+    <style>
+      [data-radix-scroll-area-viewport]{scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch;}[data-radix-scroll-area-viewport]::-webkit-scrollbar{display:none}
+    </style>
+    <div
+      class="focus-visible:ring-ring/50 size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-1"
+      data-radix-scroll-area-viewport=""
+      data-slot="scroll-area-viewport"
+      style="overflow-x: hidden; overflow-y: scroll;"
+    >
+      <div
+        style="min-width: 100%; display: table;"
+      >
+        <div
+          style="height: 200px;"
+        >
+          Scrollable content
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Select 1`] = `
+<DocumentFragment>
+  <button
+    aria-autocomplete="none"
+    aria-controls="radix-:r1i:"
+    aria-expanded="false"
+    class="border-input data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 dark:hover:bg-input/50 flex w-full items-center justify-between gap-2 rounded-md border bg-input-background px-3 py-2 text-sm whitespace-nowrap transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+    data-size="default"
+    data-slot="select-trigger"
+    data-state="closed"
+    dir="ltr"
+    role="combobox"
+    type="button"
+  >
+    <span
+      data-slot="select-value"
+      style="pointer-events: none;"
+    >
+      Option 1
+    </span>
+    <svg
+      aria-hidden="true"
+      class="lucide lucide-chevron-down size-4 opacity-50"
+      fill="none"
+      height="24"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="m6 9 6 6 6-6"
+      />
+    </svg>
+  </button>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Separator 1`] = `
+<DocumentFragment>
+  <div
+    class="bg-border shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px"
+    data-orientation="horizontal"
+    data-slot="separator-root"
+    role="none"
+  />
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Sheet 1`] = `
+<DocumentFragment>
+  <button
+    aria-controls="radix-:r1m:"
+    aria-expanded="true"
+    aria-haspopup="dialog"
+    class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 has-[>svg]:px-3"
+    data-slot="sheet-trigger"
+    data-state="open"
+    type="button"
+  >
+    Open sheet
+  </button>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Sidebar 1`] = `
+<DocumentFragment>
+  <div
+    class="group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full"
+    data-slot="sidebar-wrapper"
+    style="--sidebar-width: 16rem; --sidebar-width-icon: 3rem;"
+  >
+    <div
+      class="flex"
+    >
+      <div
+        class="group peer text-sidebar-foreground hidden md:block"
+        data-collapsible=""
+        data-side="left"
+        data-slot="sidebar"
+        data-state="expanded"
+        data-variant="sidebar"
+      >
+        <div
+          class="relative w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-linear group-data-[collapsible=offcanvas]:w-0 group-data-[side=right]:rotate-180 group-data-[collapsible=icon]:w-(--sidebar-width-icon)"
+          data-slot="sidebar-gap"
+        />
+        <div
+          class="fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)] group-data-[collapsible=icon]:w-(--sidebar-width-icon) group-data-[side=left]:border-r group-data-[side=right]:border-l"
+          data-slot="sidebar-container"
+        >
+          <div
+            class="bg-sidebar group-data-[variant=floating]:border-sidebar-border flex h-full w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm"
+            data-sidebar="sidebar"
+            data-slot="sidebar-inner"
+          >
+            <div
+              class="flex flex-col gap-2 p-2"
+              data-sidebar="header"
+              data-slot="sidebar-header"
+            >
+              <input
+                class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex min-w-0 rounded-md border px-3 py-1 text-base transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-background h-8 w-full shadow-none"
+                data-sidebar="input"
+                data-slot="sidebar-input"
+                placeholder="Search"
+              />
+            </div>
+            <div
+              class="flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden"
+              data-sidebar="content"
+              data-slot="sidebar-content"
+            >
+              <div
+                class="relative flex w-full min-w-0 flex-col p-2"
+                data-sidebar="group"
+                data-slot="sidebar-group"
+              >
+                <div
+                  class="text-sidebar-foreground/70 ring-sidebar-ring flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium outline-hidden transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0 group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0"
+                  data-sidebar="group-label"
+                  data-slot="sidebar-group-label"
+                >
+                  Section
+                </div>
+                <button
+                  aria-label="Add shortcut"
+                  class="text-sidebar-foreground ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground absolute top-3.5 right-3 flex aspect-square w-5 items-center justify-center rounded-md p-0 outline-hidden transition-transform focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0 after:absolute after:-inset-2 md:after:hidden group-data-[collapsible=icon]:hidden"
+                  data-sidebar="group-action"
+                  data-slot="sidebar-group-action"
+                >
+                  <span>
+                    +
+                  </span>
+                </button>
+                <div
+                  class="w-full text-sm"
+                  data-sidebar="group-content"
+                  data-slot="sidebar-group-content"
+                >
+                  <ul
+                    class="flex w-full min-w-0 flex-col gap-1"
+                    data-sidebar="menu"
+                    data-slot="sidebar-menu"
+                  >
+                    <li
+                      class="group/menu-item relative"
+                      data-sidebar="menu-item"
+                      data-slot="sidebar-menu-item"
+                    >
+                      <button
+                        class="peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground h-8 text-sm"
+                        data-active="true"
+                        data-sidebar="menu-button"
+                        data-size="default"
+                        data-slot="sidebar-menu-button"
+                      >
+                        Dashboard
+                      </button>
+                      <button
+                        aria-label="More options"
+                        class="text-sidebar-foreground ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground peer-hover/menu-button:text-sidebar-accent-foreground absolute top-1.5 right-1 flex aspect-square w-5 items-center justify-center rounded-md p-0 outline-hidden transition-transform focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0 after:absolute after:-inset-2 md:after:hidden peer-data-[size=sm]/menu-button:top-1 peer-data-[size=default]/menu-button:top-1.5 peer-data-[size=lg]/menu-button:top-2.5 group-data-[collapsible=icon]:hidden"
+                        data-sidebar="menu-action"
+                        data-slot="sidebar-menu-action"
+                      >
+                        ⋮
+                      </button>
+                      <div
+                        class="text-sidebar-foreground pointer-events-none absolute right-1 flex h-5 min-w-5 items-center justify-center rounded-md px-1 text-xs font-medium tabular-nums select-none peer-hover/menu-button:text-sidebar-accent-foreground peer-data-[active=true]/menu-button:text-sidebar-accent-foreground peer-data-[size=sm]/menu-button:top-1 peer-data-[size=default]/menu-button:top-1.5 peer-data-[size=lg]/menu-button:top-2.5 group-data-[collapsible=icon]:hidden"
+                        data-sidebar="menu-badge"
+                        data-slot="sidebar-menu-badge"
+                      >
+                        4
+                      </div>
+                    </li>
+                    <ul
+                      class="border-sidebar-border mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-l px-2.5 py-0.5 group-data-[collapsible=icon]:hidden"
+                      data-sidebar="menu-sub"
+                      data-slot="sidebar-menu-sub"
+                    >
+                      <li
+                        class="group/menu-sub-item relative"
+                        data-sidebar="menu-sub-item"
+                        data-slot="sidebar-menu-sub-item"
+                      >
+                        <a
+                          class="text-sidebar-foreground ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground active:bg-sidebar-accent active:text-sidebar-accent-foreground [&>svg]:text-sidebar-accent-foreground flex h-7 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2 outline-hidden focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground text-sm group-data-[collapsible=icon]:hidden"
+                          data-active="false"
+                          data-sidebar="menu-sub-button"
+                          data-size="md"
+                          data-slot="sidebar-menu-sub-button"
+                          href="#"
+                        >
+                          Reports
+                        </a>
+                      </li>
+                    </ul>
+                  </ul>
+                </div>
+              </div>
+              <div
+                class="shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px bg-sidebar-border mx-2 w-auto"
+                data-orientation="horizontal"
+                data-sidebar="separator"
+                data-slot="sidebar-separator"
+                role="none"
+              />
+              <ul
+                class="flex w-full min-w-0 flex-col gap-1"
+                data-sidebar="menu"
+                data-slot="sidebar-menu"
+              >
+                <div
+                  class="flex h-8 items-center gap-2 rounded-md px-2"
+                  data-sidebar="menu-skeleton"
+                  data-slot="sidebar-menu-skeleton"
+                >
+                  <div
+                    class="bg-accent animate-pulse rounded-md h-4 max-w-(--skeleton-width) flex-1"
+                    data-sidebar="menu-skeleton-text"
+                    data-slot="skeleton"
+                    style="--skeleton-width: 70%;"
+                  />
+                </div>
+              </ul>
+            </div>
+            <div
+              class="flex flex-col gap-2 p-2"
+              data-sidebar="footer"
+              data-slot="sidebar-footer"
+            >
+              <ul
+                class="flex w-full min-w-0 flex-col gap-1"
+                data-sidebar="menu"
+                data-slot="sidebar-menu"
+              >
+                <li
+                  class="group/menu-item relative"
+                  data-sidebar="menu-item"
+                  data-slot="sidebar-menu-item"
+                >
+                  <button
+                    class="peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground h-7 text-xs"
+                    data-active="false"
+                    data-sidebar="menu-button"
+                    data-size="sm"
+                    data-slot="sidebar-menu-button"
+                  >
+                    Settings
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button
+        aria-label="Toggle Sidebar"
+        class="hover:after:bg-sidebar-border absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] sm:flex in-data-[side=left]:cursor-w-resize in-data-[side=right]:cursor-e-resize [[data-side=left][data-state=collapsed]_&]:cursor-e-resize [[data-side=right][data-state=collapsed]_&]:cursor-w-resize hover:group-data-[collapsible=offcanvas]:bg-sidebar group-data-[collapsible=offcanvas]:translate-x-0 group-data-[collapsible=offcanvas]:after:left-full [[data-side=left][data-collapsible=offcanvas]_&]:-right-2 [[data-side=right][data-collapsible=offcanvas]_&]:-left-2"
+        data-sidebar="rail"
+        data-slot="sidebar-rail"
+        tabindex="-1"
+        title="Toggle Sidebar"
+      />
+      <main
+        class="bg-background relative flex w-full flex-1 flex-col md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2"
+        data-slot="sidebar-inset"
+      >
+        <div
+          class="p-4"
+        >
+          Main content
+        </div>
+      </main>
+    </div>
+    <button
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 rounded-md size-7"
+      data-sidebar="trigger"
+      data-slot="sidebar-trigger"
+    >
+      <svg
+        class="lucide lucide-panel-left"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect
+          height="18"
+          rx="2"
+          width="18"
+          x="3"
+          y="3"
+        />
+        <path
+          d="M9 3v18"
+        />
+      </svg>
+      <span
+        class="sr-only"
+      >
+        Toggle Sidebar
+      </span>
+    </button>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Skeleton 1`] = `
+<DocumentFragment>
+  <div
+    class="bg-accent animate-pulse rounded-md h-4 w-24"
+    data-slot="skeleton"
+  />
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Slider 1`] = `
+<DocumentFragment>
+  <span
+    aria-disabled="false"
+    class="relative flex w-full touch-none items-center select-none data-[disabled]:opacity-50 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-44 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col"
+    data-orientation="horizontal"
+    data-slot="slider"
+    dir="ltr"
+    style="--radix-slider-thumb-transform: translateX(-50%);"
+  >
+    <span
+      class="bg-muted relative grow overflow-hidden rounded-full data-[orientation=horizontal]:h-4 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-1.5"
+      data-orientation="horizontal"
+      data-slot="slider-track"
+    >
+      <span
+        class="bg-primary absolute data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full"
+        data-orientation="horizontal"
+        data-slot="slider-range"
+        style="left: 0%; right: 70%;"
+      />
+    </span>
+    <span
+      style="transform: var(--radix-slider-thumb-transform); position: absolute; left: calc(30% + 0px);"
+    >
+      <span
+        aria-orientation="horizontal"
+        aria-valuemax="100"
+        aria-valuemin="0"
+        aria-valuenow="30"
+        class="border-primary bg-background ring-ring/50 block size-4 shrink-0 rounded-full border shadow-sm transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50"
+        data-orientation="horizontal"
+        data-radix-collection-item=""
+        data-slot="slider-thumb"
+        role="slider"
+        style=""
+        tabindex="0"
+      />
+    </span>
+  </span>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Sonner toaster 1`] = `
+<DocumentFragment>
+  <div
+    class="toaster group"
+    data-sonner-toaster="true"
+    position="bottom-right"
+    style="--normal-bg: var(--popover); --normal-text: var(--popover-foreground); --normal-border: var(--border);"
+    theme="light"
+  />
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Switch 1`] = `
+<DocumentFragment>
+  <button
+    aria-checked="true"
+    class="peer data-[state=checked]:bg-primary data-[state=unchecked]:bg-switch-background focus-visible:border-ring focus-visible:ring-ring/50 dark:data-[state=unchecked]:bg-input/80 inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full border border-transparent transition-all outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
+    data-slot="switch"
+    data-state="checked"
+    id="toggle"
+    role="switch"
+    type="button"
+    value="on"
+  >
+    <span
+      class="bg-card dark:data-[state=unchecked]:bg-card-foreground dark:data-[state=checked]:bg-primary-foreground pointer-events-none block size-4 rounded-full ring-0 transition-transform data-[state=checked]:translate-x-[calc(100%-2px)] data-[state=unchecked]:translate-x-0"
+      data-slot="switch-thumb"
+      data-state="checked"
+    />
+  </button>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Table 1`] = `
+<DocumentFragment>
+  <div
+    class="relative w-full overflow-x-auto"
+    data-slot="table-container"
+  >
+    <table
+      class="w-full caption-bottom text-sm"
+      data-slot="table"
+    >
+      <caption
+        class="text-muted-foreground mt-4 text-sm"
+        data-slot="table-caption"
+      >
+        A basic table example.
+      </caption>
+      <thead
+        class="[&_tr]:border-b"
+        data-slot="table-header"
+      >
+        <tr
+          class="hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors"
+          data-slot="table-row"
+        >
+          <th
+            class="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+            data-slot="table-head"
+          >
+            Name
+          </th>
+          <th
+            class="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+            data-slot="table-head"
+          >
+            Status
+          </th>
+        </tr>
+      </thead>
+      <tbody
+        class="[&_tr:last-child]:border-0"
+        data-slot="table-body"
+      >
+        <tr
+          class="hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors"
+          data-slot="table-row"
+        >
+          <td
+            class="p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+            data-slot="table-cell"
+          >
+            Ada Lovelace
+          </td>
+          <td
+            class="p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+            data-slot="table-cell"
+          >
+            Active
+          </td>
+        </tr>
+      </tbody>
+      <tfoot
+        class="bg-muted/50 border-t font-medium [&>tr]:last:border-b-0"
+        data-slot="table-footer"
+      >
+        <tr
+          class="hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors"
+          data-slot="table-row"
+        >
+          <td
+            class="p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+            colspan="2"
+            data-slot="table-cell"
+          >
+            Footer content
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Tabs 1`] = `
+<DocumentFragment>
+  <div
+    class="flex flex-col gap-2"
+    data-orientation="horizontal"
+    data-slot="tabs"
+    dir="ltr"
+  >
+    <div
+      aria-orientation="horizontal"
+      class="bg-muted text-muted-foreground h-9 w-fit items-center justify-center rounded-xl p-[3px] flex"
+      data-orientation="horizontal"
+      data-slot="tabs-list"
+      role="tablist"
+      style="outline: none;"
+      tabindex="0"
+    >
+      <button
+        aria-controls="radix-:r1p:-content-account"
+        aria-selected="true"
+        class="data-[state=active]:bg-card dark:data-[state=active]:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring dark:data-[state=active]:border-input dark:data-[state=active]:bg-input/30 text-foreground dark:text-muted-foreground inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-xl border border-transparent px-2 py-1 text-sm font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+        data-orientation="horizontal"
+        data-radix-collection-item=""
+        data-slot="tabs-trigger"
+        data-state="active"
+        id="radix-:r1p:-trigger-account"
+        role="tab"
+        tabindex="-1"
+        type="button"
+      >
+        Account
+      </button>
+      <button
+        aria-controls="radix-:r1p:-content-password"
+        aria-selected="false"
+        class="data-[state=active]:bg-card dark:data-[state=active]:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring dark:data-[state=active]:border-input dark:data-[state=active]:bg-input/30 text-foreground dark:text-muted-foreground inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-xl border border-transparent px-2 py-1 text-sm font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+        data-orientation="horizontal"
+        data-radix-collection-item=""
+        data-slot="tabs-trigger"
+        data-state="inactive"
+        id="radix-:r1p:-trigger-password"
+        role="tab"
+        tabindex="-1"
+        type="button"
+      >
+        Password
+      </button>
+    </div>
+    <div
+      aria-labelledby="radix-:r1p:-trigger-account"
+      class="flex-1 outline-none"
+      data-orientation="horizontal"
+      data-slot="tabs-content"
+      data-state="active"
+      id="radix-:r1p:-content-account"
+      role="tabpanel"
+      style="animation-duration: 0s;"
+      tabindex="0"
+    >
+      Account settings panel
+    </div>
+    <div
+      aria-labelledby="radix-:r1p:-trigger-password"
+      class="flex-1 outline-none"
+      data-orientation="horizontal"
+      data-slot="tabs-content"
+      data-state="inactive"
+      hidden=""
+      id="radix-:r1p:-content-password"
+      role="tabpanel"
+      tabindex="0"
+    />
+  </div>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Textarea 1`] = `
+<DocumentFragment>
+  <textarea
+    class="resize-none border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-input-background px-3 py-2 text-base transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+    data-slot="textarea"
+    placeholder="Tell us more..."
+  />
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Toggle 1`] = `
+<DocumentFragment>
+  <button
+    aria-label="Toggle italic"
+    aria-pressed="true"
+    class="inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium hover:bg-muted hover:text-muted-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none transition-[color,box-shadow] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive whitespace-nowrap bg-transparent h-9 px-2 min-w-9"
+    data-slot="toggle"
+    data-state="on"
+    type="button"
+  >
+    Italic
+  </button>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Toggle group 1`] = `
+<DocumentFragment>
+  <div
+    class="group/toggle-group flex w-fit items-center rounded-md data-[variant=outline]:shadow-xs"
+    data-slot="toggle-group"
+    dir="ltr"
+    role="group"
+    style="outline: none;"
+    tabindex="0"
+  >
+    <button
+      aria-pressed="true"
+      class="inline-flex items-center justify-center gap-2 text-sm font-medium hover:bg-muted hover:text-muted-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none transition-[color,box-shadow] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive whitespace-nowrap bg-transparent h-9 px-2 min-w-0 flex-1 shrink-0 rounded-none shadow-none first:rounded-l-md last:rounded-r-md focus:z-10 focus-visible:z-10 data-[variant=outline]:border-l-0 data-[variant=outline]:first:border-l"
+      data-radix-collection-item=""
+      data-slot="toggle-group-item"
+      data-state="on"
+      tabindex="-1"
+      type="button"
+    >
+      Bold
+    </button>
+    <button
+      aria-pressed="false"
+      class="inline-flex items-center justify-center gap-2 text-sm font-medium hover:bg-muted hover:text-muted-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none transition-[color,box-shadow] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive whitespace-nowrap bg-transparent h-9 px-2 min-w-0 flex-1 shrink-0 rounded-none shadow-none first:rounded-l-md last:rounded-r-md focus:z-10 focus-visible:z-10 data-[variant=outline]:border-l-0 data-[variant=outline]:first:border-l"
+      data-radix-collection-item=""
+      data-slot="toggle-group-item"
+      data-state="off"
+      tabindex="-1"
+      type="button"
+    >
+      Italic
+    </button>
+    <button
+      aria-pressed="false"
+      class="inline-flex items-center justify-center gap-2 text-sm font-medium hover:bg-muted hover:text-muted-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none transition-[color,box-shadow] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive whitespace-nowrap bg-transparent h-9 px-2 min-w-0 flex-1 shrink-0 rounded-none shadow-none first:rounded-l-md last:rounded-r-md focus:z-10 focus-visible:z-10 data-[variant=outline]:border-l-0 data-[variant=outline]:first:border-l"
+      data-radix-collection-item=""
+      data-slot="toggle-group-item"
+      data-state="off"
+      tabindex="-1"
+      type="button"
+    >
+      Underline
+    </button>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`UI component snapshots > Tooltip 1`] = `
+<DocumentFragment>
+  <button
+    aria-describedby="radix-:r1v:"
+    class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 h-9 px-4 py-2 has-[>svg]:px-3"
+    data-slot="tooltip-trigger"
+    data-state="instant-open"
+  >
+    Hover
+  </button>
+</DocumentFragment>
+`;

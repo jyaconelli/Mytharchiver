@@ -27,7 +27,6 @@ export default function App() {
   const {
     myths,
     mythemes,
-    categories,
     dataLoading,
     dataError,
     loadArchiveData,
@@ -36,7 +35,7 @@ export default function App() {
     updateVariant,
     addMytheme,
     deleteMytheme,
-    updateCategories,
+    updateMythCategories,
     addCollaborator,
     updateCollaboratorRole,
     removeCollaborator,
@@ -157,9 +156,14 @@ export default function App() {
         subtitle={headerSubtitle}
         currentUserEmail={currentUserEmail}
         userDisplayName={session.user.user_metadata?.full_name}
-        onOpenManageCategories={() => setShowManageCategories(true)}
+        onOpenManageCategories={() => {
+          if (canEditSelectedMyth && selectedMyth) {
+            setShowManageCategories(true);
+          }
+        }}
         onOpenManageMythemes={() => setShowManageMythemes(true)}
         onSignOut={handleSignOut}
+        canManageCategories={Boolean(selectedMyth && canEditSelectedMyth)}
       />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -234,7 +238,7 @@ export default function App() {
               <VariantView
                 variant={selectedVariant}
                 mythemes={mythemes}
-                categories={categories}
+                categories={selectedMyth?.categories ?? []}
                 onUpdateVariant={handleUpdateVariant}
                 canEdit={canEditSelectedMyth}
               />
@@ -250,12 +254,20 @@ export default function App() {
         onAdd={handleAddVariant}
       />
       <AddMythemeDialog open={showAddMytheme} onOpenChange={setShowAddMytheme} onAdd={addMytheme} />
-      <ManageCategoriesDialog
-        open={showManageCategories}
-        onOpenChange={setShowManageCategories}
-        categories={categories}
-        onUpdateCategories={updateCategories}
-      />
+      {selectedMyth && (
+        <ManageCategoriesDialog
+          open={showManageCategories && canEditSelectedMyth}
+          onOpenChange={(open) => {
+            if (!open) {
+              setShowManageCategories(false);
+            } else if (canEditSelectedMyth) {
+              setShowManageCategories(true);
+            }
+          }}
+          categories={selectedMyth.categories}
+          onUpdateCategories={(updated) => updateMythCategories(selectedMyth.id, updated)}
+        />
+      )}
       <ManageMythemesDialog
         open={showManageMythemes}
         onOpenChange={setShowManageMythemes}

@@ -1,0 +1,5 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`AddMythDialog > shows error message when submission fails 1`] = `null`;
+
+exports[`AddMythDialog > submits new myth details and closes dialog 1`] = `null`;

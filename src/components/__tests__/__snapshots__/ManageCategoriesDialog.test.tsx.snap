@@ -1,0 +1,3 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ManageCategoriesDialog > allows adding, removing, and saving categories 1`] = `null`;

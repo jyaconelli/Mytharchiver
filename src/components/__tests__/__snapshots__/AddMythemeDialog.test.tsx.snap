@@ -1,0 +1,5 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`AddMythemeDialog > shows error message on submission failure 1`] = `null`;
+
+exports[`AddMythemeDialog > submits mytheme details and closes dialog 1`] = `null`;

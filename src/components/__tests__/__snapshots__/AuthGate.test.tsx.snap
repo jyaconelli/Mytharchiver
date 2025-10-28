@@ -1,0 +1,93 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`AuthGate > renders initial sign-in view 1`] = `
+<div
+  class="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4"
+>
+  <div
+    class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border w-full max-w-md p-8 space-y-6"
+    data-slot="card"
+  >
+    <div
+      class="text-center space-y-2"
+    >
+      <h1
+        class="text-2xl font-semibold"
+      >
+        Myth Archive
+      </h1>
+      <p
+        class="text-gray-600 dark:text-gray-400"
+      >
+        Sign in to continue organizing myth variants.
+      </p>
+    </div>
+    <form
+      class="space-y-4"
+    >
+      <div
+        class="space-y-2"
+      >
+        <label
+          class="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+          data-slot="label"
+          for="email"
+        >
+          Email
+        </label>
+        <input
+          autocomplete="email"
+          class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border px-3 py-1 text-base bg-input-background transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive"
+          data-slot="input"
+          id="email"
+          placeholder="you@example.com"
+          required=""
+          type="email"
+          value=""
+        />
+      </div>
+      <div
+        class="space-y-2"
+      >
+        <label
+          class="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+          data-slot="label"
+          for="password"
+        >
+          Password
+        </label>
+        <input
+          autocomplete="current-password"
+          class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border px-3 py-1 text-base bg-input-background transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive"
+          data-slot="input"
+          id="password"
+          minlength="6"
+          placeholder="At least 6 characters"
+          required=""
+          type="password"
+          value=""
+        />
+      </div>
+      <button
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 has-[>svg]:px-3 w-full"
+        data-slot="button"
+        type="submit"
+      >
+        Sign In
+      </button>
+    </form>
+    <p
+      class="text-center text-sm text-gray-600 dark:text-gray-400"
+    >
+      Don't have an account?
+       
+      <button
+        class="font-medium text-blue-600 hover:underline dark:text-blue-400"
+        type="button"
+      >
+        Create one
+      </button>
+    </p>
+  </div>
+</div>
+`;

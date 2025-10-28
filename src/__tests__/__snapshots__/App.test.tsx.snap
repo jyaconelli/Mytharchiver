@@ -1,0 +1,100 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`App > renders archive layout with myth list when authenticated 1`] = `
+<div
+  class="min-h-screen bg-gray-50 dark:bg-gray-900"
+>
+  <header
+    data-testid="app-header"
+  >
+    <h1>
+      Myth Archive
+    </h1>
+    <p>
+      Structural Taxonomy System
+    </p>
+  </header>
+  <main
+    class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+  >
+    <div
+      class="space-y-6"
+    >
+      <div>
+        <h2>
+          Myth Folders
+        </h2>
+        <p
+          class="text-gray-600 dark:text-gray-400 mt-1"
+        >
+          Each myth contains multiple variants with categorized plot points
+        </p>
+      </div>
+      <div
+        data-testid="myth-list"
+      >
+        Myth list count: 
+        2
+      </div>
+    </div>
+  </main>
+  <div
+    data-testid="add-myth-dialog"
+  >
+    Add myth dialog open: 
+    false
+  </div>
+  <div
+    data-testid="add-variant-dialog"
+  >
+    Add variant dialog open: 
+    false
+  </div>
+  <div
+    data-testid="add-mytheme-dialog"
+  >
+    Add mytheme dialog open: 
+    false
+  </div>
+  <div
+    data-testid="manage-mythemes-dialog"
+  >
+    Manage mythemes dialog open: 
+    false
+  </div>
+  <div
+    data-testid="manage-collaborators-dialog"
+  >
+    Manage collaborators dialog open: 
+    false
+  </div>
+</div>
+`;
+
+exports[`App > shows loading indicator while authentication status is pending 1`] = `
+<div
+  class="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col items-center justify-center gap-4"
+>
+  <svg
+    class="lucide lucide-loader-circle h-8 w-8 animate-spin text-blue-600 dark:text-blue-400"
+    fill="none"
+    height="24"
+    stroke="currentColor"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="2"
+    viewBox="0 0 24 24"
+    width="24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M21 12a9 9 0 1 1-6.219-8.56"
+    />
+  </svg>
+  <p
+    class="text-gray-600 dark:text-gray-400"
+  >
+    Checking your session…
+  </p>
+</div>
+`;

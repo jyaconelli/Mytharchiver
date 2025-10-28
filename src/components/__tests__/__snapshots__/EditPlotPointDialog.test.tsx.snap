@@ -1,0 +1,3 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`EditPlotPointDialog > pre-populates plot point details and saves updates 1`] = `null`;
