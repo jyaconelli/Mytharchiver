@@ -24,8 +24,7 @@ export function VariantDetailPage() {
   );
 
   const variant = useMemo(
-    () =>
-      myth?.variants.find((candidate) => candidate.id === variantId) ?? null,
+    () => myth?.variants.find((candidate) => candidate.id === variantId) ?? null,
     [myth, variantId],
   );
 
@@ -36,9 +35,7 @@ export function VariantDetailPage() {
     if (myth.ownerId === sessionUserId) {
       return 'owner';
     }
-    const collaborator = myth.collaborators.find(
-      (person) => person.email === currentUserEmail,
-    );
+    const collaborator = myth.collaborators.find((person) => person.email === currentUserEmail);
     return collaborator?.role ?? null;
   }, [myth, sessionUserId, currentUserEmail]);
 
@@ -70,12 +67,11 @@ export function VariantDetailPage() {
         categories={myth.categories}
         canonicalCategories={myth.canonicalCategories}
         collaboratorCategories={myth.collaboratorCategories}
+        collaborators={myth.collaborators}
         onUpdateVariant={(updated) => updateVariant(myth.id, updated)}
         canEdit={canEdit}
         viewerEmail={currentUserEmail}
-        onCreateCollaboratorCategory={(name) =>
-          createCollaboratorCategory(myth.id, name)
-        }
+        onCreateCollaboratorCategory={(name) => createCollaboratorCategory(myth.id, name)}
       />
     </div>
   );

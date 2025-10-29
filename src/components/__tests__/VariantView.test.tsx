@@ -4,7 +4,13 @@ import React from 'react';
 import { vi } from 'vitest';
 
 import { VariantView } from '../VariantView';
-import type { CollaboratorCategory, MythVariant, PlotPoint, Mytheme } from '../../types/myth';
+import type {
+  CollaboratorCategory,
+  MythCollaborator,
+  MythVariant,
+  PlotPoint,
+  Mytheme,
+} from '../../types/myth';
 
 const ensureDomMocks = () => {
   const proto = window.HTMLElement.prototype as HTMLElement & {
@@ -123,6 +129,10 @@ const variant: MythVariant = {
 
 const categories = ['Introduction', 'Conflict', 'Resolution'];
 const collaboratorCategories: CollaboratorCategory[] = [];
+const collaborators: MythCollaborator[] = [
+  { id: 'collab-owner', mythId: 'myth-1', email: 'owner@example.com', role: 'owner' },
+  { id: 'collab-2', mythId: 'myth-1', email: 'editor@example.com', role: 'editor' },
+];
 
 describe('VariantView', () => {
   beforeAll(() => {
@@ -148,6 +158,7 @@ describe('VariantView', () => {
         categories={categories}
         canonicalCategories={[]}
         collaboratorCategories={collaboratorCategories}
+        collaborators={collaborators}
         onUpdateVariant={vi.fn()}
         viewerEmail="owner@example.com"
       />,
@@ -174,6 +185,7 @@ describe('VariantView', () => {
         categories={categories}
         canonicalCategories={[]}
         collaboratorCategories={collaboratorCategories}
+        collaborators={collaborators}
         onUpdateVariant={onUpdateVariant}
         viewerEmail="owner@example.com"
       />,
@@ -253,6 +265,7 @@ describe('VariantView', () => {
         categories={categories}
         canonicalCategories={[]}
         collaboratorCategories={collaboratorCategories}
+        collaborators={collaborators}
         onUpdateVariant={onUpdateVariant}
         onCreateCollaboratorCategory={onCreateCollaboratorCategory}
         viewerEmail="owner@example.com"
@@ -326,6 +339,7 @@ describe('VariantView', () => {
         categories={categories}
         canonicalCategories={[]}
         collaboratorCategories={viewerCollaboratorCategories}
+        collaborators={collaborators}
         onUpdateVariant={onUpdateVariant}
         viewerEmail={viewerEmail}
       />,
@@ -382,6 +396,7 @@ describe('VariantView', () => {
         categories={categories}
         canonicalCategories={[]}
         collaboratorCategories={collaboratorCategories}
+        collaborators={collaborators}
         onUpdateVariant={onUpdateVariant}
         viewerEmail="owner@example.com"
       />,
@@ -404,6 +419,7 @@ describe('VariantView', () => {
         categories={categories}
         canonicalCategories={[]}
         collaboratorCategories={collaboratorCategories}
+        collaborators={collaborators}
         onUpdateVariant={vi.fn()}
         canEdit={false}
         viewerEmail="owner@example.com"
