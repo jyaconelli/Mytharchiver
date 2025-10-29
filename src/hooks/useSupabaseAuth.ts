@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { Session } from '@supabase/supabase-js';
 
-import { supabase } from '../lib/supabaseClient';
+import { getSupabaseClient } from '../lib/supabaseClient';
 
 export function useSupabaseAuth() {
   const [session, setSession] = useState<Session | null>(null);
@@ -9,6 +9,7 @@ export function useSupabaseAuth() {
 
   useEffect(() => {
     let isMounted = true;
+    const supabase = getSupabaseClient();
 
     supabase.auth
       .getSession()

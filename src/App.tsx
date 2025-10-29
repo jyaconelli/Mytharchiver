@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 
-import { supabase } from './lib/supabaseClient';
+import { getSupabaseClient } from './lib/supabaseClient';
 import { CollaboratorRole, Myth, MythVariant } from './types/myth';
 import { useSupabaseAuth } from './hooks/useSupabaseAuth';
 import { useMythArchive } from './hooks/useMythArchive';
@@ -20,6 +20,7 @@ import { CollaboratorSummary } from './components/CollaboratorSummary';
 import { Button } from './components/ui/button';
 
 export default function App() {
+  const supabase = useMemo(() => getSupabaseClient(), []);
   const { session, authLoading } = useSupabaseAuth();
   const currentUserEmail = session?.user.email?.toLowerCase() ?? '';
   const sessionUserId = session?.user.id ?? '';
@@ -118,7 +119,7 @@ export default function App() {
 
   const handleSignOut = useCallback(async () => {
     await supabase.auth.signOut();
-  }, []);
+  }, [supabase]);
 
   if (authLoading) {
     return (

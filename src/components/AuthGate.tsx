@@ -1,5 +1,5 @@
-import { FormEvent, useState } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import { FormEvent, useMemo, useState } from 'react';
+import { getSupabaseClient } from '../lib/supabaseClient';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -15,6 +15,9 @@ export function AuthGate() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const supabase = useMemo(() => getSupabaseClient(), []);
+  const emailRedirectTo =
+    typeof window !== 'undefined' ? `${window.location.origin}/` : undefined;
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -36,6 +39,9 @@ export function AuthGate() {
         const { error: signUpError } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+            emailRedirectTo,
+          },
         });
 
         if (signUpError) {

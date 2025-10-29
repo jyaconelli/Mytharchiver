@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { Session } from '@supabase/supabase-js';
 
-import { supabase } from '../lib/supabaseClient';
+import { getSupabaseClient } from '../lib/supabaseClient';
 import {
   CollaboratorRole,
   DEFAULT_CATEGORIES,
@@ -56,6 +56,7 @@ const parseMythRow = (row: MythRow): Myth => ({
 });
 
 export function useMythArchive(session: Session | null, currentUserEmail: string) {
+  const supabase = getSupabaseClient();
   const [dataLoading, setDataLoading] = useState(false);
   const [dataError, setDataError] = useState<string | null>(null);
   const [myths, setMyths] = useState<Myth[]>([]);

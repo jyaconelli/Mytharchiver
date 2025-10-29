@@ -10,14 +10,17 @@ const { mockSignInWithPassword, mockSignUp } = vi.hoisted(() => ({
   mockSignUp: vi.fn(),
 }));
 
-vi.mock('../../lib/supabaseClient', () => ({
-  supabase: {
+vi.mock('../../lib/supabaseClient', () => {
+  const client = {
     auth: {
       signInWithPassword: mockSignInWithPassword,
       signUp: mockSignUp,
     },
-  },
-}));
+  };
+  return {
+    getSupabaseClient: () => client,
+  };
+});
 
 describe('AuthGate', () => {
   beforeEach(() => {
@@ -78,6 +81,9 @@ describe('AuthGate', () => {
     expect(mockSignUp).toHaveBeenCalledWith({
       email: 'new@example.com',
       password: 'securepass',
+      options: {
+        emailRedirectTo: expect.stringContaining('http://localhost'),
+      },
     });
     expect(await screen.findByText(/check your inbox/i)).toBeInTheDocument();
   });

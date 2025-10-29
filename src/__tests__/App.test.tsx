@@ -130,13 +130,16 @@ vi.mock('../components/CollaboratorSummary', () => ({
   CollaboratorSummary: CollaboratorSummaryMock,
 }));
 
-vi.mock('../lib/supabaseClient', () => ({
-  supabase: {
+vi.mock('../lib/supabaseClient', () => {
+  const client = {
     auth: {
       signOut: mockSupabaseSignOut,
     },
-  },
-}));
+  };
+  return {
+    getSupabaseClient: () => client,
+  };
+});
 
 function createArchiveState(overrides?: Partial<ReturnType<typeof defaultArchiveState>>) {
   return {
