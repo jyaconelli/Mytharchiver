@@ -1,0 +1,262 @@
+import { useCallback, useMemo, useState } from 'react';
+import { Outlet, useNavigate, useOutletContext, useParams } from 'react-router-dom';
+import type { Session } from '@supabase/supabase-js';
+import { Loader2 } from 'lucide-react';
+
+import { AppHeader } from '../components/AppHeader';
+import { AddMythemeDialog } from '../components/AddMythemeDialog';
+import { ManageMythemesDialog } from '../components/ManageMythemesDialog';
+import { ManageCategoriesDialog } from '../components/ManageCategoriesDialog';
+import { ManageCollaboratorsDialog } from '../components/ManageCollaboratorsDialog';
+import { Button } from '../components/ui/button';
+import { useMythArchive } from '../hooks/useMythArchive';
+import { getSupabaseClient } from '../lib/supabaseClient';
+import {
+  CollaboratorCategory,
+  CollaboratorRole,
+  Myth,
+  MythVariant,
+  Mytheme,
+} from '../types/myth';
+
+type ArchiveLayoutProps = {
+  session: Session;
+  supabaseClient: ReturnType<typeof getSupabaseClient>;
+};
+
+export type ArchiveOutletContext = {
+  myths: Myth[];
+  mythemes: Mytheme[];
+  dataLoading: boolean;
+  dataError: string | null;
+  loadArchiveData: () => Promise<void>;
+  addMyth: (name: string, description: string) => Promise<void>;
+  addVariant: (mythId: string, name: string, source: string) => Promise<void>;
+  updateVariant: (mythId: string, variant: MythVariant) => Promise<void>;
+  addCollaborator: (
+    mythId: string,
+    email: string,
+    role: CollaboratorRole,
+  ) => Promise<void>;
+  updateCollaboratorRole: (
+    collaboratorId: string,
+    role: CollaboratorRole,
+  ) => Promise<void>;
+  removeCollaborator: (collaboratorId: string) => Promise<void>;
+  createCollaboratorCategory: (
+    mythId: string,
+    name: string,
+  ) => Promise<CollaboratorCategory>;
+  currentUserEmail: string;
+  sessionUserId: string;
+  openManageCollaborators: (mythId: string) => void;
+};
+
+export function ArchiveLayout({ session, supabaseClient }: ArchiveLayoutProps) {
+  const navigate = useNavigate();
+  const supabase = supabaseClient;
+  const currentUserEmail = session.user.email?.toLowerCase() ?? '';
+  const sessionUserId = session.user.id;
+
+  const {
+    myths,
+    mythemes,
+    dataLoading,
+    dataError,
+    loadArchiveData,
+    addMyth,
+    addVariant,
+    updateVariant,
+    addMytheme,
+    deleteMytheme,
+    updateMythCategories,
+    addCollaborator,
+    updateCollaboratorRole,
+    removeCollaborator,
+    createCollaboratorCategory,
+  } = useMythArchive(session, currentUserEmail);
+
+  const { mythId, variantId } = useParams<{ mythId?: string; variantId?: string }>();
+
+  const selectedMyth: Myth | null = useMemo(
+    () => myths.find((myth) => myth.id === mythId) ?? null,
+    [myths, mythId],
+  );
+
+  const selectedVariant: MythVariant | null = useMemo(
+    () =>
+      variantId && selectedMyth
+        ? selectedMyth.variants.find((variant) => variant.id === variantId) ?? null
+        : null,
+    [selectedMyth, variantId],
+  );
+
+  const selectedMythRole: CollaboratorRole | 'owner' | null = useMemo(() => {
+    if (!selectedMyth) {
+      return null;
+    }
+    if (selectedMyth.ownerId === sessionUserId) {
+      return 'owner';
+    }
+    const collaborator = selectedMyth.collaborators.find(
+      (person) => person.email === currentUserEmail,
+    );
+    return collaborator?.role ?? null;
+  }, [selectedMyth, sessionUserId, currentUserEmail]);
+
+  const canEditSelectedMyth =
+    selectedMythRole === 'owner' || selectedMythRole === 'editor';
+
+  const [showAddMytheme, setShowAddMytheme] = useState(false);
+  const [showManageMythemes, setShowManageMythemes] = useState(false);
+  const [showManageCategories, setShowManageCategories] = useState(false);
+  const [manageCollaboratorsMythId, setManageCollaboratorsMythId] = useState<
+    string | null
+  >(null);
+
+  const manageCollaboratorsMyth = manageCollaboratorsMythId
+    ? myths.find((myth) => myth.id === manageCollaboratorsMythId) ?? null
+    : null;
+
+  const canManageCollaborators = Boolean(
+    manageCollaboratorsMyth && manageCollaboratorsMyth.ownerId === sessionUserId,
+  );
+
+  const handleBack = useCallback(() => {
+    if (variantId && mythId) {
+      navigate(`/myths/${mythId}`);
+    } else if (mythId) {
+      navigate('/');
+    } else {
+      navigate(-1);
+    }
+  }, [navigate, mythId, variantId]);
+
+  const handleSignOut = useCallback(async () => {
+    await supabase.auth.signOut();
+  }, [supabase]);
+
+  const canGoBack = Boolean(mythId || variantId);
+  const headerSubtitle = selectedVariant
+    ? `${selectedMyth?.name ?? ''} / ${selectedVariant.name}`
+    : selectedMyth
+      ? selectedMyth.name
+      : 'Structural Taxonomy System';
+
+  const outletContext: ArchiveOutletContext = {
+    myths,
+    mythemes,
+    dataLoading,
+    dataError,
+    loadArchiveData,
+    addMyth,
+    addVariant,
+    updateVariant,
+    addCollaborator,
+    updateCollaboratorRole,
+    removeCollaborator,
+    createCollaboratorCategory,
+    currentUserEmail,
+    sessionUserId,
+    openManageCollaborators: (mythToManage) => setManageCollaboratorsMythId(mythToManage),
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <AppHeader
+        canGoBack={canGoBack}
+        onBack={handleBack}
+        title="Myth Archive"
+        subtitle={headerSubtitle}
+        currentUserEmail={currentUserEmail}
+        userDisplayName={session.user.user_metadata?.full_name}
+        onOpenManageCategories={() => {
+          if (canEditSelectedMyth && selectedMyth) {
+            setShowManageCategories(true);
+          }
+        }}
+        onOpenManageMythemes={() => setShowManageMythemes(true)}
+        onSignOut={handleSignOut}
+        canManageCategories={Boolean(selectedMyth && canEditSelectedMyth)}
+      />
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {dataError ? (
+          <div className="max-w-xl mx-auto">
+            <div className="rounded-lg border border-red-200 bg-red-50 p-6 dark:border-red-900/50 dark:bg-red-950/40">
+              <h2 className="text-lg font-semibold text-red-700 dark:text-red-300">
+                Unable to load archive data
+              </h2>
+              <p className="mt-2 text-sm text-red-700 dark:text-red-200">{dataError}</p>
+              <div className="mt-4 flex justify-end">
+                <Button variant="outline" onClick={loadArchiveData}>
+                  Retry
+                </Button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <>
+            {dataLoading && (
+              <div className="mb-6 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Syncing with Supabase…
+              </div>
+            )}
+            <Outlet context={outletContext} />
+          </>
+        )}
+      </main>
+
+      <AddMythemeDialog
+        open={showAddMytheme}
+        onOpenChange={setShowAddMytheme}
+        onAdd={addMytheme}
+      />
+      <ManageMythemesDialog
+        open={showManageMythemes}
+        onOpenChange={setShowManageMythemes}
+        mythemes={mythemes}
+        onDelete={deleteMytheme}
+        onAdd={() => {
+          setShowManageMythemes(false);
+          setShowAddMytheme(true);
+        }}
+      />
+      {selectedMyth && (
+        <ManageCategoriesDialog
+          open={showManageCategories && canEditSelectedMyth}
+          onOpenChange={(open) => {
+            if (!open) {
+              setShowManageCategories(false);
+            } else if (canEditSelectedMyth) {
+              setShowManageCategories(true);
+            }
+          }}
+          categories={selectedMyth.categories}
+          onUpdateCategories={(updated) =>
+            updateMythCategories(selectedMyth.id, updated)
+          }
+        />
+      )}
+      <ManageCollaboratorsDialog
+        open={Boolean(manageCollaboratorsMyth)}
+        onOpenChange={(open) => {
+          if (!open) {
+            setManageCollaboratorsMythId(null);
+          }
+        }}
+        myth={manageCollaboratorsMyth}
+        canManage={canManageCollaborators}
+        currentUserEmail={currentUserEmail}
+        onAddCollaborator={addCollaborator}
+        onUpdateCollaboratorRole={updateCollaboratorRole}
+        onRemoveCollaborator={removeCollaborator}
+      />
+    </div>
+  );
+}
+
+export function useArchive() {
+  return useOutletContext<ArchiveOutletContext>();
+}
