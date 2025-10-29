@@ -1,5 +1,11 @@
-import { useEffect, useState } from 'react';
-import { MythVariant, Mytheme, PlotPoint as PlotPointType } from '../types/myth';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  CollaboratorCategory,
+  MythCategory,
+  MythVariant,
+  Mytheme,
+  PlotPoint as PlotPointType,
+} from '../types/myth';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { TimelineView } from './TimelineView';
 import { GroupedView } from './GroupedView';
@@ -15,9 +21,15 @@ interface VariantViewProps {
   variant: MythVariant;
   mythemes: Mytheme[];
   categories: string[];
+  canonicalCategories?: MythCategory[];
+  collaboratorCategories?: CollaboratorCategory[];
   onUpdateVariant: (variant: MythVariant) => Promise<void>;
+  onCreateCollaboratorCategory?: (name: string) => Promise<CollaboratorCategory>;
   canEdit?: boolean;
+  viewerEmail: string;
 }
+
+const UNCATEGORIZED_LABEL = 'Uncategorized';
 
 const createLocalId = () =>
   typeof crypto !== 'undefined' && 'randomUUID' in crypto
@@ -28,8 +40,12 @@ export function VariantView({
   variant,
   mythemes,
   categories,
+  canonicalCategories = [],
+  collaboratorCategories = [],
   onUpdateVariant,
+  onCreateCollaboratorCategory,
   canEdit = true,
+  viewerEmail,
 }: VariantViewProps) {
   const [activeTab, setActiveTab] = useState('timeline');
   const [showAddPlotPoint, setShowAddPlotPoint] = useState(false);
@@ -37,6 +53,29 @@ export function VariantView({
   const [plotPointBeingEdited, setPlotPointBeingEdited] = useState<PlotPointType | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const latestVariantRef = useRef(variant);
+
+  const canonicalById = useMemo(() => {
+    const map = new Map<string, MythCategory>();
+    canonicalCategories.forEach((category) => {
+      map.set(category.id, category);
+    });
+    return map;
+  }, [canonicalCategories]);
+
+  const canonicalByName = useMemo(() => {
+    const map = new Map<string, MythCategory>();
+    canonicalCategories.forEach((category) => {
+      map.set(category.name.toLowerCase(), category);
+    });
+    return map;
+  }, [canonicalCategories]);
+
+  const normalizedViewerEmail = viewerEmail.toLowerCase();
+
+  useEffect(() => {
+    latestVariantRef.current = variant;
+  }, [variant]);
 
   useEffect(() => {
     if (!canEdit) {
@@ -47,11 +86,14 @@ export function VariantView({
   }, [canEdit]);
 
   const persistVariant = async (nextVariant: MythVariant) => {
+    const previousVariant = latestVariantRef.current;
+    latestVariantRef.current = nextVariant;
     setSaving(true);
     setError(null);
     try {
       await onUpdateVariant(nextVariant);
     } catch (err) {
+      latestVariantRef.current = previousVariant;
       setError(err instanceof Error ? err.message : 'Unable to update the variant.');
       throw err;
     } finally {
@@ -61,22 +103,26 @@ export function VariantView({
 
   const handleUpdatePlotPoint = async (id: string, updates: Partial<PlotPointType>) => {
     if (!canEdit) return;
-    const updatedPlotPoints = variant.plotPoints.map((point) =>
+    const baseVariant = latestVariantRef.current;
+    const updatedPlotPoints = baseVariant.plotPoints.map((point) =>
       point.id === id ? { ...point, ...updates } : point,
     );
-    await persistVariant({ ...variant, plotPoints: updatedPlotPoints });
+    await persistVariant({ ...baseVariant, plotPoints: updatedPlotPoints });
   };
 
-  const handleAddPlotPoint = async (text: string, category: string, mythemeRefs: string[]) => {
+  const handleAddPlotPoint = async (text: string, mythemeRefs: string[]) => {
     if (!canEdit) return;
+    const baseVariant = latestVariantRef.current;
     const newPlotPoint: PlotPointType = {
       id: createLocalId(),
       text,
-      category,
-      order: variant.plotPoints.length + 1,
+      category: UNCATEGORIZED_LABEL,
+      order: baseVariant.plotPoints.length + 1,
       mythemeRefs,
+      canonicalCategoryId: null,
+      collaboratorCategories: [],
     };
-    await persistVariant({ ...variant, plotPoints: [...variant.plotPoints, newPlotPoint] });
+    await persistVariant({ ...baseVariant, plotPoints: [...baseVariant.plotPoints, newPlotPoint] });
   };
 
   const handleRequestEditPlotPoint = (plotPoint: PlotPointType) => {
@@ -98,13 +144,87 @@ export function VariantView({
       return;
     }
 
-    const updatedPlotPoints = variant.plotPoints.map((point) =>
+    const canonicalCategory = canonicalByName.get(updates.category.toLowerCase()) ?? null;
+    const baseVariant = latestVariantRef.current;
+    const updatedPlotPoints = baseVariant.plotPoints.map((point) =>
       point.id === plotPointBeingEdited.id ? { ...point, ...updates } : point,
     );
 
-    await persistVariant({ ...variant, plotPoints: updatedPlotPoints });
+    const normalizedPlotPoints = updatedPlotPoints.map((point) =>
+      point.id === plotPointBeingEdited.id
+        ? {
+            ...point,
+            canonicalCategoryId: canonicalCategory ? canonicalCategory.id : point.canonicalCategoryId ?? null,
+            category: canonicalCategory ? canonicalCategory.name : updates.category,
+          }
+        : point,
+    );
+
+    await persistVariant({ ...baseVariant, plotPoints: normalizedPlotPoints });
     setShowEditPlotPoint(false);
     setPlotPointBeingEdited(null);
+  };
+
+  const handleAssignCollaboratorCategory = async (
+    plotPointId: string,
+    collaboratorCategoryId: string | null,
+    categoryName?: string,
+  ) => {
+    if (!canEdit) {
+      return;
+    }
+
+    let resolvedCategoryId = collaboratorCategoryId;
+    let resolvedName = categoryName?.trim() ?? '';
+
+    if (!resolvedCategoryId && resolvedName) {
+      if (onCreateCollaboratorCategory) {
+        try {
+          const createdCategory = await onCreateCollaboratorCategory(resolvedName);
+          resolvedCategoryId = createdCategory.id;
+          resolvedName = createdCategory.name;
+        } catch (err) {
+          setError(
+            err instanceof Error ? err.message : 'Unable to create the category for this plot point.',
+          );
+          return;
+        }
+      }
+    }
+
+    if (resolvedCategoryId) {
+      const nameFromId = collaboratorCategories.find((category) => category.id === resolvedCategoryId)?.name;
+      if (nameFromId) {
+        resolvedName = nameFromId;
+      }
+    }
+
+    const baseVariant = latestVariantRef.current;
+    const updatedPlotPoints = baseVariant.plotPoints.map((point) => {
+      if (point.id !== plotPointId) {
+        return point;
+      }
+
+      const otherAssignments = (point.collaboratorCategories ?? []).filter(
+        (assignment) => assignment.collaboratorEmail !== normalizedViewerEmail,
+      );
+
+      if (resolvedName) {
+        otherAssignments.push({
+          plotPointId,
+          collaboratorCategoryId: resolvedCategoryId ?? '',
+          collaboratorEmail: normalizedViewerEmail,
+          categoryName: resolvedName,
+        });
+      }
+
+      return {
+        ...point,
+        collaboratorCategories: otherAssignments,
+      };
+    });
+
+    await persistVariant({ ...baseVariant, plotPoints: updatedPlotPoints });
   };
 
   const handleCloseEditDialog = (open: boolean) => {
@@ -116,12 +236,13 @@ export function VariantView({
 
   const handleDeletePlotPoint = async (id: string) => {
     if (!canEdit) return;
-    const remaining = variant.plotPoints.filter((point) => point.id !== id);
+    const baseVariant = latestVariantRef.current;
+    const remaining = baseVariant.plotPoints.filter((point) => point.id !== id);
     const reindexed = remaining.map((point, index) => ({
       ...point,
       order: index + 1,
     }));
-    await persistVariant({ ...variant, plotPoints: reindexed });
+    await persistVariant({ ...baseVariant, plotPoints: reindexed });
   };
 
   return (
@@ -156,9 +277,8 @@ export function VariantView({
             open={showAddPlotPoint}
             onOpenChange={setShowAddPlotPoint}
             onAdd={handleAddPlotPoint}
-            categories={categories}
             mythemes={mythemes}
-            nextOrder={variant.plotPoints.length + 1}
+            nextOrder={latestVariantRef.current.plotPoints.length + 1}
           />
           <EditPlotPointDialog
             open={showEditPlotPoint && Boolean(plotPointBeingEdited)}
@@ -199,6 +319,7 @@ export function VariantView({
             mythemes={mythemes}
             onDeletePlotPoint={canEdit ? handleDeletePlotPoint : undefined}
             onEditPlotPoint={canEdit ? handleRequestEditPlotPoint : undefined}
+            viewerEmail={viewerEmail}
           />
         </TabsContent>
 
@@ -211,6 +332,9 @@ export function VariantView({
             onDeletePlotPoint={canEdit ? handleDeletePlotPoint : undefined}
             onEditPlotPoint={canEdit ? handleRequestEditPlotPoint : undefined}
             canEdit={canEdit}
+            collaboratorCategories={collaboratorCategories}
+            onAssignCategory={canEdit ? handleAssignCollaboratorCategory : undefined}
+            viewerEmail={viewerEmail}
           />
         </TabsContent>
 
@@ -222,6 +346,7 @@ export function VariantView({
             onDeletePlotPoint={canEdit ? handleDeletePlotPoint : undefined}
             onEditPlotPoint={canEdit ? handleRequestEditPlotPoint : undefined}
             canEdit={canEdit}
+            viewerEmail={viewerEmail}
           />
         </TabsContent>
       </Tabs>

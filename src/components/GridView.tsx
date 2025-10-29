@@ -8,6 +8,7 @@ interface GridViewProps {
   onDeletePlotPoint?: (id: string) => void;
   onEditPlotPoint?: (plotPoint: PlotPointType) => void;
   canEdit?: boolean;
+  viewerEmail?: string;
 }
 
 export function GridView({
@@ -17,6 +18,7 @@ export function GridView({
   onDeletePlotPoint,
   onEditPlotPoint,
   canEdit = true,
+  viewerEmail,
 }: GridViewProps) {
   const sortedPlotPoints = [...plotPoints].sort((a, b) => a.order - b.order);
 
@@ -116,6 +118,7 @@ export function GridView({
                       showCategory={false}
                       onDelete={canEdit ? onDeletePlotPoint : undefined}
                       onEdit={canEdit ? onEditPlotPoint : undefined}
+                      viewerEmail={viewerEmail}
                     />
                   ) : (
                     <div className="h-full border-2 border-dashed border-gray-200 rounded-lg dark:border-gray-700" />

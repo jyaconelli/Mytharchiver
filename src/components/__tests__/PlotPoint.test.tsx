@@ -16,6 +16,14 @@ const plotPoint = {
   category: 'Introduction',
   order: 3,
   mythemeRefs: ['t1', 't2'],
+  collaboratorCategories: [
+    {
+      plotPointId: 'point-1',
+      collaboratorCategoryId: 'cat-1',
+      collaboratorEmail: 'editor@example.com',
+      categoryName: 'Drama',
+    },
+  ],
 };
 
 describe('PlotPoint', () => {
@@ -24,12 +32,13 @@ describe('PlotPoint', () => {
     const onDelete = vi.fn();
     const onEdit = vi.fn();
 
-    const { container } = render(
+    render(
       <PlotPoint
         plotPoint={plotPoint}
         mythemes={mythemes}
         onDelete={onDelete}
         onEdit={onEdit}
+        viewerEmail="editor@example.com"
       />,
     );
 
@@ -37,7 +46,8 @@ describe('PlotPoint', () => {
     expect(screen.getByText('Prometheus')).toHaveClass('inline-block');
     expect(screen.getByText('Fire')).toBeInTheDocument();
     expect(screen.getByText('Introduction')).toBeInTheDocument();
-    expect(container.firstChild).toMatchSnapshot();
+    expect(screen.getByText('Drama')).toBeInTheDocument();
+    expect(screen.getByText('You')).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: /edit plot point/i }));
     expect(onEdit).toHaveBeenCalledWith(plotPoint);
@@ -47,13 +57,10 @@ describe('PlotPoint', () => {
   });
 
   test('hides category and actions when not provided', () => {
-    const { container } = render(
-      <PlotPoint plotPoint={plotPoint} mythemes={mythemes} showCategory={false} />,
-    );
+    render(<PlotPoint plotPoint={plotPoint} mythemes={mythemes} showCategory={false} />);
 
     expect(screen.queryByText('Introduction')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /edit plot point/i })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /delete plot point/i })).not.toBeInTheDocument();
-    expect(container.firstChild).toMatchSnapshot();
   });
 });

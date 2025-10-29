@@ -6,6 +6,7 @@ interface TimelineViewProps {
   mythemes: Mytheme[];
   onDeletePlotPoint?: (id: string) => void;
   onEditPlotPoint?: (plotPoint: PlotPointType) => void;
+  viewerEmail?: string;
 }
 
 export function TimelineView({
@@ -13,6 +14,7 @@ export function TimelineView({
   mythemes,
   onDeletePlotPoint,
   onEditPlotPoint,
+  viewerEmail,
 }: TimelineViewProps) {
   const sortedPlotPoints = [...plotPoints].sort((a, b) => a.order - b.order);
 
@@ -29,6 +31,7 @@ export function TimelineView({
                 mythemes={mythemes}
                 onDelete={onDeletePlotPoint}
                 onEdit={onEditPlotPoint}
+                viewerEmail={viewerEmail}
               />
             </div>
           ))}

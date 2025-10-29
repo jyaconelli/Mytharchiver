@@ -1,13 +1,28 @@
-import { PlotPoint as PlotPointType, Mytheme } from '../types/myth';
-import { PlotPoint } from './PlotPoint';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+
+import {
+  CollaboratorCategory,
+  PlotPoint as PlotPointType,
+  Mytheme,
+} from '../types/myth';
+import { PlotPoint } from './PlotPoint';
+
+const ITEM_TYPE = 'PLOT_POINT';
+const UNCATEGORIZED_COLUMN_ID = '__uncategorized__';
 
 interface GroupedViewProps {
   plotPoints: PlotPointType[];
   mythemes: Mytheme[];
   categories: string[];
+  collaboratorCategories?: CollaboratorCategory[];
+  viewerEmail?: string;
   onUpdatePlotPoint?: (id: string, updates: Partial<PlotPointType>) => Promise<void>;
+  onAssignCategory?: (
+    plotPointId: string,
+    categoryId: string | null,
+    categoryName?: string,
+  ) => Promise<void>;
   onDeletePlotPoint?: (id: string) => void;
   onEditPlotPoint?: (plotPoint: PlotPointType) => void;
   canEdit?: boolean;
@@ -16,24 +31,21 @@ interface GroupedViewProps {
 interface DraggablePlotPointProps {
   plotPoint: PlotPointType;
   mythemes: Mytheme[];
-  onDrop: (id: string, newCategory: string) => void;
-  onDelete?: (id: string) => void;
-  onEdit?: (plotPoint: PlotPointType) => void;
   canEdit: boolean;
+  viewerEmail?: string;
+  currentCategoryId: string;
 }
-
-const ITEM_TYPE = 'PLOT_POINT';
 
 function DraggablePlotPoint({
   plotPoint,
   mythemes,
-  onDelete,
-  onEdit,
   canEdit,
+  viewerEmail,
+  currentCategoryId,
 }: DraggablePlotPointProps) {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: ITEM_TYPE,
-    item: { id: plotPoint.id, currentCategory: plotPoint.category },
+    item: { id: plotPoint.id, currentCategory: currentCategoryId },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
@@ -47,86 +59,72 @@ function DraggablePlotPoint({
         mythemes={mythemes}
         showCategory={false}
         isDragging={isDragging}
-        onDelete={onDelete}
-        onEdit={onEdit}
+        viewerEmail={viewerEmail}
       />
     </div>
   );
 }
 
 interface CategoryDropZoneProps {
-  category: string;
+  title: string;
   plotPoints: PlotPointType[];
   mythemes: Mytheme[];
-  onDrop: (id: string, newCategory: string) => void;
-  onDelete?: (id: string) => void;
-  onEdit?: (plotPoint: PlotPointType) => void;
   canEdit: boolean;
+  viewerEmail?: string;
+  onDrop: (plotPointId: string) => void;
+  acceptSelf?: string;
+  description?: string;
 }
 
 function CategoryDropZone({
-  category,
+  title,
   plotPoints,
   mythemes,
-  onDrop,
-  onDelete,
-  onEdit,
   canEdit,
+  viewerEmail,
+  onDrop,
+  acceptSelf,
+  description,
 }: CategoryDropZoneProps) {
   const [{ isOver }, drop] = useDrop(() => ({
     accept: ITEM_TYPE,
     drop: (item: { id: string; currentCategory: string }) => {
-      if (!canEdit || item.currentCategory === category) {
+      if (!canEdit) return;
+      if (acceptSelf !== undefined && item.currentCategory === acceptSelf) {
         return;
       }
-      if (item.currentCategory !== category) {
-        onDrop(item.id, category);
-      }
+      onDrop(item.id);
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(),
     }),
   }));
 
-  const getCategoryColor = (category: string) => {
-    const colors: Record<string, string> = {
-      Introduction: 'border-slate-300 dark:border-slate-700',
-      Conflict: 'border-red-300 dark:border-red-700',
-      Journey: 'border-amber-300 dark:border-amber-700',
-      Transformation: 'border-purple-300 dark:border-purple-700',
-      Resolution: 'border-green-300 dark:border-green-700',
-      Aftermath: 'border-blue-300 dark:border-blue-700',
-    };
-    return colors[category] || 'border-gray-300';
-  };
-
-  const sortedPlotPoints = [...plotPoints].sort((a, b) => a.order - b.order);
-
   return (
     <div
       ref={canEdit ? drop : undefined}
-      className={`border-2 rounded-lg p-4 min-h-[200px] ${getCategoryColor(category)} ${
-        isOver ? 'bg-blue-50 dark:bg-blue-950' : ''
+      className={`border-2 border-dashed rounded-lg p-4 min-h-[200px] transition-colors ${
+        isOver ? 'bg-blue-50 dark:bg-blue-950' : 'border-gray-300'
       }`}
     >
-      <h3 className="mb-3">{category}</h3>
+      <h3 className="mb-3 font-semibold">{title}</h3>
+      {description && <p className="text-sm text-gray-500 mb-3">{description}</p>}
       <div className="space-y-2">
-        {sortedPlotPoints.map((point) => (
-          <DraggablePlotPoint
-            key={point.id}
-            plotPoint={point}
-            mythemes={mythemes}
-            onDrop={onDrop}
-            onDelete={onDelete}
-            onEdit={onEdit}
-            canEdit={canEdit}
-          />
-        ))}
-        {sortedPlotPoints.length === 0 && (
+        {plotPoints.length === 0 && !description && (
           <p className="text-gray-400 text-center py-8">
             {canEdit ? 'Drop plot points here' : 'No plot points in this category'}
           </p>
         )}
+        {plotPoints.map((point) => (
+          <DraggablePlotPoint
+            key={point.id}
+            plotPoint={point}
+            mythemes={mythemes}
+            canEdit={canEdit}
+            viewerEmail={viewerEmail}
+            currentCategoryId={acceptSelf ?? ''}
+          />
+        ))}
       </div>
     </div>
   );
@@ -136,40 +134,96 @@ export function GroupedView({
   plotPoints,
   mythemes,
   categories,
-  onUpdatePlotPoint,
+  collaboratorCategories = [],
+  viewerEmail,
+  onAssignCategory,
   onDeletePlotPoint,
   onEditPlotPoint,
   canEdit = true,
 }: GroupedViewProps) {
-  const handleDrop = (id: string, newCategory: string) => {
-    if (canEdit && onUpdatePlotPoint) {
-      void onUpdatePlotPoint(id, { category: newCategory });
+  const normalizedViewerEmail = viewerEmail?.toLowerCase() ?? '';
+  const viewerCategories = collaboratorCategories.filter(
+    (category) => category.collaboratorEmail === normalizedViewerEmail,
+  );
+
+  const plotPointsByCategory = new Map<string, PlotPointType[]>();
+  plotPointsByCategory.set(UNCATEGORIZED_COLUMN_ID, []);
+  viewerCategories.forEach((category) => {
+    plotPointsByCategory.set(category.id, []);
+  });
+
+  plotPoints.forEach((point) => {
+    const assignment = (point.collaboratorCategories ?? []).find(
+      (entry) => entry.collaboratorEmail === normalizedViewerEmail,
+    );
+    if (assignment && assignment.collaboratorCategoryId) {
+      const list = plotPointsByCategory.get(assignment.collaboratorCategoryId) ?? [];
+      list.push(point);
+      plotPointsByCategory.set(assignment.collaboratorCategoryId, list);
+    } else {
+      const list = plotPointsByCategory.get(UNCATEGORIZED_COLUMN_ID) ?? [];
+      list.push(point);
+      plotPointsByCategory.set(UNCATEGORIZED_COLUMN_ID, list);
     }
+  });
+
+  const handleAssign = async (plotPointId: string, categoryId: string | null, name?: string) => {
+    if (!onAssignCategory) return;
+    await onAssignCategory(plotPointId, categoryId, name);
   };
 
-  const groupedPoints = categories.reduce(
-    (acc, category) => {
-      acc[category] = plotPoints.filter((p) => p.category === category);
-      return acc;
-    },
-    {} as Record<string, PlotPointType[]>,
-  );
+  const requestNewCategory = async (plotPointId: string) => {
+    if (!onAssignCategory) return;
+    const name = window.prompt('Name for new category');
+    if (!name || !name.trim()) {
+      return;
+    }
+    await onAssignCategory(plotPointId, null, name.trim());
+  };
 
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {categories.map((category) => (
+        <CategoryDropZone
+          key="uncategorized"
+          title="Uncategorized"
+          plotPoints={plotPointsByCategory.get(UNCATEGORIZED_COLUMN_ID) ?? []}
+          mythemes={mythemes}
+          canEdit={canEdit}
+          viewerEmail={viewerEmail}
+          acceptSelf={UNCATEGORIZED_COLUMN_ID}
+          onDrop={async (plotPointId) => {
+            if (!canEdit) return;
+            await handleAssign(plotPointId, null);
+          }}
+        />
+        {viewerCategories.map((category) => (
           <CategoryDropZone
-            key={category}
-            category={category}
-            plotPoints={groupedPoints[category] || []}
+            key={category.id}
+            title={category.name}
+            plotPoints={plotPointsByCategory.get(category.id) ?? []}
             mythemes={mythemes}
-            onDrop={handleDrop}
-            onDelete={onDeletePlotPoint}
-            onEdit={onEditPlotPoint}
-            canEdit={canEdit && Boolean(onUpdatePlotPoint)}
+            canEdit={canEdit}
+            viewerEmail={viewerEmail}
+            acceptSelf={category.id}
+            onDrop={async (plotPointId) => {
+              if (!canEdit) return;
+              await handleAssign(plotPointId, category.id, category.name);
+            }}
           />
         ))}
+        {canEdit && onAssignCategory && (
+          <CategoryDropZone
+            key="new"
+            title="Create New Category"
+            plotPoints={[]}
+            mythemes={mythemes}
+            canEdit={canEdit}
+            viewerEmail={viewerEmail}
+            description="Drag a plot point here to create a new personal category."
+            onDrop={requestNewCategory}
+          />
+        )}
       </div>
     </DndProvider>
   );

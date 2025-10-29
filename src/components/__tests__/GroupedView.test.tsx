@@ -3,6 +3,7 @@ import React from 'react';
 import { vi } from 'vitest';
 
 import { GroupedView } from '../GroupedView';
+import type { CollaboratorCategory } from '../../types/myth';
 
 const dropHandlers = vi.hoisted(() => [] as Array<(item: { id: string; currentCategory: string }) => void>);
 const plotPointCalls = vi.hoisted(() => [] as Array<any>);
@@ -10,11 +11,7 @@ const plotPointCalls = vi.hoisted(() => [] as Array<any>);
 vi.mock('../PlotPoint', () => ({
   PlotPoint: vi.fn((props) => {
     plotPointCalls.push(props);
-    return (
-      <div data-testid={`plot-${props.plotPoint.id}`}>
-        {props.plotPoint.text} ({props.plotPoint.category})
-      </div>
-    );
+    return <div data-testid={`plot-${props.plotPoint.id}`}>{props.plotPoint.text}</div>;
   }),
 }));
 
@@ -35,12 +32,18 @@ const mythemes = [
   { id: 'theme-2', name: 'Hero', type: 'character', color: '#00f' },
 ];
 
+const viewerEmail = 'editor@example.com';
+const collaboratorCategories: CollaboratorCategory[] = [
+  { id: 'cat-1', mythId: 'myth-1', collaboratorEmail: viewerEmail, name: 'Drama' },
+];
+
 const createPlotPoint = (overrides: Partial<any> = {}) => ({
   id: `point-${Math.random().toString(36).slice(2, 7)}`,
   text: 'Sample plot point',
   category: 'Introduction',
   order: 1,
   mythemeRefs: [],
+  collaboratorCategories: [],
   ...overrides,
 });
 
@@ -51,53 +54,69 @@ describe('GroupedView', () => {
     vi.clearAllMocks();
   });
 
-  test('renders grouped plot points and handles drop updates', () => {
-    const onUpdatePlotPoint = vi.fn().mockResolvedValue(undefined);
-    const plotPoints = [
-      createPlotPoint({ id: 'p1', text: 'Arrival', category: 'Introduction', order: 2 }),
-      createPlotPoint({ id: 'p2', text: 'Conflict arises', category: 'Conflict', order: 1 }),
-    ];
+  test('renders grouped plot points and handles assignments', async () => {
+    const onAssignCategory = vi.fn().mockResolvedValue(undefined);
 
-    const { container } = render(
+    const assignedPlotPoint = createPlotPoint({
+      id: 'p1',
+      text: 'Assigned',
+      collaboratorCategories: [
+        {
+          plotPointId: 'p1',
+          collaboratorCategoryId: 'cat-1',
+          collaboratorEmail: viewerEmail,
+          categoryName: 'Drama',
+        },
+      ],
+    });
+    const unassignedPlotPoint = createPlotPoint({ id: 'p2', text: 'Unassigned' });
+
+    render(
       <GroupedView
-        plotPoints={plotPoints}
+        plotPoints={[assignedPlotPoint, unassignedPlotPoint]}
         mythemes={mythemes}
-        categories={['Introduction', 'Conflict']}
-        onUpdatePlotPoint={onUpdatePlotPoint}
-        onDeletePlotPoint={vi.fn()}
-        onEditPlotPoint={vi.fn()}
+        categories={['Introduction']}
+        collaboratorCategories={collaboratorCategories}
+        viewerEmail={viewerEmail}
+        onAssignCategory={onAssignCategory}
         canEdit
       />,
     );
 
-    expect(container.firstChild).toMatchSnapshot();
-    expect(screen.getByText('Introduction')).toBeInTheDocument();
-    expect(screen.getByText('Conflict')).toBeInTheDocument();
+    expect(screen.getByText('Uncategorized')).toBeInTheDocument();
+    expect(screen.getByText('Drama')).toBeInTheDocument();
     expect(plotPointCalls).toHaveLength(2);
 
-    // Simulate dropping plot point p1 into the Conflict column.
-    expect(dropHandlers.length).toBeGreaterThanOrEqual(2);
-    const dropIntoConflict = dropHandlers[1];
-    dropIntoConflict({ id: 'p1', currentCategory: 'Introduction' });
-    expect(onUpdatePlotPoint).toHaveBeenCalledWith('p1', { category: 'Conflict' });
+    const [, dropIntoDrama, dropIntoNew] = dropHandlers;
+    dropIntoDrama({ id: 'p2', currentCategory: '__uncategorized__' });
+    expect(onAssignCategory).toHaveBeenCalledWith('p2', 'cat-1', 'Drama');
+
+    const [dropIntoUncategorized] = dropHandlers;
+    dropIntoUncategorized({ id: 'p1', currentCategory: 'cat-1' });
+    expect(onAssignCategory).toHaveBeenCalledWith('p1', null, undefined);
+
+    const promptSpy = vi.spyOn(window, 'prompt').mockReturnValue('Mystery');
+    dropIntoNew({ id: 'p1', currentCategory: 'cat-1' });
+    expect(onAssignCategory).toHaveBeenCalledWith('p1', null, 'Mystery');
+    promptSpy.mockRestore();
   });
 
-  test('shows placeholder when no plot points and editing disabled', () => {
+  test('renders read-only view when editing disabled', () => {
     render(
       <GroupedView
         plotPoints={[]}
         mythemes={mythemes}
-        categories={['Resolution']}
-        onUpdatePlotPoint={undefined}
+        categories={['Introduction']}
+        collaboratorCategories={collaboratorCategories}
+        viewerEmail={viewerEmail}
         canEdit={false}
       />,
     );
 
-    expect(screen.getByText(/no plot points in this category/i)).toBeInTheDocument();
-
-    // Drop should not trigger update when editing disabled.
+    expect(screen.getByText('Uncategorized')).toBeInTheDocument();
     expect(dropHandlers.length).toBeGreaterThan(0);
-    dropHandlers[0]({ id: 'p1', currentCategory: 'Resolution' });
+
+    dropHandlers[0]({ id: 'p1', currentCategory: '' });
     expect(plotPointCalls).toHaveLength(0);
   });
 });

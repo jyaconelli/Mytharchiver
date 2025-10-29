@@ -5,7 +5,6 @@ import { vi } from 'vitest';
 
 import { AddPlotPointDialog } from '../AddPlotPointDialog';
 
-const categories = ['Origins', 'Conflict', 'Resolution'];
 const mythemes = [
   { id: 'theme-1', name: 'Hero', type: 'character', color: '#fff' },
   { id: 'theme-2', name: 'Prophecy', type: 'event', color: '#eee' },
@@ -47,16 +46,6 @@ describe('AddPlotPointDialog', () => {
       window.ResizeObserver = MockResizeObserver;
     }
   });
-  const selectOption = async (user: ReturnType<typeof userEvent['setup']>, name: string) => {
-    await user.click(screen.getByLabelText(/category/i));
-    const optionLabel = screen
-      .getAllByText(name, { exact: true })
-      .find((element) => element.closest('[data-slot="select-item"]'));
-    if (!optionLabel) {
-      throw new Error(`Option ${name} not found`);
-    }
-    await user.click(optionLabel.closest('[data-slot="select-item"]') as HTMLElement);
-  };
   const findBadge = (name: string) =>
     screen
       .queryAllByText(name, { exact: true })
@@ -73,7 +62,6 @@ describe('AddPlotPointDialog', () => {
         open
         onOpenChange={onOpenChange}
         onAdd={onAdd}
-        categories={categories}
         mythemes={mythemes}
         nextOrder={4}
       />,
@@ -85,8 +73,6 @@ describe('AddPlotPointDialog', () => {
       screen.getByLabelText(/plot point text/i),
       'Prometheus walks among mortals to understand their suffering.',
     );
-
-    await selectOption(user, 'Conflict');
 
     await user.click(screen.getByRole('button', { name: /select mythemes/i }));
     await user.click(screen.getByLabelText(/hero/i));
@@ -100,7 +86,6 @@ describe('AddPlotPointDialog', () => {
 
     expect(onAdd).toHaveBeenCalledWith(
       'Prometheus walks among mortals to understand their suffering.',
-      'Conflict',
       ['theme-1', 'theme-2'],
     );
     expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -115,14 +100,12 @@ describe('AddPlotPointDialog', () => {
         open
         onOpenChange={vi.fn()}
         onAdd={onAdd}
-        categories={categories}
         mythemes={mythemes}
         nextOrder={10}
       />,
     );
 
     await user.type(screen.getByLabelText(/plot point text/i), 'Zeus notices the theft.');
-    await selectOption(user, 'Origins');
     await user.click(screen.getByRole('button', { name: /select mythemes/i }));
     await user.click(screen.getByLabelText(/hero/i));
     await user.click(screen.getByLabelText(/hero/i));

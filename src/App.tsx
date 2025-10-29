@@ -40,6 +40,7 @@ export default function App() {
     addCollaborator,
     updateCollaboratorRole,
     removeCollaborator,
+    createCollaboratorCategory,
   } = useMythArchive(session, currentUserEmail);
 
   const [selectedMythId, setSelectedMythId] = useState<string | null>(null);
@@ -240,8 +241,16 @@ export default function App() {
                 variant={selectedVariant}
                 mythemes={mythemes}
                 categories={selectedMyth?.categories ?? []}
+                canonicalCategories={selectedMyth?.canonicalCategories ?? []}
+                collaboratorCategories={selectedMyth?.collaboratorCategories ?? []}
                 onUpdateVariant={handleUpdateVariant}
                 canEdit={canEditSelectedMyth}
+                viewerEmail={currentUserEmail}
+                onCreateCollaboratorCategory={
+                  selectedMyth
+                    ? (name) => createCollaboratorCategory(selectedMyth.id, name)
+                    : undefined
+                }
               />
             )}
           </>

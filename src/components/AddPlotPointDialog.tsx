@@ -3,7 +3,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Button } from './ui/button';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Mytheme } from '../types/myth';
 import { Checkbox } from './ui/checkbox';
 import { Badge } from './ui/badge';
@@ -12,8 +11,7 @@ import { X, Loader2 } from 'lucide-react';
 interface AddPlotPointDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onAdd: (text: string, category: string, mythemeRefs: string[]) => Promise<void>;
-  categories: string[];
+  onAdd: (text: string, mythemeRefs: string[]) => Promise<void>;
   mythemes: Mytheme[];
   nextOrder: number;
 }
@@ -22,12 +20,10 @@ export function AddPlotPointDialog({
   open,
   onOpenChange,
   onAdd,
-  categories,
   mythemes,
   nextOrder,
 }: AddPlotPointDialogProps) {
   const [text, setText] = useState('');
-  const [category, setCategory] = useState('');
   const [selectedMythemes, setSelectedMythemes] = useState<string[]>([]);
   const [showMythemeSelector, setShowMythemeSelector] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -35,7 +31,7 @@ export function AddPlotPointDialog({
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!text.trim() || !category) {
+    if (!text.trim()) {
       return;
     }
 
@@ -43,9 +39,8 @@ export function AddPlotPointDialog({
     setError(null);
 
     try {
-      await onAdd(text, category, selectedMythemes);
+      await onAdd(text, selectedMythemes);
       setText('');
-      setCategory('');
       setSelectedMythemes([]);
       setShowMythemeSelector(false);
       onOpenChange(false);
@@ -87,22 +82,6 @@ export function AddPlotPointDialog({
                 rows={3}
                 required
               />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="plot-category">Category</Label>
-              <Select value={category} onValueChange={setCategory} required>
-                <SelectTrigger id="plot-category">
-                  <SelectValue placeholder="Select a category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((cat) => (
-                    <SelectItem key={cat} value={cat}>
-                      {cat}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
             </div>
 
             <div className="space-y-2">

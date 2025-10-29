@@ -10,6 +10,7 @@ interface PlotPointProps {
   isDragging?: boolean;
   onDelete?: (id: string) => void;
   onEdit?: (plotPoint: PlotPointType) => void;
+  viewerEmail?: string;
 }
 
 export function PlotPoint({
@@ -19,6 +20,7 @@ export function PlotPoint({
   isDragging = false,
   onDelete,
   onEdit,
+  viewerEmail,
 }: PlotPointProps) {
   // Function to highlight mytheme references in text
   const renderTextWithHighlights = (text: string) => {
@@ -111,6 +113,30 @@ export function PlotPoint({
               {plotPoint.category}
             </Badge>
           )}
+          {Array.isArray(plotPoint.collaboratorCategories) &&
+            plotPoint.collaboratorCategories.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-1">
+                {plotPoint.collaboratorCategories.map((assignment) => {
+                  const normalizedViewer = viewerEmail?.toLowerCase();
+                  const isViewer =
+                    normalizedViewer !== undefined &&
+                    assignment.collaboratorEmail === normalizedViewer;
+
+                  return (
+                    <Badge
+                      key={`${assignment.collaboratorCategoryId}-${assignment.collaboratorEmail}-${assignment.categoryName}`}
+                      variant="outline"
+                      className="text-[0.65rem] uppercase"
+                    >
+                      {assignment.categoryName}
+                      <span className="ml-1 normal-case text-gray-600 dark:text-gray-300">
+                        {isViewer ? 'You' : assignment.collaboratorEmail}
+                      </span>
+                    </Badge>
+                  );
+                })}
+              </div>
+            )}
         </div>
         {(onEdit || onDelete) && (
           <div className="flex items-center gap-1">

@@ -4,7 +4,7 @@ import React from 'react';
 import { vi } from 'vitest';
 
 import { VariantView } from '../VariantView';
-import type { MythVariant, PlotPoint, Mytheme } from '../../types/myth';
+import type { CollaboratorCategory, MythVariant, PlotPoint, Mytheme } from '../../types/myth';
 
 const ensureDomMocks = () => {
   const proto = window.HTMLElement.prototype as HTMLElement & {
@@ -37,12 +37,11 @@ const ensureDomMocks = () => {
       unobserve() {}
       disconnect() {}
     }
-    // @ts-expect-error mock for test environment
     window.ResizeObserver = MockResizeObserver;
   }
   if (!globalThis.crypto || typeof globalThis.crypto.randomUUID !== 'function') {
     Object.defineProperty(globalThis, 'crypto', {
-      value: { randomUUID: vi.fn(() => 'generated-id') },
+      value: { randomUUID: vi.fn(() => 'generated-id-faked-for-testing') },
       configurable: true,
     });
   }
@@ -65,7 +64,11 @@ const resetCapturedProps = () => {
 vi.mock('../TimelineView', () => ({
   TimelineView: (props: any) => {
     timelinePropsCalls.push(props);
-    return <div data-testid="timeline-view">{props.plotPoints.map((p: PlotPoint) => p.text).join(',')}</div>;
+    return (
+      <div data-testid="timeline-view">
+        {props.plotPoints.map((p: PlotPoint) => p.text).join(',')}
+      </div>
+    );
   },
 }));
 
@@ -98,8 +101,8 @@ vi.mock('../EditPlotPointDialog', () => ({
 }));
 
 const mythemes: Mytheme[] = [
-  { id: 't1', name: 'Fire', type: 'object', color: '#fff' },
-  { id: 't2', name: 'Prometheus', type: 'character', color: '#eee' },
+  { id: 't1', name: 'Fire', type: 'object' },
+  { id: 't2', name: 'Prometheus', type: 'character' },
 ];
 
 const variant: MythVariant = {
@@ -107,18 +110,27 @@ const variant: MythVariant = {
   name: 'Canonical Version',
   source: 'Oral tradition',
   plotPoints: [
-    { id: 'p1', text: 'Prometheus observes humans', category: 'Introduction', order: 1, mythemeRefs: [] },
+    {
+      id: 'p1',
+      text: 'Prometheus observes humans',
+      category: 'Introduction',
+      order: 1,
+      mythemeRefs: [],
+    },
     { id: 'p2', text: 'Fire is stolen', category: 'Conflict', order: 2, mythemeRefs: ['t1'] },
   ],
 };
 
 const categories = ['Introduction', 'Conflict', 'Resolution'];
+const collaboratorCategories: CollaboratorCategory[] = [];
 
 describe('VariantView', () => {
   beforeAll(() => {
     ensureDomMocks();
     if (globalThis.crypto && typeof globalThis.crypto.randomUUID === 'function') {
-      vi.spyOn(globalThis.crypto, 'randomUUID').mockImplementation(() => 'generated-id');
+      vi.spyOn(globalThis.crypto, 'randomUUID').mockImplementation(
+        () => 'generated-id-faked-for-testing',
+      );
     }
   });
 
@@ -130,7 +142,15 @@ describe('VariantView', () => {
     const user = userEvent.setup();
 
     const { container } = render(
-      <VariantView variant={variant} mythemes={mythemes} categories={categories} onUpdateVariant={vi.fn()} />,
+      <VariantView
+        variant={variant}
+        mythemes={mythemes}
+        categories={categories}
+        canonicalCategories={[]}
+        collaboratorCategories={collaboratorCategories}
+        onUpdateVariant={vi.fn()}
+        viewerEmail="owner@example.com"
+      />,
     );
 
     expect(container.firstChild).toMatchSnapshot();
@@ -148,28 +168,33 @@ describe('VariantView', () => {
     const onUpdateVariant = vi.fn().mockResolvedValue(undefined);
 
     render(
-      <VariantView variant={variant} mythemes={mythemes} categories={categories} onUpdateVariant={onUpdateVariant} />,
+      <VariantView
+        variant={variant}
+        mythemes={mythemes}
+        categories={categories}
+        canonicalCategories={[]}
+        collaboratorCategories={collaboratorCategories}
+        onUpdateVariant={onUpdateVariant}
+        viewerEmail="owner@example.com"
+      />,
     );
 
     // Trigger add plot point
     await user.click(screen.getByRole('button', { name: /add plot point/i }));
     expect(addDialogProps.open).toBe(true);
     await act(async () => {
-      await addDialogProps.onAdd('New point', 'Resolution', ['t2']);
+      await addDialogProps.onAdd('New point', ['t2']);
     });
 
-    expect(onUpdateVariant).toHaveBeenCalledWith({
-      ...variant,
-      plotPoints: [
-        ...variant.plotPoints,
-        {
-          id: 'generated-id',
-          text: 'New point',
-          category: 'Resolution',
-          order: variant.plotPoints.length + 1,
-          mythemeRefs: ['t2'],
-        },
-      ],
+    const firstCall = onUpdateVariant.mock.calls[0][0];
+    expect(firstCall.plotPoints).toHaveLength(variant.plotPoints.length + 1);
+    const addedPoint = firstCall.plotPoints.at(-1);
+    expect(addedPoint).toMatchObject({
+      text: 'New point',
+      category: 'Uncategorized',
+      mythemeRefs: ['t2'],
+      canonicalCategoryId: null,
+      collaboratorCategories: [],
     });
 
     // Trigger edit
@@ -186,17 +211,12 @@ describe('VariantView', () => {
       });
     });
 
-    expect(onUpdateVariant).toHaveBeenCalledWith({
-      ...variant,
-      plotPoints: [
-        variant.plotPoints[0],
-        {
-          ...variant.plotPoints[1],
-          text: 'Updated fire theft',
-          category: 'Conflict',
-          mythemeRefs: [],
-        },
-      ],
+    const secondCall = onUpdateVariant.mock.calls[1][0];
+    expect(secondCall.plotPoints[1]).toMatchObject({
+      id: variant.plotPoints[1].id,
+      text: 'Updated fire theft',
+      category: 'Conflict',
+      mythemeRefs: [],
     });
 
     // Trigger delete
@@ -204,12 +224,151 @@ describe('VariantView', () => {
       await timelineProps.onDeletePlotPoint?.('p1');
     });
 
-    expect(onUpdateVariant).toHaveBeenCalledWith({
+    const thirdCall = onUpdateVariant.mock.calls[2][0];
+    expect(thirdCall.plotPoints).toHaveLength(2);
+    expect(thirdCall.plotPoints[0]).toMatchObject({
+      id: 'p2',
+      order: 1,
+    });
+    expect(thirdCall.plotPoints[1]).toMatchObject({
+      id: 'generated-id-faked-for-testing',
+      order: 2,
+    });
+  });
+
+  test('creates collaborator category before assigning when available', async () => {
+    const onUpdateVariant = vi.fn().mockResolvedValue(undefined);
+    const onCreateCollaboratorCategory = vi.fn().mockResolvedValue({
+      id: 'cat-123',
+      mythId: 'myth-1',
+      collaboratorEmail: 'owner@example.com',
+      name: 'My Thread',
+    });
+    const user = userEvent.setup();
+
+    render(
+      <VariantView
+        variant={variant}
+        mythemes={mythemes}
+        categories={categories}
+        canonicalCategories={[]}
+        collaboratorCategories={collaboratorCategories}
+        onUpdateVariant={onUpdateVariant}
+        onCreateCollaboratorCategory={onCreateCollaboratorCategory}
+        viewerEmail="owner@example.com"
+      />,
+    );
+
+    await user.click(screen.getByRole('tab', { name: /grouped/i }));
+
+    const groupedProps = groupedPropsCalls.at(-1);
+    expect(groupedProps?.onAssignCategory).toBeDefined();
+
+    await act(async () => {
+      await groupedProps.onAssignCategory?.('p1', null, 'My Thread');
+    });
+
+    expect(onCreateCollaboratorCategory).toHaveBeenCalledWith('My Thread');
+    const updatedVariant = onUpdateVariant.mock.calls.at(-1)?.[0];
+    expect(updatedVariant).toBeDefined();
+    expect(updatedVariant.plotPoints[0].collaboratorCategories).toEqual([
+      {
+        plotPointId: 'p1',
+        collaboratorCategoryId: 'cat-123',
+        collaboratorEmail: 'owner@example.com',
+        categoryName: 'My Thread',
+      },
+    ]);
+  });
+
+  test('preserves previous grouped assignments after consecutive drags', async () => {
+    const user = userEvent.setup();
+    const onUpdateVariant = vi.fn().mockResolvedValue(undefined);
+    const viewerEmail = 'editor@example.com';
+
+    const variantWithAssignments: MythVariant = {
       ...variant,
       plotPoints: [
-        { ...variant.plotPoints[1], id: 'p2', order: 1 },
+        {
+          ...variant.plotPoints[0],
+          collaboratorCategories: [
+            {
+              plotPointId: 'p1',
+              collaboratorCategoryId: 'cat-1',
+              collaboratorEmail: viewerEmail,
+              categoryName: 'Thread Alpha',
+            },
+          ],
+        },
+        {
+          ...variant.plotPoints[1],
+          collaboratorCategories: [
+            {
+              plotPointId: 'p2',
+              collaboratorCategoryId: 'cat-1',
+              collaboratorEmail: viewerEmail,
+              categoryName: 'Thread Alpha',
+            },
+          ],
+        },
       ],
+    };
+
+    const viewerCollaboratorCategories: CollaboratorCategory[] = [
+      { id: 'cat-1', mythId: variant.id, collaboratorEmail: viewerEmail, name: 'Thread Alpha' },
+      { id: 'cat-2', mythId: variant.id, collaboratorEmail: viewerEmail, name: 'Thread Beta' },
+    ];
+
+    render(
+      <VariantView
+        variant={variantWithAssignments}
+        mythemes={mythemes}
+        categories={categories}
+        canonicalCategories={[]}
+        collaboratorCategories={viewerCollaboratorCategories}
+        onUpdateVariant={onUpdateVariant}
+        viewerEmail={viewerEmail}
+      />,
+    );
+
+    await user.click(screen.getByRole('tab', { name: /grouped/i }));
+
+    const groupedProps = groupedPropsCalls.at(-1);
+    expect(groupedProps?.onAssignCategory).toBeDefined();
+
+    await act(async () => {
+      await groupedProps.onAssignCategory?.('p1', 'cat-2', 'Thread Beta');
     });
+
+    await act(async () => {
+      await groupedProps.onAssignCategory?.('p2', 'cat-2', 'Thread Beta');
+    });
+
+    expect(onUpdateVariant).toHaveBeenCalledTimes(2);
+
+    const finalVariant = onUpdateVariant.mock.calls.at(-1)?.[0];
+    expect(
+      finalVariant?.plotPoints.find((point: PlotPoint) => point.id === 'p1')
+        ?.collaboratorCategories,
+    ).toEqual([
+      {
+        plotPointId: 'p1',
+        collaboratorCategoryId: 'cat-2',
+        collaboratorEmail: viewerEmail,
+        categoryName: 'Thread Beta',
+      },
+    ]);
+    expect(
+      finalVariant?.plotPoints.find((point: PlotPoint) => point.id === 'p2')
+        ?.collaboratorCategories,
+    ).toEqual([
+      {
+        plotPointId: 'p2',
+        collaboratorCategoryId: 'cat-2',
+        collaboratorEmail: viewerEmail,
+        categoryName: 'Thread Beta',
+      },
+    ]);
   });
 
   test('displays error when persistence fails', async () => {
@@ -217,13 +376,21 @@ describe('VariantView', () => {
     const onUpdateVariant = vi.fn().mockRejectedValue(new Error('Unable to update the variant.'));
 
     render(
-      <VariantView variant={variant} mythemes={mythemes} categories={categories} onUpdateVariant={onUpdateVariant} />,
+      <VariantView
+        variant={variant}
+        mythemes={mythemes}
+        categories={categories}
+        canonicalCategories={[]}
+        collaboratorCategories={collaboratorCategories}
+        onUpdateVariant={onUpdateVariant}
+        viewerEmail="owner@example.com"
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: /add plot point/i }));
     expect(addDialogProps.open).toBe(true);
     await act(async () => {
-      await expect(addDialogProps.onAdd('Failing', 'Conflict', [])).rejects.toThrow();
+      await expect(addDialogProps.onAdd('Failing', [])).rejects.toThrow();
     });
 
     expect(await screen.findByText(/unable to update the variant/i)).toBeInTheDocument();
@@ -235,15 +402,18 @@ describe('VariantView', () => {
         variant={variant}
         mythemes={mythemes}
         categories={categories}
+        canonicalCategories={[]}
+        collaboratorCategories={collaboratorCategories}
         onUpdateVariant={vi.fn()}
         canEdit={false}
+        viewerEmail="owner@example.com"
       />,
     );
 
     expect(screen.queryByRole('button', { name: /add plot point/i })).not.toBeInTheDocument();
     expect(addDialogProps).toBeUndefined();
     expect(timelinePropsCalls[0].onDeletePlotPoint).toBeUndefined();
-    expect(groupedPropsCalls[0]?.onUpdatePlotPoint).toBeUndefined();
+    expect(groupedPropsCalls[0]?.onAssignCategory).toBeUndefined();
     expect(gridPropsCalls[0]?.onEditPlotPoint).toBeUndefined();
   });
 });
