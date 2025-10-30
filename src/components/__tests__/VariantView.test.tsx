@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { vi } from 'vitest';
 
-import { VariantView } from '../VariantView';
+import { VariantView, computeVariantInsightMetrics } from '../VariantView';
 import type {
   CollaboratorCategory,
   MythCollaborator,
@@ -433,5 +433,88 @@ describe('VariantView', () => {
     expect(timelinePropsCalls[0].onDeletePlotPoint).toBeUndefined();
     expect(groupedPropsCalls[0]?.onAssignCategory).toBeUndefined();
     expect(gridPropsCalls[0]?.onEditPlotPoint).toBeUndefined();
+  });
+
+  test('computes insight metrics for contributor coverage and agreement', () => {
+    const plotPointsWithAssignments: PlotPoint[] = [
+      {
+        id: 'p1',
+        text: 'First point',
+        category: 'Introduction',
+        order: 1,
+        mythemeRefs: [],
+        collaboratorCategories: [
+          {
+            plotPointId: 'p1',
+            collaboratorCategoryId: 'owner-cat',
+            collaboratorEmail: 'owner@example.com',
+            categoryName: 'Hero',
+          },
+          {
+            plotPointId: 'p1',
+            collaboratorCategoryId: 'editor-cat',
+            collaboratorEmail: 'editor@example.com',
+            categoryName: 'Conflict',
+          },
+        ],
+      },
+      {
+        id: 'p2',
+        text: 'Second point',
+        category: 'Conflict',
+        order: 2,
+        mythemeRefs: [],
+        collaboratorCategories: [
+          {
+            plotPointId: 'p2',
+            collaboratorCategoryId: 'owner-cat',
+            collaboratorEmail: 'owner@example.com',
+            categoryName: 'Hero',
+          },
+          {
+            plotPointId: 'p2',
+            collaboratorCategoryId: 'guest-cat',
+            collaboratorEmail: 'guest@example.com',
+            categoryName: 'Guest',
+          },
+        ],
+      },
+      {
+        id: 'p3',
+        text: 'Third point',
+        category: 'Resolution',
+        order: 3,
+        mythemeRefs: [],
+        collaboratorCategories: [],
+      },
+    ];
+
+    const metrics = computeVariantInsightMetrics(plotPointsWithAssignments, collaborators);
+
+    expect(metrics.totalPlotPoints).toBe(3);
+    expect(metrics.totalAssignments).toBe(3);
+    expect(metrics.totalCapacity).toBe(6);
+    expect(metrics.completionPercentage).toBe(50);
+    expect(metrics.averageAssignmentsPerPlotPoint).toBe(1);
+    expect(metrics.coverageByCollaborator).toEqual([
+      {
+        email: 'editor@example.com',
+        completed: 1,
+        percentage: 33.3,
+        role: 'editor',
+      },
+      {
+        email: 'owner@example.com',
+        completed: 2,
+        percentage: 66.7,
+        role: 'owner',
+      },
+    ]);
+    expect(metrics.pairwiseAgreements[0][1]).toBeCloseTo(0.5, 5);
+    expect(metrics.agreementSummary.average).toBe(50);
+    expect(metrics.agreementSummary.highest).toEqual({
+      pair: ['editor@example.com', 'owner@example.com'],
+      score: 0.5,
+    });
   });
 });

@@ -50,6 +50,161 @@ const createLocalId = () =>
     ? crypto.randomUUID()
     : `plot-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
+const normalizeEmail = (email?: string | null) =>
+  typeof email === 'string' && email.trim().length > 0 ? email.trim().toLowerCase() : null;
+
+const roundToDecimal = (value: number, precision = 1) => {
+  const factor = 10 ** precision;
+  return Math.round(value * factor) / factor;
+};
+
+type VariantInsightCoverageStat = {
+  email: string;
+  completed: number;
+  percentage: number;
+  role: MythCollaborator['role'] | null;
+};
+
+export type VariantInsightMetrics = {
+  totalPlotPoints: number;
+  collaboratorEmails: string[];
+  totalAssignments: number;
+  totalContributors: number;
+  totalCapacity: number;
+  completionPercentage: number;
+  averageAssignmentsPerPlotPoint: number;
+  coverageByCollaborator: VariantInsightCoverageStat[];
+  pairwiseAgreements: number[][];
+  agreementSummary: {
+    average: number;
+    highest: null | { pair: [string, string]; score: number };
+  };
+};
+
+export const computeVariantInsightMetrics = (
+  plotPoints: PlotPointType[],
+  collaborators: MythCollaborator[],
+): VariantInsightMetrics => {
+  const totalPlotPoints = plotPoints.length;
+  const collaboratorEmails = Array.from(
+    new Set(
+      collaborators
+        .map((collaborator) => normalizeEmail(collaborator.email))
+        .filter((email): email is string => Boolean(email)),
+    ),
+  ).sort();
+
+  const collaboratorEmailSet = new Set(collaboratorEmails);
+  const roleLookup = new Map<string, MythCollaborator['role']>();
+  collaboratorEmails.forEach((email) => roleLookup.set(email, null));
+  collaborators.forEach((collaborator) => {
+    const normalized = normalizeEmail(collaborator.email);
+    if (!normalized) return;
+    roleLookup.set(normalized, collaborator.role);
+  });
+
+  const assignmentsByPlotPoint: Array<Set<string>> = [];
+  const assignmentsByEmail = new Map<string, Set<string>>();
+  collaboratorEmails.forEach((email) => assignmentsByEmail.set(email, new Set<string>()));
+
+  plotPoints.forEach((plotPoint) => {
+    const seenForPoint = new Set<string>();
+    (plotPoint.collaboratorCategories ?? []).forEach((assignment) => {
+      const normalized = normalizeEmail(assignment.collaboratorEmail);
+      if (!normalized || !collaboratorEmailSet.has(normalized)) {
+        return;
+      }
+      seenForPoint.add(normalized);
+      assignmentsByEmail.get(normalized)?.add(plotPoint.id);
+    });
+    assignmentsByPlotPoint.push(seenForPoint);
+  });
+
+  const totalAssignments = assignmentsByPlotPoint.reduce((sum, assignmentSet) => sum + assignmentSet.size, 0);
+  const totalContributors = collaboratorEmails.length;
+  const totalCapacity = totalPlotPoints * totalContributors;
+  const completionPercentage = totalCapacity
+    ? Math.min(roundToDecimal((totalAssignments / totalCapacity) * 100), 100)
+    : 0;
+
+  const averageAssignmentsPerPlotPoint = totalPlotPoints
+    ? roundToDecimal(totalAssignments / totalPlotPoints)
+    : 0;
+
+  const coverageByCollaborator: VariantInsightCoverageStat[] = collaboratorEmails.map((email) => {
+    const completed = assignmentsByEmail.get(email)?.size ?? 0;
+    const percentage = totalPlotPoints
+      ? Math.min(roundToDecimal((completed / totalPlotPoints) * 100), 100)
+      : 0;
+    return {
+      email,
+      completed,
+      percentage,
+      role: roleLookup.get(email) ?? null,
+    };
+  });
+
+  const pairwiseAgreements = collaboratorEmails.map((emailA) =>
+    collaboratorEmails.map((emailB) => {
+      if (emailA === emailB) {
+        return 1;
+      }
+      const assignmentsA = assignmentsByEmail.get(emailA) ?? new Set<string>();
+      const assignmentsB = assignmentsByEmail.get(emailB) ?? new Set<string>();
+      if (assignmentsA.size === 0 && assignmentsB.size === 0) {
+        return 0;
+      }
+      let intersection = 0;
+      assignmentsA.forEach((plotPointId) => {
+        if (assignmentsB.has(plotPointId)) {
+          intersection += 1;
+        }
+      });
+      const union = new Set<string>([...assignmentsA, ...assignmentsB]);
+      const unionSize = union.size;
+      return unionSize ? intersection / unionSize : 0;
+    }),
+  );
+
+  let totalAgreement = 0;
+  let comparisons = 0;
+  let highest: VariantInsightMetrics['agreementSummary']['highest'] = null;
+
+  pairwiseAgreements.forEach((row, rowIndex) => {
+    row.forEach((value, columnIndex) => {
+      if (rowIndex >= columnIndex) {
+        return;
+      }
+      totalAgreement += value;
+      comparisons += 1;
+      if (!highest || value > highest.score) {
+        highest = {
+          pair: [collaboratorEmails[rowIndex], collaboratorEmails[columnIndex]],
+          score: value,
+        };
+      }
+    });
+  });
+
+  const averageAgreement = comparisons ? Math.min(roundToDecimal((totalAgreement / comparisons) * 100), 100) : 0;
+
+  return {
+    totalPlotPoints,
+    collaboratorEmails,
+    totalAssignments,
+    totalContributors,
+    totalCapacity,
+    completionPercentage,
+    averageAssignmentsPerPlotPoint,
+    coverageByCollaborator,
+    pairwiseAgreements,
+    agreementSummary: {
+      average: averageAgreement,
+      highest,
+    },
+  };
+};
+
 export function VariantView({
   variant,
   mythemes,
@@ -419,173 +574,73 @@ type VariantInsightsProps = {
 };
 
 function VariantInsights({ plotPoints, collaborators, viewerEmail }: VariantInsightsProps) {
-  const totalPlotPoints = plotPoints.length;
-  const collaboratorEmails = useMemo(() => {
-    const set = new Set<string>();
-    collaborators.forEach((collaborator) => {
-      if (collaborator.email) {
-        set.add(collaborator.email.toLowerCase());
-      }
-    });
-    return Array.from(set).sort();
-  }, [collaborators]);
+  const normalizedViewerEmail = useMemo(() => normalizeEmail(viewerEmail), [viewerEmail]);
 
-  const collaboratorRoleLookup = useMemo(() => {
-    const map = new Map<string, MythCollaborator['role']>();
-    collaborators.forEach((collaborator) => {
-      if (collaborator.email) {
-        map.set(collaborator.email.toLowerCase(), collaborator.role);
+  const {
+    totalPlotPoints,
+    collaboratorEmails,
+    totalAssignments,
+    totalContributors,
+    totalCapacity,
+    completionPercentage,
+    averageAssignmentsPerPlotPoint,
+    coverageByCollaborator,
+    pairwiseAgreements,
+    agreementSummary,
+  } = useMemo(
+    () => computeVariantInsightMetrics(plotPoints, collaborators),
+    [plotPoints, collaborators],
+  );
+
+  const roleLabelByEmail = useMemo(() => {
+    const map = new Map<string, string>();
+    coverageByCollaborator.forEach((item) => {
+      if (!item.role) {
+        map.set(item.email, 'Contributor');
+        return;
       }
+      map.set(
+        item.email,
+        item.role === 'owner' ? 'Owner' : item.role.charAt(0).toUpperCase() + item.role.slice(1),
+      );
     });
     return map;
-  }, [collaborators]);
+  }, [coverageByCollaborator]);
 
   const getRoleLabel = useCallback(
-    (email: string) => {
-      const role = collaboratorRoleLookup.get(email);
-      if (!role) {
-        return 'Contributor';
-      }
-      return role === 'owner' ? 'Owner' : role.charAt(0).toUpperCase() + role.slice(1);
-    },
-    [collaboratorRoleLookup],
+    (email: string) => roleLabelByEmail.get(email) ?? 'Contributor',
+    [roleLabelByEmail],
   );
-
-  const assignmentsByPlotPoint = useMemo(() => {
-    return plotPoints.map((plotPoint) => {
-      const set = new Set<string>();
-      (plotPoint.collaboratorCategories ?? []).forEach((assignment) => {
-        if (assignment.collaboratorEmail) {
-          set.add(assignment.collaboratorEmail.toLowerCase());
-        }
-      });
-      return set;
-    });
-  }, [plotPoints]);
-
-  const totalAssignments = assignmentsByPlotPoint.reduce(
-    (sum, assignmentSet) => sum + assignmentSet.size,
-    0,
-  );
-
-  const totalContributors = collaboratorEmails.length;
-  const totalCapacity = totalPlotPoints * totalContributors;
-  const completionPercentage = totalCapacity
-    ? Math.round((totalAssignments / totalCapacity) * 1000) / 10
-    : 0;
-
-  const contributorCoverage = useMemo(() => {
-    return collaboratorEmails.map((email) => {
-      const completed = assignmentsByPlotPoint.filter((set) => set.has(email)).length;
-      const percentage = totalPlotPoints ? (completed / totalPlotPoints) * 100 : 0;
-      const roleLabel = getRoleLabel(email);
-      return {
-        email,
-        completed,
-        percentage: Math.round(percentage * 10) / 10,
-        roleLabel,
-      };
-    });
-  }, [assignmentsByPlotPoint, collaboratorEmails, totalPlotPoints, getRoleLabel]);
-
-  const coverageChartData = contributorCoverage.map((item) => ({
-    email: item.email,
-    label: item.email,
-    role: item.roleLabel,
-    completed: Math.round(item.percentage * 10) / 10,
-  }));
-
-  const assignmentsPerPlotPoint = assignmentsByPlotPoint.map((set) => set.size);
-  const averageAssignmentsPerPlotPoint = totalPlotPoints
-    ? Math.round((assignmentsPerPlotPoint.reduce((a, b) => a + b, 0) / totalPlotPoints) * 10) / 10
-    : 0;
 
   const coverageForViewer = useMemo(() => {
-    const normalized = viewerEmail?.toLowerCase();
-    if (!normalized) return null;
-    return contributorCoverage.find((item) => item.email === normalized) ?? null;
-  }, [contributorCoverage, viewerEmail]);
-
-  const pairwiseAgreements = useMemo(() => {
-    const plotPointAssignmentsByEmail = collaboratorEmails.map((email) => {
-      const set = new Set<string>();
-      plotPoints.forEach((plotPoint) => {
-        const assignments = plotPoint.collaboratorCategories ?? [];
-        const hasAssignment = assignments.some(
-          (assignment) => assignment.collaboratorEmail?.toLowerCase() === email,
-        );
-        if (hasAssignment) {
-          set.add(plotPoint.id);
-        }
-      });
-      return set;
-    });
-
-    return collaboratorEmails.map((emailA, indexA) =>
-      collaboratorEmails.map((emailB, indexB) => {
-        const assignmentsA = plotPointAssignmentsByEmail[indexA];
-        const assignmentsB = plotPointAssignmentsByEmail[indexB];
-        if (indexA === indexB) {
-          return 1;
-        }
-        const intersection = new Set<string>();
-        assignmentsA.forEach((plotPointId) => {
-          if (assignmentsB.has(plotPointId)) {
-            intersection.add(plotPointId);
-          }
-        });
-        const union = new Set<string>([...assignmentsA, ...assignmentsB]);
-        if (union.size === 0) {
-          return 0;
-        }
-        return intersection.size / union.size;
-      }),
-    );
-  }, [collaboratorEmails, plotPoints]);
-
-  const agreementSummary = useMemo(() => {
-    if (!pairwiseAgreements.length) {
-      return {
-        average: 0,
-        highest: null as null | { pair: [string, string]; score: number },
-      };
+    if (!normalizedViewerEmail) {
+      return null;
     }
+    return coverageByCollaborator.find((item) => item.email === normalizedViewerEmail) ?? null;
+  }, [coverageByCollaborator, normalizedViewerEmail]);
 
-    let total = 0;
-    let comparisons = 0;
-    let bestPair: null | { pair: [string, string]; score: number } = null;
+  const coverageChartData = useMemo(
+    () =>
+      coverageByCollaborator.map((item) => ({
+        email: item.email,
+        label: item.email,
+        role: getRoleLabel(item.email),
+        percentage: item.percentage,
+        completedCount: item.completed,
+      })),
+    [coverageByCollaborator, getRoleLabel],
+  );
 
-    pairwiseAgreements.forEach((row, rowIndex) => {
-      row.forEach((value, columnIndex) => {
-        if (rowIndex >= columnIndex) {
-          return;
-        }
-        total += value;
-        comparisons += 1;
-        if (!bestPair || value > bestPair.score) {
-          bestPair = {
-            pair: [collaboratorEmails[rowIndex], collaboratorEmails[columnIndex]],
-            score: value,
-          };
-        }
-      });
-    });
-
-    const averageScore = comparisons ? Math.round((total / comparisons) * 1000) / 10 : 0;
-
-    return {
-      average: averageScore,
-      highest: bestPair,
-    };
-  }, [pairwiseAgreements, collaboratorEmails]);
-
-  const completionChartData = [
-    {
-      name: 'Completion',
-      value: completionPercentage,
-      fill: 'var(--color-completion)',
-    },
-  ];
+  const completionChartData = useMemo(
+    () => [
+      {
+        name: 'Completion',
+        value: completionPercentage,
+        fill: 'var(--color-completion)',
+      },
+    ],
+    [completionPercentage],
+  );
 
   const chartConfig = {
     completion: {
@@ -628,7 +683,10 @@ function VariantInsights({ plotPoints, collaborators, viewerEmail }: VariantInsi
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center gap-6">
-          <ChartContainer config={chartConfig} className="w-full max-w-xs">
+          <ChartContainer
+            config={chartConfig}
+            className="w-full max-w-xs !aspect-square h-[260px]"
+          >
             <RadialBarChart
               data={completionChartData}
               startAngle={90}
@@ -648,7 +706,7 @@ function VariantInsights({ plotPoints, collaborators, viewerEmail }: VariantInsi
           <div className="text-center">
             <p className="text-3xl font-semibold">{completionPercentage.toFixed(1)}%</p>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Avg. assignments per plot point: {averageAssignmentsPerPlotPoint}
+              Avg. assignments per plot point: {averageAssignmentsPerPlotPoint.toFixed(1)}
             </p>
             {coverageForViewer && (
               <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -680,15 +738,24 @@ function VariantInsights({ plotPoints, collaborators, viewerEmail }: VariantInsi
               <YAxis
                 tickFormatter={(value) => `${value}%`}
                 tick={{ fill: 'var(--muted-foreground)' }}
+                domain={[0, 100]}
               />
               <ChartTooltip
                 cursor={{ fill: 'hsl(0 0% 95% / 0.6)' }}
                 content={
                   <ChartTooltipContent
-                    formatter={(value) => {
+                    formatter={(value, _name, item) => {
                       const numeric =
                         typeof value === 'number' ? value : Number.parseFloat(String(value ?? 0));
-                      return <span>{numeric.toFixed(1)}% completion</span>;
+                      const completedCount = Number(item?.payload?.completedCount ?? 0);
+                      return (
+                        <div className="flex flex-col gap-0.5">
+                          <span>{numeric.toFixed(1)}% completion</span>
+                          <span className="text-muted-foreground">
+                            {completedCount} / {totalPlotPoints} plot points
+                          </span>
+                        </div>
+                      );
                     }}
                     labelFormatter={(label) => {
                       const emailLabel = String(label);
@@ -698,7 +765,11 @@ function VariantInsights({ plotPoints, collaborators, viewerEmail }: VariantInsi
                   />
                 }
               />
-              <Bar dataKey="completed" fill="var(--color-coverage)" radius={[8, 8, 0, 0]} />
+              <Bar
+                dataKey="percentage"
+                fill="var(--color-coverage)"
+                radius={[8, 8, 0, 0]}
+              />
             </BarChart>
           </ChartContainer>
         </CardContent>
