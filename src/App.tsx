@@ -1,18 +1,50 @@
-import { useMemo } from 'react';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
+import type { ComponentType } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Loader2 } from 'lucide-react';
+import type { Session } from '@supabase/supabase-js';
 
 import { getSupabaseClient } from './lib/supabaseClient';
 import { useSupabaseAuth } from './hooks/useSupabaseAuth';
-import { AuthGate } from './components/AuthGate';
-import { ArchiveLayout } from './routes/ArchiveLayout';
-import { MythListPage } from './routes/MythListPage';
-import { MythDetailPage } from './routes/MythDetailPage';
-import { VariantDetailPage } from './routes/VariantDetailPage';
+import { AppRoutes } from './AppRoutes';
+import type { SupabaseAuthClient } from './routes/ArchiveLayout';
 
-export default function App() {
-  const supabase = useMemo(() => getSupabaseClient(), []);
-  const { session, authLoading } = useSupabaseAuth();
+type AppContainerProps = {
+  RouterComponent: ComponentType<any>;
+  routerProps?: Record<string, unknown>;
+  initialSession?: Session | null;
+  initialAuthLoading?: boolean;
+  supabaseClientOverride?: SupabaseAuthClient;
+};
+
+export function AppContainer({
+  RouterComponent,
+  routerProps,
+  initialSession,
+  initialAuthLoading,
+  supabaseClientOverride,
+}: AppContainerProps) {
+  const supabase = useMemo(
+    () => supabaseClientOverride ?? getSupabaseClient(),
+    [supabaseClientOverride],
+  );
+  const { session: liveSession, authLoading: liveAuthLoading } = useSupabaseAuth();
+  const [useInitialState, setUseInitialState] = useState(
+    initialSession !== undefined || initialAuthLoading !== undefined,
+  );
+
+  useEffect(() => {
+    if (useInitialState) {
+      setUseInitialState(false);
+    }
+  }, [useInitialState]);
+
+  const session =
+    useInitialState && initialSession !== undefined ? initialSession : liveSession;
+  const authLoading =
+    useInitialState && initialAuthLoading !== undefined
+      ? initialAuthLoading
+      : liveAuthLoading;
 
   if (authLoading) {
     return (
@@ -23,32 +55,15 @@ export default function App() {
     );
   }
 
+  const Router = RouterComponent;
+
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route
-          path="/auth"
-          element={session ? <Navigate to="/" replace /> : <AuthGate />}
-        />
-        <Route
-          path="/"
-          element={
-            session ? (
-              <ArchiveLayout session={session} supabaseClient={supabase} />
-            ) : (
-              <Navigate to="/auth" replace />
-            )
-          }
-        >
-          <Route index element={<MythListPage />} />
-          <Route path="myths/:mythId" element={<MythDetailPage />} />
-          <Route path="myths/:mythId/variants/:variantId" element={<VariantDetailPage />} />
-        </Route>
-        <Route
-          path="*"
-          element={<Navigate to={session ? '/' : '/auth'} replace />}
-        />
-      </Routes>
-    </BrowserRouter>
+    <Router {...(routerProps ?? {})}>
+      <AppRoutes session={session} supabaseClient={supabase} />
+    </Router>
   );
+}
+
+export default function App() {
+  return <AppContainer RouterComponent={BrowserRouter} />;
 }

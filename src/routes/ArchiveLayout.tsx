@@ -19,9 +19,11 @@ import {
   Mytheme,
 } from '../types/myth';
 
+export type SupabaseAuthClient = Pick<ReturnType<typeof getSupabaseClient>, 'auth'>;
+
 type ArchiveLayoutProps = {
   session: Session;
-  supabaseClient: ReturnType<typeof getSupabaseClient>;
+  supabaseClient?: SupabaseAuthClient;
 };
 
 export type ArchiveOutletContext = {
@@ -54,7 +56,7 @@ export type ArchiveOutletContext = {
 
 export function ArchiveLayout({ session, supabaseClient }: ArchiveLayoutProps) {
   const navigate = useNavigate();
-  const supabase = supabaseClient;
+  const supabase: SupabaseAuthClient = supabaseClient ?? getSupabaseClient();
   const currentUserEmail = session.user.email?.toLowerCase() ?? '';
   const sessionUserId = session.user.id;
 
