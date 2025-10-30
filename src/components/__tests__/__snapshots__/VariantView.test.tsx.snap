@@ -68,7 +68,7 @@ exports[`VariantView > renders variant summary and tabs with snapshot 1`] = `
   >
     <div
       aria-orientation="horizontal"
-      class="bg-muted text-muted-foreground items-center justify-center rounded-xl p-[3px] grid h-auto w-full grid-cols-2 gap-2 sm:grid-cols-4"
+      class="bg-muted text-muted-foreground items-center justify-center rounded-xl p-[3px] grid h-auto w-full gap-2 grid-cols-2 sm:grid-cols-4"
       data-orientation="horizontal"
       data-slot="tabs-list"
       role="tablist"

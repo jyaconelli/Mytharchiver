@@ -345,6 +345,8 @@ describe('VariantView', () => {
       />,
     );
 
+    expect(screen.queryByRole('tab', { name: /insights/i })).not.toBeInTheDocument();
+
     await user.click(screen.getByRole('tab', { name: /grouped/i }));
 
     const groupedProps = groupedPropsCalls.at(-1);

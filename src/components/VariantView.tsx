@@ -88,6 +88,27 @@ export function VariantView({
 
   const normalizedViewerEmail = viewerEmail.toLowerCase();
 
+  const viewerRole = useMemo(() => {
+    if (!normalizedViewerEmail) {
+      return null;
+    }
+    const matchingCollaborator = collaborators.find(
+      (collaborator) => collaborator.email?.toLowerCase() === normalizedViewerEmail,
+    );
+    return matchingCollaborator?.role ?? null;
+  }, [collaborators, normalizedViewerEmail]);
+
+  useEffect(() => {
+    if (viewerRole !== 'owner' && activeTab === 'insights') {
+      setActiveTab('timeline');
+    }
+  }, [activeTab, viewerRole]);
+
+  const tabListClassName =
+    viewerRole === 'owner'
+      ? 'grid h-auto w-full gap-2 grid-cols-2 sm:grid-cols-4'
+      : 'grid h-auto w-full gap-2 grid-cols-3';
+
   useEffect(() => {
     latestVariantRef.current = variant;
   }, [variant]);
@@ -319,7 +340,7 @@ export function VariantView({
       )}
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid h-auto w-full grid-cols-2 gap-2 sm:grid-cols-4">
+        <TabsList className={tabListClassName}>
           <TabsTrigger value="timeline" className="flex items-center gap-2">
             <LayoutList className="w-4 h-4" />
             Timeline
@@ -332,10 +353,12 @@ export function VariantView({
             <Grid3x3 className="w-4 h-4" />
             Grid
           </TabsTrigger>
-          <TabsTrigger value="insights" className="flex items-center gap-2">
-            <BarChart3 className="w-4 h-4" />
-            Insights
-          </TabsTrigger>
+          {viewerRole === 'owner' && (
+            <TabsTrigger value="insights" className="flex items-center gap-2">
+              <BarChart3 className="w-4 h-4" />
+              Insights
+            </TabsTrigger>
+          )}
         </TabsList>
 
         <TabsContent value="timeline" className="mt-4">
@@ -375,13 +398,15 @@ export function VariantView({
           />
         </TabsContent>
 
-        <TabsContent value="insights" className="mt-4">
-          <VariantInsights
-            plotPoints={variant.plotPoints}
-            collaborators={collaborators}
-            viewerEmail={viewerEmail}
-          />
-        </TabsContent>
+        {viewerRole === 'owner' && (
+          <TabsContent value="insights" className="mt-4">
+            <VariantInsights
+              plotPoints={variant.plotPoints}
+              collaborators={collaborators}
+              viewerEmail={viewerEmail}
+            />
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );
