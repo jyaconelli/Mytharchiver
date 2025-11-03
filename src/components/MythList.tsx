@@ -2,6 +2,7 @@ import { Myth } from '../types/myth';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Folder, ChevronRight, Plus, Users } from 'lucide-react';
 
 interface MythListProps {
@@ -51,20 +52,33 @@ export function MythList({ myths, selectedMythId, onSelectMyth, onAddMyth }: Myt
               {myth.collaborators.length > 0 && (
                 <div className="mt-2 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                   <Users className="h-4 w-4" />
-                  <div className="flex flex-wrap gap-1">
+                  <div className="flex flex-wrap items-center gap-2">
                     {myth.collaborators.slice(0, 3).map((collaborator) => (
-                      <Badge
+                      <div
                         key={collaborator.id}
-                        variant="outline"
-                        className="text-[0.65rem] uppercase"
+                        className="flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 dark:border-gray-700 dark:bg-gray-900"
                       >
-                        {collaborator.role === 'owner'
-                          ? 'Owner'
-                          : collaborator.role.charAt(0).toUpperCase() + collaborator.role.slice(1)}
-                        <span className="ml-1 normal-case text-gray-600 dark:text-gray-300">
-                          {collaborator.email}
-                        </span>
-                      </Badge>
+                        <Avatar className="h-6 w-6 border border-gray-200 text-[0.65rem] font-semibold dark:border-gray-600">
+                          <AvatarImage
+                            src={collaborator.avatarUrl ?? undefined}
+                            alt={collaborator.displayName ?? collaborator.email}
+                          />
+                          <AvatarFallback>
+                            {getInitials(collaborator.displayName ?? collaborator.email)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col leading-tight">
+                          <span className="text-[0.7rem] font-medium text-gray-800 dark:text-gray-100">
+                            {collaborator.displayName ?? collaborator.email}
+                          </span>
+                          <span className="text-[0.6rem] text-gray-500 dark:text-gray-400">
+                            {collaborator.role === 'owner'
+                              ? 'Owner'
+                              : collaborator.role.charAt(0).toUpperCase() +
+                                collaborator.role.slice(1)}
+                          </span>
+                        </div>
+                      </div>
                     ))}
                     {myth.collaborators.length > 3 && (
                       <Badge variant="secondary" className="text-[0.65rem]">
@@ -80,4 +94,13 @@ export function MythList({ myths, selectedMythId, onSelectMyth, onAddMyth }: Myt
       ))}
     </div>
   );
+}
+
+function getInitials(label: string) {
+  return label
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => word[0]?.toUpperCase())
+    .join('')
+    .slice(0, 2) || '??';
 }

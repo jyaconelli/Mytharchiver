@@ -139,41 +139,95 @@ exports[`MythList > renders myths and handles selection and addition 1`] = `
             />
           </svg>
           <div
-            class="flex flex-wrap gap-1"
+            class="flex flex-wrap items-center gap-2"
           >
-            <span
-              class="inline-flex items-center justify-center rounded-md border px-2 py-0.5 font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground text-[0.65rem] uppercase"
-              data-slot="badge"
+            <div
+              class="flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 dark:border-gray-700 dark:bg-gray-900"
             >
-              Owner
               <span
-                class="ml-1 normal-case text-gray-600 dark:text-gray-300"
+                class="relative flex size-10 shrink-0 overflow-hidden rounded-full h-6 w-6 border border-gray-200 text-[0.65rem] font-semibold dark:border-gray-600"
+                data-slot="avatar"
               >
-                owner@example.com
+                <span
+                  class="bg-muted flex size-full items-center justify-center rounded-full"
+                  data-slot="avatar-fallback"
+                >
+                  O
+                </span>
               </span>
-            </span>
-            <span
-              class="inline-flex items-center justify-center rounded-md border px-2 py-0.5 font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground text-[0.65rem] uppercase"
-              data-slot="badge"
+              <div
+                class="flex flex-col leading-tight"
+              >
+                <span
+                  class="text-[0.7rem] font-medium text-gray-800 dark:text-gray-100"
+                >
+                  owner@example.com
+                </span>
+                <span
+                  class="text-[0.6rem] text-gray-500 dark:text-gray-400"
+                >
+                  Owner
+                </span>
+              </div>
+            </div>
+            <div
+              class="flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 dark:border-gray-700 dark:bg-gray-900"
             >
-              Editor
               <span
-                class="ml-1 normal-case text-gray-600 dark:text-gray-300"
+                class="relative flex size-10 shrink-0 overflow-hidden rounded-full h-6 w-6 border border-gray-200 text-[0.65rem] font-semibold dark:border-gray-600"
+                data-slot="avatar"
               >
-                scribe@example.com
+                <span
+                  class="bg-muted flex size-full items-center justify-center rounded-full"
+                  data-slot="avatar-fallback"
+                >
+                  S
+                </span>
               </span>
-            </span>
-            <span
-              class="inline-flex items-center justify-center rounded-md border px-2 py-0.5 font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground text-[0.65rem] uppercase"
-              data-slot="badge"
+              <div
+                class="flex flex-col leading-tight"
+              >
+                <span
+                  class="text-[0.7rem] font-medium text-gray-800 dark:text-gray-100"
+                >
+                  scribe@example.com
+                </span>
+                <span
+                  class="text-[0.6rem] text-gray-500 dark:text-gray-400"
+                >
+                  Editor
+                </span>
+              </div>
+            </div>
+            <div
+              class="flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 dark:border-gray-700 dark:bg-gray-900"
             >
-              Viewer
               <span
-                class="ml-1 normal-case text-gray-600 dark:text-gray-300"
+                class="relative flex size-10 shrink-0 overflow-hidden rounded-full h-6 w-6 border border-gray-200 text-[0.65rem] font-semibold dark:border-gray-600"
+                data-slot="avatar"
               >
-                viewer@example.com
+                <span
+                  class="bg-muted flex size-full items-center justify-center rounded-full"
+                  data-slot="avatar-fallback"
+                >
+                  V
+                </span>
               </span>
-            </span>
+              <div
+                class="flex flex-col leading-tight"
+              >
+                <span
+                  class="text-[0.7rem] font-medium text-gray-800 dark:text-gray-100"
+                >
+                  viewer@example.com
+                </span>
+                <span
+                  class="text-[0.6rem] text-gray-500 dark:text-gray-400"
+                >
+                  Viewer
+                </span>
+              </div>
+            </div>
             <span
               class="inline-flex items-center justify-center rounded-md border px-2 py-0.5 font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90 text-[0.65rem]"
               data-slot="badge"

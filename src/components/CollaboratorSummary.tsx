@@ -1,12 +1,14 @@
-import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Users } from 'lucide-react';
 import { Myth } from '../types/myth';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
 type CollaboratorSummaryProps = {
   myth: Myth;
   currentUserEmail: string;
   sessionUserId: string;
+  currentUserDisplayName?: string | null;
+  currentUserAvatarUrl?: string | null;
   onManage: () => void;
 };
 
@@ -14,9 +16,17 @@ export function CollaboratorSummary({
   myth,
   currentUserEmail,
   sessionUserId,
+  currentUserDisplayName,
+  currentUserAvatarUrl,
   onManage,
 }: CollaboratorSummaryProps) {
-  const collaboratorsForDisplay = getCollaboratorsForDisplay(myth, currentUserEmail, sessionUserId);
+  const collaboratorsForDisplay = getCollaboratorsForDisplay(
+    myth,
+    currentUserEmail,
+    sessionUserId,
+    currentUserDisplayName,
+    currentUserAvatarUrl,
+  );
   const canManage = myth.ownerId === sessionUserId;
 
   return (
@@ -42,16 +52,36 @@ export function CollaboratorSummary({
           <span className="text-sm text-gray-500 dark:text-gray-400">No collaborators yet.</span>
         ) : (
           collaboratorsForDisplay.map((collaborator) => (
-            <Badge
+            <div
               key={collaborator.id}
-              variant="outline"
-              className="flex items-center gap-2 text-xs uppercase tracking-wide"
+              className="flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs uppercase tracking-wide dark:border-gray-700 dark:bg-gray-900"
             >
-              <span className="font-semibold">{collaborator.label}</span>
-              <span className="normal-case text-[0.7rem] text-gray-600 dark:text-gray-200">
-                {collaborator.email}
-              </span>
-            </Badge>
+              <Avatar className="h-6 w-6 border border-gray-200 text-[0.65rem] font-semibold dark:border-gray-600">
+                <AvatarImage
+                  src={collaborator.avatarUrl ?? undefined}
+                  alt={collaborator.displayName ?? collaborator.email}
+                />
+                <AvatarFallback>{collaborator.initials}</AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col text-left normal-case leading-tight">
+                <div className="flex items-center gap-1">
+                  <span className="text-[0.75rem] font-semibold text-gray-800 dark:text-gray-100">
+                    {collaborator.displayName ?? collaborator.email}
+                  </span>
+                  {collaborator.isCurrentUser && (
+                    <span className="rounded-full bg-blue-100 px-1.5 py-[1px] text-[0.55rem] font-semibold uppercase text-blue-700 dark:bg-blue-500/20 dark:text-blue-300">
+                      You
+                    </span>
+                  )}
+                </div>
+                <span className="text-[0.65rem] text-gray-500 dark:text-gray-400">
+                  {collaborator.label}
+                </span>
+                <span className="text-[0.6rem] text-gray-400 dark:text-gray-500">
+                  {collaborator.email}
+                </span>
+              </div>
+            </div>
           ))
         )}
       </div>
@@ -59,7 +89,13 @@ export function CollaboratorSummary({
   );
 }
 
-function getCollaboratorsForDisplay(myth: Myth, currentUserEmail: string, sessionUserId: string) {
+function getCollaboratorsForDisplay(
+  myth: Myth,
+  currentUserEmail: string,
+  sessionUserId: string,
+  currentUserDisplayName?: string | null,
+  currentUserAvatarUrl?: string | null,
+) {
   const collaborators = [...myth.collaborators];
   const normalizedEmail = currentUserEmail?.toLowerCase();
   const hasOwnerEntry = collaborators.some((collaborator) => collaborator.role === 'owner');
@@ -70,6 +106,8 @@ function getCollaboratorsForDisplay(myth: Myth, currentUserEmail: string, sessio
       mythId: myth.id,
       email: normalizedEmail,
       role: 'owner',
+      displayName: currentUserDisplayName ?? null,
+      avatarUrl: currentUserAvatarUrl ?? null,
     });
   }
 
@@ -88,9 +126,22 @@ function getCollaboratorsForDisplay(myth: Myth, currentUserEmail: string, sessio
     .map((collaborator) => ({
       id: collaborator.id,
       email: collaborator.email,
+      displayName: collaborator.displayName ?? null,
+      avatarUrl: collaborator.avatarUrl ?? null,
+      initials: getInitials(collaborator.displayName ?? collaborator.email),
+      isCurrentUser: collaborator.email === normalizedEmail,
       label:
         collaborator.role === 'owner'
           ? 'Owner'
           : collaborator.role.charAt(0).toUpperCase() + collaborator.role.slice(1),
     }));
+}
+
+function getInitials(label: string) {
+  return label
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => word[0]?.toUpperCase())
+    .join('')
+    .slice(0, 2) || '??';
 }

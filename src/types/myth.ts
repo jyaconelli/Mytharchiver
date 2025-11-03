@@ -49,6 +49,8 @@ export interface MythCollaborator {
   mythId: string;
   email: string;
   role: CollaboratorRole;
+  displayName?: string | null;
+  avatarUrl?: string | null;
 }
 
 export interface MythCategory {

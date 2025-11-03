@@ -5,6 +5,7 @@ import { VariantView } from '../components/VariantView';
 import { CollaboratorSummary } from '../components/CollaboratorSummary';
 import { useArchive } from './ArchiveLayout';
 import { CollaboratorRole } from '../types/myth';
+import { LoadingAnimation } from '../components/LoadingAnimation';
 
 export function VariantDetailPage() {
   const { mythId, variantId } = useParams<{ mythId: string; variantId: string }>();
@@ -13,9 +14,12 @@ export function VariantDetailPage() {
     mythemes,
     updateVariant,
     currentUserEmail,
+    currentUserDisplayName,
+    currentUserAvatarUrl,
     sessionUserId,
     createCollaboratorCategory,
     openManageCollaborators,
+    isInitialLoad,
   } = useArchive();
 
   const myth = useMemo(
@@ -41,7 +45,26 @@ export function VariantDetailPage() {
 
   const canEdit = selectedMythRole === 'owner' || selectedMythRole === 'editor';
 
-  if (!myth || !variant) {
+  if (isInitialLoad) {
+    return (
+      <div className="flex justify-center py-16">
+        <LoadingAnimation message="Loading variant…" />
+      </div>
+    );
+  }
+
+  if (!myth) {
+    return (
+      <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-6 text-yellow-800 dark:border-yellow-900/50 dark:bg-yellow-950/30 dark:text-yellow-200">
+        <h2 className="text-lg font-semibold">Myth not found</h2>
+        <p className="mt-2 text-sm">
+          The requested myth is unavailable or you may have lost access to it.
+        </p>
+      </div>
+    );
+  }
+
+  if (!variant) {
     return (
       <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-6 text-yellow-800 dark:border-yellow-900/50 dark:bg-yellow-950/30 dark:text-yellow-200">
         <h2 className="text-lg font-semibold">Variant not found</h2>
@@ -58,6 +81,8 @@ export function VariantDetailPage() {
         myth={myth}
         currentUserEmail={currentUserEmail}
         sessionUserId={sessionUserId}
+        currentUserDisplayName={currentUserDisplayName}
+        currentUserAvatarUrl={currentUserAvatarUrl}
         onManage={() => openManageCollaborators(myth.id)}
       />
 

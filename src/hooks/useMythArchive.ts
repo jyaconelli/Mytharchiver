@@ -31,6 +31,12 @@ type CollaboratorRow = {
   role: CollaboratorRole;
 };
 
+type UserProfileRow = {
+  email: string | null;
+  display_name: string | null;
+  avatar_url: string | null;
+};
+
 type MythemeRow = {
   id: string;
   name: string;
@@ -311,6 +317,51 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
         collaboratorRows = (collaboratorListResult.data as CollaboratorRow[] | null) ?? [];
       }
 
+      const collaboratorEmails = new Set<string>();
+      collaboratorRows.forEach((row) => {
+        if (row.email) {
+          collaboratorEmails.add(row.email.toLowerCase());
+        }
+      });
+      if (currentUserEmail) {
+        collaboratorEmails.add(currentUserEmail);
+      }
+
+      const profileMap = new Map<string, { displayName: string | null; avatarUrl: string | null }>();
+      if (collaboratorEmails.size > 0) {
+        const { data: profileData, error: profileError } = await supabase
+          .from('user_profiles')
+          .select('email, display_name, avatar_url')
+          .in('email', Array.from(collaboratorEmails));
+
+        if (profileError && profileError.code !== 'PGRST116') {
+          throw profileError;
+        }
+
+        (profileData as UserProfileRow[] | null)?.forEach((profile) => {
+          const email = (profile.email ?? '').toLowerCase();
+          if (!email) return;
+          profileMap.set(email, {
+            displayName: profile.display_name,
+            avatarUrl: profile.avatar_url,
+          });
+        });
+      }
+      if (currentUserEmail && !profileMap.has(currentUserEmail)) {
+        const metadata = session?.user?.user_metadata ?? {};
+        profileMap.set(currentUserEmail, {
+          displayName:
+            (metadata.display_name as string | undefined) ??
+            (metadata.full_name as string | undefined) ??
+            (metadata.name as string | undefined) ??
+            null,
+          avatarUrl:
+            (metadata.avatar_url as string | undefined) ??
+            (metadata.picture as string | undefined) ??
+            null,
+        });
+      }
+
       const collaboratorsByMyth = new Map<string, MythCollaborator[]>();
       collaboratorRows.forEach((row) => {
         const collaborator: MythCollaborator = {
@@ -318,6 +369,8 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
           mythId: row.myth_id,
           email: (row.email ?? '').toLowerCase(),
           role: row.role,
+          displayName: profileMap.get((row.email ?? '').toLowerCase())?.displayName ?? null,
+          avatarUrl: profileMap.get((row.email ?? '').toLowerCase())?.avatarUrl ?? null,
         };
         const existing = collaboratorsByMyth.get(row.myth_id) ?? [];
         existing.push(collaborator);
@@ -566,6 +619,17 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
       let collaborators: MythCollaborator[] = myth.collaborators;
 
       if (currentUserEmail) {
+        const userMetadata = session.user.user_metadata ?? {};
+        const displayName =
+          (userMetadata.display_name as string | undefined) ??
+          (userMetadata.full_name as string | undefined) ??
+          (userMetadata.name as string | undefined) ??
+          null;
+        const avatarUrl =
+          (userMetadata.avatar_url as string | undefined) ??
+          (userMetadata.picture as string | undefined) ??
+          null;
+
         const { data: ownerCollaboratorData, error: ownerCollaboratorError } = await supabase
           .from('myth_collaborators')
           .insert({
@@ -584,6 +648,8 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
               mythId: ownerRow.myth_id,
               email: (ownerRow.email ?? '').toLowerCase(),
               role: ownerRow.role,
+              displayName,
+              avatarUrl,
             },
           ];
         }
@@ -1210,11 +1276,23 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
       }
 
       const collaboratorRow = data as CollaboratorRow;
+      const profile = await supabase
+        .from('user_profiles')
+        .select('email, display_name, avatar_url')
+        .eq('email', normalizedEmail)
+        .maybeSingle();
+
+      if (profile.error && profile.error.code !== 'PGRST116') {
+        throw new Error(profile.error.message);
+      }
+
       const collaborator: MythCollaborator = {
         id: collaboratorRow.id,
         mythId: collaboratorRow.myth_id,
         email: (collaboratorRow.email ?? '').toLowerCase(),
         role: collaboratorRow.role,
+        displayName: profile.data?.display_name ?? null,
+        avatarUrl: profile.data?.avatar_url ?? null,
       };
 
       setMyths((prev) =>

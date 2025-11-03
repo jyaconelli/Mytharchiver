@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import * as RechartsPrimitive from 'recharts@2.15.2';
+import * as RechartsPrimitive from 'recharts';
 
 import { cn } from './utils';
 
@@ -59,7 +59,7 @@ function ChartContainer({
         {...props}
       >
         <ChartStyle id={chartId} config={config} />
-        <RechartsPrimitive.ResponsiveContainer>{children}</RechartsPrimitive.ResponsiveContainer>
+        <RechartsPrimitive.ResponsiveContainer width={'100%'} height={400}>{children}</RechartsPrimitive.ResponsiveContainer>
       </div>
     </ChartContext.Provider>
   );

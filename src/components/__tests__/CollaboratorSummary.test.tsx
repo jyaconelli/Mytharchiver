@@ -25,6 +25,7 @@ describe('CollaboratorSummary', () => {
           mythId: 'myth-1',
           email: 'guardian@example.com',
           role: 'viewer',
+          displayName: 'Guardian Gal',
         },
       ],
     });
@@ -34,13 +35,15 @@ describe('CollaboratorSummary', () => {
         myth={myth}
         currentUserEmail="OWNER@example.com"
         sessionUserId="owner-1"
+        currentUserDisplayName="Owner One"
+        currentUserAvatarUrl="data:image/jpeg;base64,owner"
         onManage={vi.fn()}
       />,
     );
 
     expect(screen.getByRole('button', { name: /manage/i })).toBeInTheDocument();
-    const ownerBadges = screen.getAllByText(/^owner$/i);
-    expect(ownerBadges.length).toBeGreaterThan(0);
+    expect(screen.getByText('Owner One')).toBeInTheDocument();
+    expect(screen.getByText(/guardian gal/i)).toBeInTheDocument();
     expect(container.firstChild).toMatchSnapshot();
   });
 
@@ -53,12 +56,14 @@ describe('CollaboratorSummary', () => {
           mythId: 'myth-1',
           email: 'keeper@example.com',
           role: 'owner',
+          displayName: 'Keeper Kai',
         },
         {
           id: 'editor-entry',
           mythId: 'myth-1',
           email: 'scribe@example.com',
           role: 'editor',
+          displayName: 'Scribe Syd',
         },
       ],
     });
@@ -68,14 +73,14 @@ describe('CollaboratorSummary', () => {
         myth={myth}
         currentUserEmail="viewer@example.com"
         sessionUserId="viewer-1"
+        currentUserDisplayName="Viewer Vic"
+        currentUserAvatarUrl={null}
         onManage={vi.fn()}
       />,
     );
 
     expect(screen.getByRole('button', { name: /view/i })).toBeInTheDocument();
-    const badges = screen.getAllByText(/example\.com/);
-    expect(badges).toHaveLength(2);
-    expect(badges[0]).toHaveTextContent('keeper@example.com');
-    expect(badges[1]).toHaveTextContent('scribe@example.com');
+    expect(screen.getByText('Keeper Kai')).toBeInTheDocument();
+    expect(screen.getByText('Scribe Syd')).toBeInTheDocument();
   });
 });
