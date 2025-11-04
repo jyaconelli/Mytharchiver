@@ -2,82 +2,89 @@
 
 exports[`AuthGate > renders initial sign-in view 1`] = `
 <div
-  class="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4"
+  class="min-h-screen grid grid-cols-3 max-md:grid-cols-1 max-md:px-4 text-gray-900 dark:bg-gray-950 dark:text-gray-100"
 >
   <div
-    class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border w-full max-w-md p-8 space-y-6"
-    data-slot="card"
+    class="col-start-2 max-md:col-start-1 flex w-full max-w-4xl flex-col items-center space-y-6 py-4 text-center"
   >
+    <img
+      alt="Myth Archiver"
+      class="h-48 w-48 bg-white object-contain dark:border-gray-800"
+      src="/src/assets/logo.png"
+    />
     <div
-      class="text-center space-y-2"
+      class="space-y-2"
     >
       <h1
-        class="text-2xl font-semibold"
+        class="font-display text-4xl text-gray-900 dark:text-gray-100"
       >
-        Myth Archive
+        Myth Archiver
       </h1>
-      <p
-        class="text-gray-600 dark:text-gray-400"
-      >
-        Sign in to continue organizing myth variants.
-      </p>
     </div>
-    <form
-      class="space-y-4"
+    <div
+      class="text-card-foreground flex flex-col rounded-xl w-full gap-6 border border-gray-200 bg-white p-6 text-left shadow-lg dark:border-gray-800 dark:bg-gray-900"
+      data-slot="card"
     >
-      <div
-        class="space-y-2"
+      <form
+        class="col-span-4 space-y-4 md:col-span-3"
       >
-        <label
-          class="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
-          data-slot="label"
-          for="email"
+        <div
+          class="space-y-2"
         >
-          Email
-        </label>
-        <input
-          autocomplete="email"
-          class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border px-3 py-1 text-base bg-input-background transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive"
-          data-slot="input"
-          id="email"
-          placeholder="you@example.com"
-          required=""
-          type="email"
-          value=""
-        />
-      </div>
-      <div
-        class="space-y-2"
-      >
-        <label
-          class="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
-          data-slot="label"
-          for="password"
+          <label
+            class="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+            data-slot="label"
+            for="email"
+          >
+            Email
+          </label>
+          <input
+            autocomplete="email"
+            class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border px-3 py-1 text-base bg-input-background transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive"
+            data-slot="input"
+            id="email"
+            placeholder="you@example.com"
+            required=""
+            type="email"
+            value=""
+          />
+        </div>
+        <div
+          class="space-y-2"
         >
-          Password
-        </label>
-        <input
-          autocomplete="current-password"
-          class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border px-3 py-1 text-base bg-input-background transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive"
-          data-slot="input"
-          id="password"
-          minlength="6"
-          placeholder="At least 6 characters"
-          required=""
-          type="password"
-          value=""
-        />
-      </div>
-      <button
-        class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 has-[>svg]:px-3 w-full"
-        data-slot="button"
-        type="submit"
-      >
-        Sign In
-      </button>
-    </form>
+          <label
+            class="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+            data-slot="label"
+            for="password"
+          >
+            Password
+          </label>
+          <input
+            autocomplete="current-password"
+            class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border px-3 py-1 text-base bg-input-background transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive"
+            data-slot="input"
+            id="password"
+            minlength="6"
+            placeholder="At least 6 characters"
+            required=""
+            type="password"
+            value=""
+          />
+        </div>
+        <button
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive h-10 px-6 has-[>svg]:px-4 w-full rounded-xl bg-blue-500 text-base font-semibold text-white shadow-[0_8px_18px_-8px_rgba(37,99,235,0.65)] hover:bg-blue-400 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:bg-blue-400 dark:hover:bg-blue-300 dark:focus-visible:ring-blue-300 dark:focus-visible:ring-offset-gray-900"
+          data-slot="button"
+          type="submit"
+        >
+          Sign in
+        </button>
+      </form>
+      <div
+        class="col-span-4 space-y-3 text-sm md:col-span-1"
+      />
+    </div>
     <p
-      class="text-center text-sm text-gray-600 dark:text-gray-400"
+      class="text-sm text-gray-600 dark:text-gray-400"
     >
       Don't have an account?
        

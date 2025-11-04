@@ -50,9 +50,27 @@ const createMyth = (overrides: Partial<Myth> = {}): Myth => ({
   categories: [],
   variants: [],
   collaborators: [
-    { id: 'collab-1', mythId: 'myth-1', email: 'owner@example.com', role: 'owner' },
-    { id: 'collab-2', mythId: 'myth-1', email: 'scribe@example.com', role: 'editor' },
-    { id: 'collab-3', mythId: 'myth-1', email: 'watcher@example.com', role: 'viewer' },
+    {
+      id: 'collab-1',
+      mythId: 'myth-1',
+      email: 'owner@example.com',
+      role: 'owner',
+      displayName: 'Olive Owner',
+    },
+    {
+      id: 'collab-2',
+      mythId: 'myth-1',
+      email: 'scribe@example.com',
+      role: 'editor',
+      displayName: 'Eddie Editor',
+    },
+    {
+      id: 'collab-3',
+      mythId: 'myth-1',
+      email: 'watcher@example.com',
+      role: 'viewer',
+      displayName: 'Vera Viewer',
+    },
   ],
   ...overrides,
 });

@@ -3,8 +3,14 @@ import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { vi } from 'vitest';
 
-import { VariantView } from '../VariantView';
-import type { CollaboratorCategory, MythVariant, PlotPoint, Mytheme } from '../../types/myth';
+import { VariantView, computeVariantInsightMetrics } from '../VariantView';
+import type {
+  CollaboratorCategory,
+  MythCollaborator,
+  MythVariant,
+  PlotPoint,
+  Mytheme,
+} from '../../types/myth';
 
 const ensureDomMocks = () => {
   const proto = window.HTMLElement.prototype as HTMLElement & {
@@ -123,6 +129,10 @@ const variant: MythVariant = {
 
 const categories = ['Introduction', 'Conflict', 'Resolution'];
 const collaboratorCategories: CollaboratorCategory[] = [];
+const collaborators: MythCollaborator[] = [
+  { id: 'collab-owner', mythId: 'myth-1', email: 'owner@example.com', role: 'owner' },
+  { id: 'collab-2', mythId: 'myth-1', email: 'editor@example.com', role: 'editor' },
+];
 
 describe('VariantView', () => {
   beforeAll(() => {
@@ -148,6 +158,7 @@ describe('VariantView', () => {
         categories={categories}
         canonicalCategories={[]}
         collaboratorCategories={collaboratorCategories}
+        collaborators={collaborators}
         onUpdateVariant={vi.fn()}
         viewerEmail="owner@example.com"
       />,
@@ -174,6 +185,7 @@ describe('VariantView', () => {
         categories={categories}
         canonicalCategories={[]}
         collaboratorCategories={collaboratorCategories}
+        collaborators={collaborators}
         onUpdateVariant={onUpdateVariant}
         viewerEmail="owner@example.com"
       />,
@@ -253,6 +265,7 @@ describe('VariantView', () => {
         categories={categories}
         canonicalCategories={[]}
         collaboratorCategories={collaboratorCategories}
+        collaborators={collaborators}
         onUpdateVariant={onUpdateVariant}
         onCreateCollaboratorCategory={onCreateCollaboratorCategory}
         viewerEmail="owner@example.com"
@@ -326,10 +339,13 @@ describe('VariantView', () => {
         categories={categories}
         canonicalCategories={[]}
         collaboratorCategories={viewerCollaboratorCategories}
+        collaborators={collaborators}
         onUpdateVariant={onUpdateVariant}
         viewerEmail={viewerEmail}
       />,
     );
+
+    expect(screen.queryByRole('tab', { name: /insights/i })).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('tab', { name: /grouped/i }));
 
@@ -382,6 +398,7 @@ describe('VariantView', () => {
         categories={categories}
         canonicalCategories={[]}
         collaboratorCategories={collaboratorCategories}
+        collaborators={collaborators}
         onUpdateVariant={onUpdateVariant}
         viewerEmail="owner@example.com"
       />,
@@ -404,6 +421,7 @@ describe('VariantView', () => {
         categories={categories}
         canonicalCategories={[]}
         collaboratorCategories={collaboratorCategories}
+        collaborators={collaborators}
         onUpdateVariant={vi.fn()}
         canEdit={false}
         viewerEmail="owner@example.com"
@@ -415,5 +433,88 @@ describe('VariantView', () => {
     expect(timelinePropsCalls[0].onDeletePlotPoint).toBeUndefined();
     expect(groupedPropsCalls[0]?.onAssignCategory).toBeUndefined();
     expect(gridPropsCalls[0]?.onEditPlotPoint).toBeUndefined();
+  });
+
+  test('computes insight metrics for contributor coverage and agreement', () => {
+    const plotPointsWithAssignments: PlotPoint[] = [
+      {
+        id: 'p1',
+        text: 'First point',
+        category: 'Introduction',
+        order: 1,
+        mythemeRefs: [],
+        collaboratorCategories: [
+          {
+            plotPointId: 'p1',
+            collaboratorCategoryId: 'owner-cat',
+            collaboratorEmail: 'owner@example.com',
+            categoryName: 'Hero',
+          },
+          {
+            plotPointId: 'p1',
+            collaboratorCategoryId: 'editor-cat',
+            collaboratorEmail: 'editor@example.com',
+            categoryName: 'Conflict',
+          },
+        ],
+      },
+      {
+        id: 'p2',
+        text: 'Second point',
+        category: 'Conflict',
+        order: 2,
+        mythemeRefs: [],
+        collaboratorCategories: [
+          {
+            plotPointId: 'p2',
+            collaboratorCategoryId: 'owner-cat',
+            collaboratorEmail: 'owner@example.com',
+            categoryName: 'Hero',
+          },
+          {
+            plotPointId: 'p2',
+            collaboratorCategoryId: 'guest-cat',
+            collaboratorEmail: 'guest@example.com',
+            categoryName: 'Guest',
+          },
+        ],
+      },
+      {
+        id: 'p3',
+        text: 'Third point',
+        category: 'Resolution',
+        order: 3,
+        mythemeRefs: [],
+        collaboratorCategories: [],
+      },
+    ];
+
+    const metrics = computeVariantInsightMetrics(plotPointsWithAssignments, collaborators);
+
+    expect(metrics.totalPlotPoints).toBe(3);
+    expect(metrics.totalAssignments).toBe(3);
+    expect(metrics.totalCapacity).toBe(6);
+    expect(metrics.completionPercentage).toBe(50);
+    expect(metrics.averageAssignmentsPerPlotPoint).toBe(1);
+    expect(metrics.coverageByCollaborator).toEqual([
+      {
+        email: 'editor@example.com',
+        completed: 1,
+        percentage: 33.3,
+        role: 'editor',
+      },
+      {
+        email: 'owner@example.com',
+        completed: 2,
+        percentage: 66.7,
+        role: 'owner',
+      },
+    ]);
+    expect(metrics.pairwiseAgreements[0][1]).toBeCloseTo(0.5, 5);
+    expect(metrics.agreementSummary.average).toBe(50);
+    expect(metrics.agreementSummary.highest).toEqual({
+      pair: ['editor@example.com', 'owner@example.com'],
+      score: 0.5,
+    });
   });
 });

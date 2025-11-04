@@ -1237,6 +1237,8 @@ exports[`UI component snapshots > Chart 1`] = `
     </style>
     <div
       data-recharts-responsive-container="true"
+      height="400"
+      width="100%"
     >
       <div>
         Mock Chart Body

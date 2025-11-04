@@ -6,6 +6,7 @@ import { CollaboratorSummary } from '../components/CollaboratorSummary';
 import { AddVariantDialog } from '../components/AddVariantDialog';
 import { useArchive } from './ArchiveLayout';
 import { CollaboratorRole } from '../types/myth';
+import { LoadingAnimation } from '../components/LoadingAnimation';
 
 export function MythDetailPage() {
   const { mythId } = useParams<{ mythId: string }>();
@@ -14,8 +15,11 @@ export function MythDetailPage() {
     myths,
     addVariant,
     currentUserEmail,
+    currentUserDisplayName,
+    currentUserAvatarUrl,
     sessionUserId,
     openManageCollaborators,
+    isInitialLoad,
   } = useArchive();
   const [showAddVariant, setShowAddVariant] = useState(false);
 
@@ -39,6 +43,14 @@ export function MythDetailPage() {
 
   const canEdit = selectedMythRole === 'owner' || selectedMythRole === 'editor';
 
+  if (isInitialLoad) {
+    return (
+      <div className="flex justify-center py-16">
+        <LoadingAnimation message="Loading myth…" />
+      </div>
+    );
+  }
+
   if (!myth) {
     return (
       <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-6 text-yellow-800 dark:border-yellow-900/50 dark:bg-yellow-950/30 dark:text-yellow-200">
@@ -61,6 +73,8 @@ export function MythDetailPage() {
         myth={myth}
         currentUserEmail={currentUserEmail}
         sessionUserId={sessionUserId}
+        currentUserDisplayName={currentUserDisplayName}
+        currentUserAvatarUrl={currentUserAvatarUrl}
         onManage={() => openManageCollaborators(myth.id)}
       />
 

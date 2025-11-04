@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   CollaboratorCategory,
+  MythCollaborator,
   MythCategory,
   MythVariant,
   Mytheme,
@@ -10,12 +11,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { TimelineView } from './TimelineView';
 import { GroupedView } from './GroupedView';
 import { GridView } from './GridView';
-import { Card } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
-import { LayoutList, Grid3x3, FolderTree, Plus, Loader2 } from 'lucide-react';
+import { LayoutList, Grid3x3, FolderTree, Plus, Loader2, BarChart3 } from 'lucide-react';
 import { AddPlotPointDialog } from './AddPlotPointDialog';
 import { EditPlotPointDialog } from './EditPlotPointDialog';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+import { VariantInsights } from './VariantInsights';
+
+export type { VariantInsightMetrics } from './VariantInsights';
+export { computeVariantInsightMetrics } from './VariantInsights';
 
 interface VariantViewProps {
   variant: MythVariant;
@@ -23,6 +28,7 @@ interface VariantViewProps {
   categories: string[];
   canonicalCategories?: MythCategory[];
   collaboratorCategories?: CollaboratorCategory[];
+  collaborators: MythCollaborator[];
   onUpdateVariant: (variant: MythVariant) => Promise<void>;
   onCreateCollaboratorCategory?: (name: string) => Promise<CollaboratorCategory>;
   canEdit?: boolean;
@@ -36,12 +42,14 @@ const createLocalId = () =>
     ? crypto.randomUUID()
     : `plot-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
+
 export function VariantView({
   variant,
   mythemes,
   categories,
   canonicalCategories = [],
   collaboratorCategories = [],
+  collaborators,
   onUpdateVariant,
   onCreateCollaboratorCategory,
   canEdit = true,
@@ -72,6 +80,24 @@ export function VariantView({
   }, [canonicalCategories]);
 
   const normalizedViewerEmail = viewerEmail.toLowerCase();
+
+  const viewerRole = useMemo(() => {
+    if (!normalizedViewerEmail) {
+      return null;
+    }
+    const matchingCollaborator = collaborators.find(
+      (collaborator) => collaborator.email?.toLowerCase() === normalizedViewerEmail,
+    );
+    return matchingCollaborator?.role ?? null;
+  }, [collaborators, normalizedViewerEmail]);
+
+  useEffect(() => {
+    if (viewerRole !== 'owner' && activeTab === 'insights') {
+      setActiveTab('timeline');
+    }
+  }, [activeTab, viewerRole]);
+
+  const tabListClassName = 'flex h-auto w-full gap-2';
 
   useEffect(() => {
     latestVariantRef.current = variant;
@@ -154,7 +180,9 @@ export function VariantView({
       point.id === plotPointBeingEdited.id
         ? {
             ...point,
-            canonicalCategoryId: canonicalCategory ? canonicalCategory.id : point.canonicalCategoryId ?? null,
+            canonicalCategoryId: canonicalCategory
+              ? canonicalCategory.id
+              : (point.canonicalCategoryId ?? null),
             category: canonicalCategory ? canonicalCategory.name : updates.category,
           }
         : point,
@@ -185,7 +213,9 @@ export function VariantView({
           resolvedName = createdCategory.name;
         } catch (err) {
           setError(
-            err instanceof Error ? err.message : 'Unable to create the category for this plot point.',
+            err instanceof Error
+              ? err.message
+              : 'Unable to create the category for this plot point.',
           );
           return;
         }
@@ -193,7 +223,9 @@ export function VariantView({
     }
 
     if (resolvedCategoryId) {
-      const nameFromId = collaboratorCategories.find((category) => category.id === resolvedCategoryId)?.name;
+      const nameFromId = collaboratorCategories.find(
+        (category) => category.id === resolvedCategoryId,
+      )?.name;
       if (nameFromId) {
         resolvedName = nameFromId;
       }
@@ -298,7 +330,7 @@ export function VariantView({
       )}
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className={tabListClassName}>
           <TabsTrigger value="timeline" className="flex items-center gap-2">
             <LayoutList className="w-4 h-4" />
             Timeline
@@ -311,6 +343,12 @@ export function VariantView({
             <Grid3x3 className="w-4 h-4" />
             Grid
           </TabsTrigger>
+          {viewerRole === 'owner' && (
+            <TabsTrigger value="insights" className="flex items-center gap-2">
+              <BarChart3 className="w-4 h-4" />
+              Insights
+            </TabsTrigger>
+          )}
         </TabsList>
 
         <TabsContent value="timeline" className="mt-4">
@@ -349,6 +387,16 @@ export function VariantView({
             viewerEmail={viewerEmail}
           />
         </TabsContent>
+
+        {viewerRole === 'owner' && (
+          <TabsContent value="insights" className="mt-4">
+            <VariantInsights
+              plotPoints={variant.plotPoints}
+              collaborators={collaborators}
+              viewerEmail={viewerEmail}
+            />
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );

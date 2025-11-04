@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Outlet, useNavigate, useOutletContext, useParams } from 'react-router-dom';
 import type { Session } from '@supabase/supabase-js';
-import { Loader2 } from 'lucide-react';
 
 import { AppHeader } from '../components/AppHeader';
 import { AddMythemeDialog } from '../components/AddMythemeDialog';
@@ -18,6 +17,7 @@ import {
   MythVariant,
   Mytheme,
 } from '../types/myth';
+import { LoadingAnimation } from '../components/LoadingAnimation';
 
 type ArchiveLayoutProps = {
   session: Session;
@@ -28,6 +28,7 @@ export type ArchiveOutletContext = {
   myths: Myth[];
   mythemes: Mytheme[];
   dataLoading: boolean;
+  isInitialLoad: boolean;
   dataError: string | null;
   loadArchiveData: () => Promise<void>;
   addMyth: (name: string, description: string) => Promise<void>;
@@ -48,6 +49,8 @@ export type ArchiveOutletContext = {
     name: string,
   ) => Promise<CollaboratorCategory>;
   currentUserEmail: string;
+  currentUserDisplayName: string | null;
+  currentUserAvatarUrl: string | null;
   sessionUserId: string;
   openManageCollaborators: (mythId: string) => void;
 };
@@ -57,6 +60,16 @@ export function ArchiveLayout({ session, supabaseClient }: ArchiveLayoutProps) {
   const supabase = supabaseClient;
   const currentUserEmail = session.user.email?.toLowerCase() ?? '';
   const sessionUserId = session.user.id;
+  const userMetadata = session.user.user_metadata ?? {};
+  const currentUserDisplayName =
+    (userMetadata.display_name as string | undefined) ??
+    (userMetadata.full_name as string | undefined) ??
+    (userMetadata.name as string | undefined) ??
+    null;
+  const currentUserAvatarUrl =
+    (userMetadata.avatar_url as string | undefined) ??
+    (userMetadata.picture as string | undefined) ??
+    null;
 
   const {
     myths,
@@ -122,6 +135,8 @@ export function ArchiveLayout({ session, supabaseClient }: ArchiveLayoutProps) {
     manageCollaboratorsMyth && manageCollaboratorsMyth.ownerId === sessionUserId,
   );
 
+  const isInitialLoad = dataLoading && myths.length === 0 && mythemes.length === 0;
+
   const handleBack = useCallback(() => {
     if (variantId && mythId) {
       navigate(`/myths/${mythId}`);
@@ -147,6 +162,7 @@ export function ArchiveLayout({ session, supabaseClient }: ArchiveLayoutProps) {
     myths,
     mythemes,
     dataLoading,
+    isInitialLoad,
     dataError,
     loadArchiveData,
     addMyth,
@@ -157,6 +173,8 @@ export function ArchiveLayout({ session, supabaseClient }: ArchiveLayoutProps) {
     removeCollaborator,
     createCollaboratorCategory,
     currentUserEmail,
+    currentUserDisplayName,
+    currentUserAvatarUrl,
     sessionUserId,
     openManageCollaborators: (mythToManage) => setManageCollaboratorsMythId(mythToManage),
   };
@@ -169,7 +187,8 @@ export function ArchiveLayout({ session, supabaseClient }: ArchiveLayoutProps) {
         title="Myth Archive"
         subtitle={headerSubtitle}
         currentUserEmail={currentUserEmail}
-        userDisplayName={session.user.user_metadata?.full_name}
+        userDisplayName={currentUserDisplayName}
+        userAvatarUrl={currentUserAvatarUrl}
         onOpenManageCategories={() => {
           if (canEditSelectedMyth && selectedMyth) {
             setShowManageCategories(true);
@@ -197,11 +216,12 @@ export function ArchiveLayout({ session, supabaseClient }: ArchiveLayoutProps) {
           </div>
         ) : (
           <>
-            {dataLoading && (
-              <div className="mb-6 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Syncing with Supabase…
-              </div>
+            {dataLoading && !isInitialLoad && (
+              <LoadingAnimation
+                message="Syncing with Supabase…"
+                size={48}
+                className="mb-6 flex-row items-center text-left"
+              />
             )}
             <Outlet context={outletContext} />
           </>

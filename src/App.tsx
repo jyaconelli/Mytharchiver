@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import { Loader2 } from 'lucide-react';
 
 import { getSupabaseClient } from './lib/supabaseClient';
 import { useSupabaseAuth } from './hooks/useSupabaseAuth';
@@ -9,6 +8,7 @@ import { ArchiveLayout } from './routes/ArchiveLayout';
 import { MythListPage } from './routes/MythListPage';
 import { MythDetailPage } from './routes/MythDetailPage';
 import { VariantDetailPage } from './routes/VariantDetailPage';
+import { LoadingAnimation } from './components/LoadingAnimation';
 
 export default function App() {
   const supabase = useMemo(() => getSupabaseClient(), []);
@@ -17,8 +17,7 @@ export default function App() {
   if (authLoading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col items-center justify-center gap-4">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600 dark:text-blue-400" />
-        <p className="text-gray-600 dark:text-gray-400">Checking your session…</p>
+        <LoadingAnimation message="Checking your session…" />
       </div>
     );
   }

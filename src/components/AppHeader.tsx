@@ -1,5 +1,7 @@
 import { ReactNode } from 'react';
-import { ArrowLeft, Book, LogOut, Settings } from 'lucide-react';
+import { ArrowLeft, LogOut, Settings } from 'lucide-react';
+
+import logoUrl from '../assets/logo.png';
 
 import { Button } from './ui/button';
 import {
@@ -9,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
 type AppHeaderProps = {
   canGoBack: boolean;
@@ -17,6 +20,7 @@ type AppHeaderProps = {
   subtitle: string;
   currentUserEmail: string;
   userDisplayName?: string | null;
+  userAvatarUrl?: string | null;
   onOpenManageCategories: () => void;
   onOpenManageMythemes: () => void;
   onSignOut: () => Promise<void>;
@@ -31,11 +35,20 @@ export function AppHeader({
   subtitle,
   currentUserEmail,
   userDisplayName,
+  userAvatarUrl,
   onOpenManageCategories,
   onOpenManageMythemes,
   onSignOut,
   canManageCategories,
 }: AppHeaderProps) {
+  const resolvedDisplayName = userDisplayName?.trim() || 'Signed in';
+  const avatarFallbackSource = (userDisplayName || currentUserEmail || 'Myth Archive')
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((part) => part[0]?.toUpperCase())
+    .slice(0, 2)
+    .join('') || 'MA';
+
   return (
     <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -47,20 +60,27 @@ export function AppHeader({
               </Button>
             )}
             <div className="flex items-center gap-3">
-              <Book className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+              <img src={logoUrl} alt="Myth Archive logo" className="h-9 w-9" />
               <div>
-                <h1>{title}</h1>
+                <h1 className="font-display">{title}</h1>
                 <p className="text-gray-600 dark:text-gray-400">{subtitle}</p>
               </div>
             </div>
           </div>
           <div className="flex items-center gap-3">
             {currentUserEmail && (
-              <div className="text-right text-sm">
-                <p className="font-medium text-gray-800 dark:text-gray-100">
-                  {userDisplayName ?? 'Signed in'}
-                </p>
-                <p className="text-gray-500 dark:text-gray-400">{currentUserEmail}</p>
+              <div className="flex items-center gap-3">
+                <Avatar className="h-9 w-9 border border-indigo-100 bg-white text-sm font-medium text-indigo-600 dark:border-indigo-900/40 dark:bg-gray-900 dark:text-indigo-300">
+                  <AvatarImage
+                    src={userAvatarUrl && userAvatarUrl.trim() ? userAvatarUrl : undefined}
+                    alt={resolvedDisplayName}
+                  />
+                  <AvatarFallback>{avatarFallbackSource}</AvatarFallback>
+                </Avatar>
+                <div className="text-right text-sm">
+                  <p className="font-medium text-gray-800 dark:text-gray-100">{resolvedDisplayName}</p>
+                  <p className="text-gray-500 dark:text-gray-400">{currentUserEmail}</p>
+                </div>
               </div>
             )}
             <DropdownMenu>

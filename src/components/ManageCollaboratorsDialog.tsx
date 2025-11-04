@@ -6,7 +6,8 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Badge } from './ui/badge';
-import { Loader2, Mail, ShieldAlert, UserMinus } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { Loader2, ShieldAlert, UserMinus } from 'lucide-react';
 
 interface ManageCollaboratorsDialogProps {
   open: boolean;
@@ -213,33 +214,42 @@ export function ManageCollaboratorsDialog({
                   {collaborators.map((collaborator) => {
                     const isOwner = collaborator.role === 'owner';
                     const isCurrentUser = collaborator.email === currentUserEmail;
+                    const displayName = collaborator.displayName ?? collaborator.email;
+                    const initials = getInitials(displayName);
+                    const roleLabel = isOwner
+                      ? 'Owner'
+                      : collaborator.role.charAt(0).toUpperCase() + collaborator.role.slice(1);
 
                     return (
                       <li
                         key={collaborator.id}
                         className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-gray-200 p-4 dark:border-gray-700"
                       >
-                        <div className="min-w-0 space-y-1">
-                          <div className="flex items-center gap-2">
-                            <Mail className="h-4 w-4 text-gray-400" />
-                            <span className="truncate font-medium text-gray-800 dark:text-gray-100">
-                              {collaborator.email}
-                            </span>
-                            {isCurrentUser && (
-                              <Badge variant="outline" className="text-xs uppercase">
-                                You
-                              </Badge>
-                            )}
+                        <div className="flex min-w-0 items-center gap-3">
+                          <Avatar className="h-10 w-10 border border-gray-200 text-sm font-semibold dark:border-gray-600">
+                            <AvatarImage
+                              src={collaborator.avatarUrl ?? undefined}
+                              alt={displayName}
+                            />
+                            <AvatarFallback>{initials}</AvatarFallback>
+                          </Avatar>
+                          <div className="min-w-0 space-y-1">
+                            <div className="flex items-center gap-2">
+                              <span className="truncate font-medium text-gray-800 dark:text-gray-100">
+                                {displayName}
+                              </span>
+                              {isCurrentUser && (
+                                <Badge variant="outline" className="text-xs uppercase">
+                                  You
+                                </Badge>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                              <span className="uppercase">{roleLabel}</span>
+                              <span className="text-gray-400 dark:text-gray-500">·</span>
+                              <span className="truncate">{collaborator.email}</span>
+                            </div>
                           </div>
-                          <Badge
-                            variant={isOwner ? 'default' : 'secondary'}
-                            className="text-xs uppercase"
-                          >
-                            {isOwner
-                              ? 'Owner'
-                              : collaborator.role.charAt(0).toUpperCase() +
-                                collaborator.role.slice(1)}
-                          </Badge>
                         </div>
                         {canManage && !isOwner && (
                           <div className="flex items-center gap-2">
@@ -292,4 +302,13 @@ export function ManageCollaboratorsDialog({
       </DialogContent>
     </Dialog>
   );
+}
+
+function getInitials(label: string) {
+  return label
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => word[0]?.toUpperCase())
+    .join('')
+    .slice(0, 2) || '??';
 }
