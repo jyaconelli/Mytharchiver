@@ -189,14 +189,16 @@ describe('useMythArchive', () => {
     enqueue('myth_collaborator_plot_point_categories', collaboratorPlotPointCategories);
     registerDefault('myth_collaborator_plot_point_categories', collaboratorPlotPointCategories);
 
-    const userProfiles = {
+    const profiles = {
       data: [
         {
+          id: 'profile-scribe',
           email: 'scribe@example.com',
           display_name: 'Scribe Syd',
           avatar_url: 'scribe.png',
         },
         {
+          id: 'profile-owner',
           email: 'owner@example.com',
           display_name: 'Owner One',
           avatar_url: 'owner.png',
@@ -204,8 +206,8 @@ describe('useMythArchive', () => {
       ],
       error: null,
     };
-    enqueue('user_profiles', userProfiles);
-    registerDefault('user_profiles', userProfiles);
+    enqueue('profiles', profiles);
+    registerDefault('profiles', profiles);
   });
 
   const renderArchive = (email = 'owner@example.com') => {
@@ -559,8 +561,13 @@ describe('useMythArchive', () => {
       },
       error: null,
     });
-    enqueue('user_profiles', {
-      data: { email: 'new@example.com', display_name: 'New Person', avatar_url: 'new.png' },
+    enqueue('profiles', {
+      data: {
+        id: 'profile-new',
+        email: 'new@example.com',
+        display_name: 'New Person',
+        avatar_url: 'new.png',
+      },
       error: null,
     });
     enqueue('myth_collaborators', {
@@ -653,7 +660,7 @@ describe('useMythArchive', () => {
       error: null,
     });
 
-    prependResult('user_profiles', {
+    prependResult('profiles', {
       data: null,
       error: { code: '999', message: 'profile lookup failed' },
     });

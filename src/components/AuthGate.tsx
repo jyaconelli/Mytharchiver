@@ -52,28 +52,6 @@ export function AuthGate() {
   const emailRedirectTo = typeof window !== 'undefined' ? `${window.location.origin}/` : undefined;
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const syncProfile = useCallback(
-    async (rawEmail: string | null | undefined, displayName: string | null, avatarUrl: string | null) => {
-      const normalizedEmail = rawEmail?.trim().toLowerCase();
-      if (!normalizedEmail) {
-        return;
-      }
-      try {
-        await supabase.from('user_profiles').upsert(
-          {
-            email: normalizedEmail,
-            display_name: displayName,
-            avatar_url: avatarUrl,
-          },
-          { onConflict: 'email' },
-        );
-      } catch (err) {
-        console.warn('Unable to persist profile information', err);
-      }
-    },
-    [supabase],
-  );
-
   const handleAvatarFileChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) {
@@ -167,7 +145,6 @@ export function AuthGate() {
     setMessage(null);
 
     const trimmedDisplayName = displayName.trim();
-    const normalizedEmail = email.trim().toLowerCase();
 
     if (mode === 'signUp') {
       if (!trimmedDisplayName) {
@@ -192,28 +169,16 @@ export function AuthGate() {
     setSubmitting(true);
     try {
       if (mode === 'signIn') {
-        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        const { error: signInError } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
 
         if (signInError) {
           setError(signInError.message);
-        } else {
-          const metadata = signInData.user?.user_metadata ?? {};
-          const displayNameFromMeta =
-            (metadata.display_name as string | undefined) ??
-            (metadata.full_name as string | undefined) ??
-            (metadata.name as string | undefined) ??
-            null;
-          const avatarUrlFromMeta =
-            (metadata.avatar_url as string | undefined) ??
-            (metadata.picture as string | undefined) ??
-            null;
-          await syncProfile(signInData.user?.email ?? normalizedEmail, displayNameFromMeta, avatarUrlFromMeta);
         }
       } else {
-        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        const { error: signUpError } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -228,7 +193,6 @@ export function AuthGate() {
         if (signUpError) {
           setError(signUpError.message);
         } else {
-          await syncProfile(signUpData.user?.email ?? normalizedEmail, trimmedDisplayName, avatarDataUrl);
           setMessage('Check your inbox to confirm the sign up request.');
           setMode('signIn');
           setPassword('');
@@ -331,10 +295,13 @@ export function AuthGate() {
                 required
                 minLength={6}
                 autoComplete={mode === 'signIn' ? 'current-password' : 'new-password'}
-                placeholder={mode === 'signIn' ? 'At least 6 characters' : 'Create a strong password'}
+                placeholder={
+                  mode === 'signIn' ? 'At least 6 characters' : 'Create a strong password'
+                }
               />
-              {mode === 'signUp' && password && (
-                allRequirementsMet ? (
+              {mode === 'signUp' &&
+                password &&
+                (allRequirementsMet ? (
                   <p className="flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400">
                     <Check className="h-3.5 w-3.5" aria-hidden="true" />
                     <span>Password meets all requirements.</span>
@@ -354,8 +321,7 @@ export function AuthGate() {
                       </li>
                     ))}
                   </ul>
-                )
-              )}
+                ))}
             </div>
 
             {mode === 'signUp' && (
@@ -384,7 +350,9 @@ export function AuthGate() {
                       ) : (
                         <X className="h-3.5 w-3.5" aria-hidden="true" />
                       )}
-                      <span>{passwordsMatch ? 'Passwords match.' : 'Passwords do not match yet.'}</span>
+                      <span>
+                        {passwordsMatch ? 'Passwords match.' : 'Passwords do not match yet.'}
+                      </span>
                     </p>
                   )}
                 </div>

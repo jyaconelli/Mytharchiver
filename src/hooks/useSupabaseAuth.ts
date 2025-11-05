@@ -39,45 +39,5 @@ export function useSupabaseAuth() {
     };
   }, []);
 
-  useEffect(() => {
-    const syncProfile = async () => {
-      if (!session) {
-        return;
-      }
-
-      const supabase = getSupabaseClient();
-      const email = session.user.email?.toLowerCase();
-      if (!email) {
-        return;
-      }
-
-      const metadata = session.user.user_metadata ?? {};
-      const displayName =
-        (metadata.display_name as string | undefined) ??
-        (metadata.full_name as string | undefined) ??
-        (metadata.name as string | undefined) ??
-        null;
-      const avatarUrl =
-        (metadata.avatar_url as string | undefined) ??
-        (metadata.picture as string | undefined) ??
-        null;
-
-      try {
-        await supabase.from('user_profiles').upsert(
-          {
-            email,
-            display_name: displayName,
-            avatar_url: avatarUrl,
-          },
-          { onConflict: 'email' },
-        );
-      } catch (error) {
-        console.warn('Unable to sync user profile', error);
-      }
-    };
-
-    syncProfile();
-  }, [session]);
-
   return { session, authLoading };
 }

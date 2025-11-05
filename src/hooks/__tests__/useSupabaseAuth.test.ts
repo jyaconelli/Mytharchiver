@@ -12,15 +12,12 @@ const supabaseStub = {
   from: vi.fn(),
 };
 
-let profileUpsertMock: ReturnType<typeof vi.fn>;
 vi.mock('../../lib/supabaseClient', () => ({
   getSupabaseClient: () => supabaseStub,
 }));
 
 describe('useSupabaseAuth', () => {
   beforeEach(() => {
-    profileUpsertMock = vi.fn().mockResolvedValue({ data: null, error: null });
-
     supabaseStub.auth.getSession.mockResolvedValue({
       data: {
         session: {
@@ -42,25 +39,16 @@ describe('useSupabaseAuth', () => {
       data: { subscription: { unsubscribe: vi.fn() } },
     }));
 
-    supabaseStub.from.mockReturnValue({
-      upsert: profileUpsertMock,
-    } as any);
+    supabaseStub.from.mockReset();
   });
 
-  it('returns the current session and syncs profile data', async () => {
+  it('returns the current session', async () => {
     const { result } = renderHook(() => useSupabaseAuth());
 
     await waitFor(() => expect(result.current.session).not.toBeNull());
 
     expect(result.current.session?.user.email).toBe('owner@example.com');
-    expect(profileUpsertMock).toHaveBeenCalledWith(
-      {
-        email: 'owner@example.com',
-        display_name: 'Owner One',
-        avatar_url: 'owner.png',
-      },
-      { onConflict: 'email' },
-    );
+    expect(supabaseStub.from).not.toHaveBeenCalled();
   });
 
   it('updates session when auth state changes', async () => {
