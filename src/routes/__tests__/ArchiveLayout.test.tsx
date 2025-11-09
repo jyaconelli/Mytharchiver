@@ -61,6 +61,7 @@ describe('ArchiveLayout', () => {
       updateCollaboratorRole: vi.fn(),
       removeCollaborator: vi.fn(),
       createCollaboratorCategory: vi.fn(),
+      updateContributorInstructions: vi.fn(),
     });
   });
 
@@ -81,6 +82,7 @@ describe('ArchiveLayout', () => {
       updateCollaboratorRole: vi.fn(),
       removeCollaborator: vi.fn(),
       createCollaboratorCategory: vi.fn(),
+      updateContributorInstructions: vi.fn(),
     });
 
     render(
@@ -107,6 +109,7 @@ describe('ArchiveLayout', () => {
           id: 'myth-1',
           name: 'Fire Theft',
           description: '',
+          contributorInstructions: '',
           ownerId: 'user-1',
           categories: [],
           variants: [],
@@ -129,6 +132,7 @@ describe('ArchiveLayout', () => {
       updateCollaboratorRole: vi.fn(),
       removeCollaborator: vi.fn(),
       createCollaboratorCategory: vi.fn(),
+      updateContributorInstructions: vi.fn(),
     });
 
     render(
@@ -163,6 +167,7 @@ describe('ArchiveLayout', () => {
       updateCollaboratorRole: vi.fn(),
       removeCollaborator: vi.fn(),
       createCollaboratorCategory: vi.fn(),
+      updateContributorInstructions: vi.fn(),
     });
 
     render(

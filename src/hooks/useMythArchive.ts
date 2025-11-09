@@ -19,6 +19,7 @@ type MythRow = {
   id: string;
   name: string | null;
   description: string | null;
+  contributor_instructions: string | null;
   variants: MythVariant[] | null;
   user_id: string;
   categories: string[] | null;
@@ -102,6 +103,7 @@ const parseMythRow = (row: MythRow): Myth => ({
   id: row.id,
   name: row.name ?? '',
   description: row.description ?? '',
+  contributorInstructions: row.contributor_instructions ?? '',
   variants: Array.isArray(row.variants) ? row.variants : [],
   categories:
     Array.isArray(row.categories) && row.categories.length > 0
@@ -156,7 +158,9 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
       lastStep = 'loading owned myths';
       const ownedMythsResult = await supabase
         .from('myth_folders')
-        .select('id, name, description, variants, user_id, categories')
+        .select(
+          'id, name, description, contributor_instructions, variants, user_id, categories',
+        )
         .eq('user_id', session.user.id)
         .order('created_at', { ascending: true });
 
@@ -216,7 +220,9 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
         lastStep = 'loading collaborator myths';
         const collaboratorMythsResult = await supabase
           .from('myth_folders')
-          .select('id, name, description, variants, user_id, categories')
+          .select(
+            'id, name, description, contributor_instructions, variants, user_id, categories',
+          )
           .in('id', collaboratorMythIds)
           .order('created_at', { ascending: true });
 
@@ -654,7 +660,7 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
   }, [session, loadArchiveData]);
 
   const addMyth = useCallback(
-    async (name: string, description: string) => {
+    async (name: string, description: string, contributorInstructions = '') => {
       if (!session) {
         throw new Error('You must be signed in to add myths.');
       }
@@ -664,11 +670,12 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
         .insert({
           name,
           description,
+          contributor_instructions: contributorInstructions,
           variants: [],
           categories: DEFAULT_CATEGORIES,
           user_id: session.user.id,
         })
-        .select('id, name, description, variants, user_id')
+        .select('id, name, description, contributor_instructions, variants, user_id')
         .single();
 
       if (error) {
@@ -1303,6 +1310,30 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
     [session, myths],
   );
 
+  const updateContributorInstructions = useCallback(
+    async (mythId: string, instructions: string) => {
+      if (!session) {
+        throw new Error('You must be signed in to update contributor instructions.');
+      }
+
+      const { error } = await supabase
+        .from('myth_folders')
+        .update({ contributor_instructions: instructions })
+        .eq('id', mythId);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      setMyths((prev) =>
+        prev.map((myth) =>
+          myth.id === mythId ? { ...myth, contributorInstructions: instructions } : myth,
+        ),
+      );
+    },
+    [session, supabase],
+  );
+
   const addCollaborator = useCallback(
     async (mythId: string, email: string, role: CollaboratorRole) => {
       if (!session) {
@@ -1541,6 +1572,7 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
     addMytheme,
     deleteMytheme,
     updateMythCategories,
+    updateContributorInstructions,
     addCollaborator,
     updateCollaboratorRole,
     removeCollaborator,

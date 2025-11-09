@@ -9,12 +9,13 @@ import { Loader2 } from 'lucide-react';
 interface AddMythDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onAdd: (name: string, description: string) => Promise<void>;
+  onAdd: (name: string, description: string, contributorInstructions?: string) => Promise<void>;
 }
 
 export function AddMythDialog({ open, onOpenChange, onAdd }: AddMythDialogProps) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [instructions, setInstructions] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,9 +29,10 @@ export function AddMythDialog({ open, onOpenChange, onAdd }: AddMythDialogProps)
     setError(null);
 
     try {
-      await onAdd(name, description);
+      await onAdd(name, description, instructions);
       setName('');
       setDescription('');
+      setInstructions('');
       onOpenChange(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unable to add the myth folder.');
@@ -66,6 +68,16 @@ export function AddMythDialog({ open, onOpenChange, onAdd }: AddMythDialogProps)
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Brief description of the myth..."
                 rows={3}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="myth-instructions">Contributor Instructions</Label>
+              <Textarea
+                id="myth-instructions"
+                value={instructions}
+                onChange={(e) => setInstructions(e.target.value)}
+                placeholder="Guidance that contributors will see before they add plot points…"
+                rows={4}
               />
             </div>
           </div>

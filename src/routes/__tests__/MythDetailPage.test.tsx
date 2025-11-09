@@ -20,6 +20,7 @@ vi.mock('../../components/LoadingAnimation', () => ({
 const baseContext = {
   myths: [],
   addVariant: vi.fn(),
+  updateContributorInstructions: vi.fn(),
   currentUserEmail: 'owner@example.com',
   currentUserDisplayName: 'Owner One',
   currentUserAvatarUrl: 'owner.png',
@@ -69,6 +70,7 @@ describe('MythDetailPage', () => {
           id: 'myth-1',
           name: 'Fire Theft',
           description: 'story',
+          contributorInstructions: '',
           ownerId: 'user-1',
           categories: [],
           variants: [],

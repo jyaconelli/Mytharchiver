@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { VariantSelector } from '../components/VariantSelector';
 import { CollaboratorSummary } from '../components/CollaboratorSummary';
 import { AddVariantDialog } from '../components/AddVariantDialog';
+import { ContributionRequestsPanel } from '../components/ContributionRequestsPanel';
 import { useArchive } from './ArchiveLayout';
 import { CollaboratorRole } from '../types/myth';
 import { LoadingAnimation } from '../components/LoadingAnimation';
@@ -19,6 +20,7 @@ export function MythDetailPage() {
     currentUserAvatarUrl,
     sessionUserId,
     openManageCollaborators,
+    updateContributorInstructions,
     isInitialLoad,
   } = useArchive();
   const [showAddVariant, setShowAddVariant] = useState(false);
@@ -42,6 +44,7 @@ export function MythDetailPage() {
   }, [myth, sessionUserId, currentUserEmail]);
 
   const canEdit = selectedMythRole === 'owner' || selectedMythRole === 'editor';
+  const canManageInvites = selectedMythRole === 'owner';
 
   if (isInitialLoad) {
     return (
@@ -92,6 +95,16 @@ export function MythDetailPage() {
         onAdd={async (name, source) => {
           await addVariant(myth.id, name, source);
         }}
+      />
+
+      <ContributionRequestsPanel
+        mythId={myth.id}
+        mythName={myth.name}
+        contributorInstructions={myth.contributorInstructions}
+        canManage={Boolean(canManageInvites)}
+        onUpdateInstructions={async (instructions) =>
+          updateContributorInstructions(myth.id, instructions)
+        }
       />
     </div>
   );

@@ -16,9 +16,13 @@ describe('AddMythDialog', () => {
 
     await user.type(screen.getByLabelText(/myth name/i), 'Prometheus');
     await user.type(screen.getByLabelText(/description/i), 'Fire bringer');
+    await user.type(
+      screen.getByLabelText(/contributor instructions/i),
+      'Share source links.',
+    );
     await user.click(screen.getByRole('button', { name: /add myth/i }));
 
-    expect(handleAdd).toHaveBeenCalledWith('Prometheus', 'Fire bringer');
+    expect(handleAdd).toHaveBeenCalledWith('Prometheus', 'Fire bringer', 'Share source links.');
     expect(handleOpenChange).toHaveBeenCalledWith(false);
     expect(container.firstChild).toMatchSnapshot();
   });

@@ -83,6 +83,7 @@ describe('VariantDetailPage', () => {
           id: 'myth-1',
           name: 'Fire Theft',
           description: 'story',
+          contributorInstructions: '',
           ownerId: 'user-1',
           categories: [],
           variants: [],
@@ -115,6 +116,7 @@ describe('VariantDetailPage', () => {
           id: 'myth-1',
           name: 'Fire Theft',
           description: 'story',
+          contributorInstructions: '',
           ownerId: 'user-1',
           categories: [],
           variants: [

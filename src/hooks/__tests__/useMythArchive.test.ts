@@ -102,6 +102,7 @@ describe('useMythArchive', () => {
           id: 'myth-1',
           name: 'Fire Theft',
           description: 'story',
+          contributor_instructions: '',
           variants: [],
           user_id: 'user-1',
           categories: [],

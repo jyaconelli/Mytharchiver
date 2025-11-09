@@ -27,8 +27,8 @@ export function MythListPage() {
       <AddMythDialog
         open={showAddMyth}
         onOpenChange={setShowAddMyth}
-        onAdd={async (name, description) => {
-          await addMyth(name, description);
+        onAdd={async (name, description, contributorInstructions) => {
+          await addMyth(name, description, contributorInstructions);
         }}
       />
     </div>
