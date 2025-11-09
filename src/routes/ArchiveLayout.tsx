@@ -31,9 +31,10 @@ export type ArchiveOutletContext = {
   isInitialLoad: boolean;
   dataError: string | null;
   loadArchiveData: () => Promise<void>;
-  addMyth: (name: string, description: string) => Promise<void>;
+  addMyth: (name: string, description: string, contributorInstructions?: string) => Promise<void>;
   addVariant: (mythId: string, name: string, source: string) => Promise<void>;
   updateVariant: (mythId: string, variant: MythVariant) => Promise<void>;
+  updateContributorInstructions: (mythId: string, instructions: string) => Promise<void>;
   addCollaborator: (
     mythId: string,
     email: string,
@@ -83,6 +84,7 @@ export function ArchiveLayout({ session, supabaseClient }: ArchiveLayoutProps) {
     addMytheme,
     deleteMytheme,
     updateMythCategories,
+    updateContributorInstructions,
     addCollaborator,
     updateCollaboratorRole,
     removeCollaborator,
@@ -168,6 +170,7 @@ export function ArchiveLayout({ session, supabaseClient }: ArchiveLayoutProps) {
     addMyth,
     addVariant,
     updateVariant,
+    updateContributorInstructions,
     addCollaborator,
     updateCollaboratorRole,
     removeCollaborator,

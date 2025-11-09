@@ -1,4 +1,4 @@
-import { MythVariant } from '../types/myth';
+import type { MythVariant, VariantContributorType } from '../types/myth';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
@@ -10,7 +10,30 @@ interface VariantSelectorProps {
   onSelectVariant: (variantId: string) => void;
   onAddVariant?: () => void;
   canEdit?: boolean;
+  viewerEmail?: string;
 }
+
+const CONTRIBUTOR_LABEL: Record<VariantContributorType, string> = {
+  owner: 'Owner',
+  collaborator: 'Collaborator',
+  invitee: 'Guest contributor',
+  unknown: 'Contributor',
+};
+
+const getContributorDisplay = (variant: MythVariant, viewerEmail?: string) => {
+  if (!variant.contributor) {
+    return 'Unknown contributor';
+  }
+  const normalizedViewerEmail = viewerEmail?.toLowerCase() ?? null;
+  if (
+    variant.contributor.email &&
+    normalizedViewerEmail &&
+    variant.contributor.email === normalizedViewerEmail
+  ) {
+    return 'You';
+  }
+  return variant.contributor.name ?? variant.contributor.email ?? 'Unknown contributor';
+};
 
 export function VariantSelector({
   variants,
@@ -18,6 +41,7 @@ export function VariantSelector({
   onSelectVariant,
   onAddVariant,
   canEdit = true,
+  viewerEmail,
 }: VariantSelectorProps) {
   return (
     <div className="space-y-3">
@@ -48,6 +72,12 @@ export function VariantSelector({
               <Badge variant="outline" className="mt-2">
                 {variant.plotPoints.length} plot points
               </Badge>
+              {variant.contributor && (
+                <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                  <Badge variant="outline">{CONTRIBUTOR_LABEL[variant.contributor.type ?? 'unknown']}</Badge>
+                  <span>{getContributorDisplay(variant, viewerEmail)}</span>
+                </div>
+              )}
             </div>
           </div>
         </Card>

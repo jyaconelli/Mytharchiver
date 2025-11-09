@@ -9,10 +9,13 @@ const createMyth = (overrides: Partial<Myth> = {}): Myth => ({
   id: 'myth-1',
   name: 'Fire Theft',
   description: 'Prometheus steals fire.',
+  contributorInstructions: '',
   ownerId: 'owner-1',
   categories: [],
   variants: [],
   collaborators: [],
+  canonicalCategories: [],
+  collaboratorCategories: [],
   ...overrides,
 });
 

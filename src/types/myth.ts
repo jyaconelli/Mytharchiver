@@ -14,17 +14,30 @@ export interface PlotPoint {
   collaboratorCategories?: CollaboratorCategoryAssignment[];
 }
 
+export type VariantContributorType = 'owner' | 'collaborator' | 'invitee' | 'unknown';
+
+export interface VariantContributor {
+  type: VariantContributorType;
+  email?: string | null;
+  name?: string | null;
+  userId?: string | null;
+  avatarUrl?: string | null;
+  contributionRequestId?: string | null;
+}
+
 export interface MythVariant {
   id: string;
   name: string;
   source: string;
   plotPoints: PlotPoint[];
+  contributor?: VariantContributor | null;
 }
 
 export interface Myth {
   id: string;
   name: string;
   description: string;
+  contributorInstructions: string;
   variants: MythVariant[];
   categories: string[];
   ownerId: string;
@@ -72,4 +85,29 @@ export interface CollaboratorCategoryAssignment {
   collaboratorCategoryId: string;
   collaboratorEmail: string;
   categoryName: string;
+}
+
+export interface ContributionPlotPointDraft {
+  id: string;
+  text: string;
+  order: number;
+}
+
+export interface ContributionDraftPayload {
+  name: string;
+  source: string;
+  plotPoints: ContributionPlotPointDraft[];
+}
+
+export type ContributionRequestStatus = 'draft' | 'submitted' | 'expired';
+
+export interface ContributionRequest {
+  id: string;
+  mythId: string;
+  email: string;
+  token: string;
+  status: ContributionRequestStatus;
+  submittedVariantId?: string | null;
+  updatedAt: string;
+  draft: ContributionDraftPayload;
 }

@@ -10,6 +10,7 @@ const createMyth = (overrides: Partial<Myth> = {}): Myth => ({
   id: `myth-${Math.random().toString(36).slice(2, 7)}`,
   name: 'Sample Myth',
   description: 'Myth description',
+  contributorInstructions: '',
   ownerId: 'owner-1',
   categories: [],
   variants: [
@@ -21,6 +22,8 @@ const createMyth = (overrides: Partial<Myth> = {}): Myth => ({
     },
   ],
   collaborators: [],
+  canonicalCategories: [],
+  collaboratorCategories: [],
   ...overrides,
 });
 

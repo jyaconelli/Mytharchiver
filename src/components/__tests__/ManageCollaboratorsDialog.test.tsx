@@ -46,6 +46,7 @@ const createMyth = (overrides: Partial<Myth> = {}): Myth => ({
   id: 'myth-1',
   name: 'Fire Theft',
   description: '',
+  contributorInstructions: '',
   ownerId: 'owner-1',
   categories: [],
   variants: [],
@@ -72,6 +73,8 @@ const createMyth = (overrides: Partial<Myth> = {}): Myth => ({
       displayName: 'Vera Viewer',
     },
   ],
+  canonicalCategories: [],
+  collaboratorCategories: [],
   ...overrides,
 });
 
