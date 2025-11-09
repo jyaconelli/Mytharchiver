@@ -253,6 +253,11 @@ begin
   return query select new_variant_id;
 end;
 $$;
+
+-- Edge function email invites
+-- Deploy supabase/functions/send-contribution-invite to automatically email contributors
+-- after inserting records into myth_contribution_requests.
+
 ```
 
 Enable Row Level Security on each table and add policies so that authenticated users can manage only their own records, for example:
@@ -340,3 +345,27 @@ create policy "Owners remove collaborators"
 ```
 
 Finally, add at least one Supabase user (via the Dashboard → Authentication panel) or enable email sign-up so new visitors can create accounts directly from the app.
+
+## Email invite automation
+
+To send contributor invites automatically when you add email addresses inside the app, deploy the included Edge Function and configure the required secrets:
+
+1. Deploy the function (after logging in with the Supabase CLI):
+   ```bash
+   supabase functions deploy send-contribution-invite
+   ```
+2. Set the secrets the function relies on (replace the placeholders with your values):
+   ```bash
+   supabase secrets set \
+     RESEND_API_KEY=your-resend-api-key \
+     CONTRIBUTION_INVITE_FROM_EMAIL="Myth Archive <invites@example.com>" \
+     CONTRIBUTION_INVITE_APP_URL=https://your-app-hostname \
+     SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+   ```
+
+   - `RESEND_API_KEY` – API key from Resend (or update the function to call a different provider).
+   - `CONTRIBUTION_INVITE_FROM_EMAIL` – The verified sender address.
+   - `CONTRIBUTION_INVITE_APP_URL` – Public base URL of the web app (used to build invite links).
+   - `SUPABASE_SERVICE_ROLE_KEY` – Service role key so the Edge Function can read myth + request details. Keep this secret safe.
+
+Once deployed, every new entry in **Contribution Requests** triggers an email automatically. You can also resend an invitation from the UI at any time.

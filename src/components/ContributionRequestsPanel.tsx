@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Copy, Loader2, Mail, Trash2 } from 'lucide-react';
+import { Copy, Loader2, Mail, Send, Trash2 } from 'lucide-react';
 
 import { getSupabaseClient } from '../lib/supabaseClient';
 import {
@@ -107,6 +107,7 @@ export function ContributionRequestsPanel({
   const [inviteError, setInviteError] = useState<string | null>(null);
   const [sendingInvites, setSendingInvites] = useState(false);
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
+  const [resendingIds, setResendingIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     setInstructionsValue(contributorInstructions);
@@ -190,15 +191,37 @@ export function ContributionRequestsPanel({
     setInviteError(null);
     setSendingInvites(true);
     try {
-      const { error } = await supabase.from('myth_contribution_requests').insert(
-        emails.map((email) => ({
-          myth_id: mythId,
-          email,
-        })),
-      );
+      const { data, error } = await supabase
+        .from('myth_contribution_requests')
+        .insert(
+          emails.map((email) => ({
+            myth_id: mythId,
+            email,
+          })),
+        )
+        .select('id');
       if (error) {
         throw new Error(error.message);
       }
+
+      const created = (data as { id: string }[] | null) ?? [];
+      if (created.length > 0) {
+        const { error: functionError } = await supabase.functions.invoke(
+          'send-contribution-invite',
+          {
+            body: {
+              requestIds: created.map((row) => row.id),
+            },
+          },
+        );
+
+        if (functionError) {
+          throw new Error(
+            functionError.message ?? 'Unable to send invite emails. Please try again.',
+          );
+        }
+      }
+
       setEmailInput('');
       await fetchRequests();
     } catch (error) {
@@ -253,6 +276,30 @@ export function ContributionRequestsPanel({
 
   const instructionsChanged =
     contributorInstructions.trim() !== instructionsValue.trim() && canManage;
+
+  const handleResendInvite = async (requestId: string) => {
+    if (!canManage) return;
+    setResendingIds((prev) => new Set(prev).add(requestId));
+    setInviteError(null);
+    try {
+      const { error } = await supabase.functions.invoke('send-contribution-invite', {
+        body: { requestIds: [requestId] },
+      });
+      if (error) {
+        throw new Error(error.message ?? 'Unable to resend invite email.');
+      }
+    } catch (error) {
+      setInviteError(
+        error instanceof Error ? error.message : 'Unable to resend invite email.',
+      );
+    } finally {
+      setResendingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(requestId);
+        return next;
+      });
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -312,8 +359,8 @@ export function ContributionRequestsPanel({
           <CardHeader>
             <CardTitle>Contribution Requests</CardTitle>
             <CardDescription>
-              Add one or more email addresses to generate unique contribution links. You can copy
-              the links or open your default email client to send the invitation.
+              Add one or more email addresses to generate unique contribution links. Invitations are
+              emailed automatically, and you can still copy or resend links manually if needed.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">
@@ -402,6 +449,21 @@ export function ContributionRequestsPanel({
                               <Mail className="mr-2 h-4 w-4" />
                               Email
                             </Button>
+                            {request.status === 'draft' && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleResendInvite(request.id)}
+                                disabled={resendingIds.has(request.id)}
+                              >
+                                {resendingIds.has(request.id) ? (
+                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                ) : (
+                                  <Send className="mr-2 h-4 w-4" />
+                                )}
+                                Resend
+                              </Button>
+                            )}
                             {request.status === 'draft' && (
                               <Button
                                 size="sm"
