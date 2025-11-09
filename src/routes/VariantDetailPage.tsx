@@ -4,8 +4,10 @@ import { useParams } from 'react-router-dom';
 import { VariantView } from '../components/VariantView';
 import { CollaboratorSummary } from '../components/CollaboratorSummary';
 import { useArchive } from './ArchiveLayout';
-import { CollaboratorRole } from '../types/myth';
+import { CollaboratorRole, VariantContributorType } from '../types/myth';
 import { LoadingAnimation } from '../components/LoadingAnimation';
+import { Badge } from '../components/ui/badge';
+import { UserCircle2 } from 'lucide-react';
 
 export function VariantDetailPage() {
   const { mythId, variantId } = useParams<{ mythId: string; variantId: string }>();
@@ -44,6 +46,48 @@ export function VariantDetailPage() {
   }, [myth, sessionUserId, currentUserEmail]);
 
   const canEdit = selectedMythRole === 'owner' || selectedMythRole === 'editor';
+
+  const contributorTypeLabel: Record<VariantContributorType, string> = {
+    owner: 'Owner',
+    collaborator: 'Collaborator',
+    invitee: 'Guest contributor',
+    unknown: 'Contributor',
+  };
+
+  const contributorCard = variant?.contributor ? (
+    <div className="rounded-lg border bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+      <div className="flex flex-wrap items-center gap-3">
+        <UserCircle2 className="h-8 w-8 text-purple-500" />
+        <div className="flex-1 min-w-0">
+          <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
+            Contributed by
+          </p>
+          <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+            {variant.contributor.email &&
+            currentUserEmail &&
+            variant.contributor.email === currentUserEmail
+              ? 'You'
+              : variant.contributor.name ??
+                variant.contributor.email ??
+                'Unknown contributor'}
+          </p>
+          {variant.contributor.name &&
+            variant.contributor.email &&
+            variant.contributor.name !== variant.contributor.email && (
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                {variant.contributor.email}
+              </p>
+            )}
+        </div>
+        <Badge>{contributorTypeLabel[variant.contributor.type]}</Badge>
+      </div>
+      {variant.contributor.type === 'invitee' && (
+        <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+          Submitted through an invitation link.
+        </p>
+      )}
+    </div>
+  ) : null;
 
   if (isInitialLoad) {
     return (
@@ -85,6 +129,8 @@ export function VariantDetailPage() {
         currentUserAvatarUrl={currentUserAvatarUrl}
         onManage={() => openManageCollaborators(myth.id)}
       />
+
+      {contributorCard}
 
       <VariantView
         variant={variant}

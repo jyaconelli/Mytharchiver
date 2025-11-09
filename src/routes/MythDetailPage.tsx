@@ -87,6 +87,7 @@ export function MythDetailPage() {
         onSelectVariant={(variant) => navigate(`/myths/${myth.id}/variants/${variant}`)}
         onAddVariant={canEdit ? () => setShowAddVariant(true) : undefined}
         canEdit={canEdit}
+        viewerEmail={currentUserEmail}
       />
 
       <AddVariantDialog

@@ -13,6 +13,8 @@ import {
   MythVariant,
   Mytheme,
   PlotPoint,
+  VariantContributor,
+  VariantContributorType,
 } from '../types/myth';
 
 type MythRow = {
@@ -80,6 +82,11 @@ type MythVariantRow = {
   source: string;
   sort_order: number | null;
   created_at: string;
+  created_by_user_id: string | null;
+  contributor_email: string | null;
+  contributor_name: string | null;
+  contributor_type: string | null;
+  contribution_request_id: string | null;
 };
 
 type PlotPointRow = {
@@ -114,6 +121,32 @@ const parseMythRow = (row: MythRow): Myth => ({
   canonicalCategories: [],
   collaboratorCategories: [],
 });
+
+const normalizeContributorType = (value: string | null | undefined): VariantContributorType => {
+  if (value === 'owner' || value === 'collaborator' || value === 'invitee' || value === 'unknown') {
+    return value;
+  }
+  return 'unknown';
+};
+
+const mapVariantContributor = (row: MythVariantRow): VariantContributor | null => {
+  const email = row.contributor_email ? row.contributor_email.toLowerCase() : null;
+  const name = row.contributor_name ?? null;
+  const userId = row.created_by_user_id ?? null;
+  const contributionRequestId = row.contribution_request_id ?? null;
+
+  if (!email && !name && !userId && !contributionRequestId && !row.contributor_type) {
+    return null;
+  }
+
+  return {
+    type: normalizeContributorType(row.contributor_type),
+    email,
+    name,
+    userId,
+    contributionRequestId,
+  };
+};
 
 type PostgrestErrorLike = {
   message?: string;
@@ -250,9 +283,11 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
       let variantRows: MythVariantRow[] = [];
       if (mythIds.length > 0) {
         lastStep = 'loading myth variants';
-        const { data, error } = await supabase
-          .from('myth_variants')
-          .select('id, myth_id, name, source, sort_order, created_at')
+      const { data, error } = await supabase
+        .from('myth_variants')
+        .select(
+          'id, myth_id, name, source, sort_order, created_at, created_by_user_id, contributor_email, contributor_name, contributor_type, contribution_request_id',
+        )
           .in('myth_id', mythIds)
           .order('sort_order', { ascending: true, nullsFirst: false })
           .order('created_at', { ascending: true });
@@ -320,6 +355,7 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
           name: row.name ?? '',
           source: row.source ?? '',
           plotPoints,
+          contributor: mapVariantContributor(row),
         };
 
         const entry = {
@@ -441,10 +477,31 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
         myth.collaborators = collaboratorsByMyth.get(row.id) ?? [];
         const relationalVariants = variantsByMyth.get(row.id);
         if (relationalVariants && relationalVariants.length > 0) {
-          myth.variants = relationalVariants.map((variant) => ({
-            ...variant,
-            plotPoints: variant.plotPoints.map((point) => ({ ...point })),
-          }));
+          myth.variants = relationalVariants.map((variant) => {
+            let contributor = variant.contributor ?? null;
+            if (contributor) {
+              const emailKey = contributor.email ?? '';
+              const profile = emailKey ? profileMap.get(emailKey) : null;
+              const resolvedName =
+                contributor.name ?? profile?.displayName ?? contributor.email ?? null;
+              const resolvedAvatar =
+                contributor.avatarUrl ?? profile?.avatarUrl ?? null;
+
+              if (resolvedName !== contributor.name || resolvedAvatar !== contributor.avatarUrl) {
+                contributor = {
+                  ...contributor,
+                  name: resolvedName,
+                  avatarUrl: resolvedAvatar,
+                };
+              }
+            }
+
+            return {
+              ...variant,
+              contributor,
+              plotPoints: variant.plotPoints.map((point) => ({ ...point })),
+            };
+          });
         }
         if (
           myth.categories.length === 0 &&
@@ -771,6 +828,18 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
       const newVariantId = createLocalId();
       const sortOrder = myth.variants.length;
 
+      const contributorType: VariantContributorType =
+        myth.ownerId === session.user.id ? 'owner' : 'collaborator';
+      const contributorName =
+        (session.user.user_metadata?.display_name as string | undefined) ??
+        (session.user.user_metadata?.full_name as string | undefined) ??
+        (session.user.user_metadata?.name as string | undefined) ??
+        null;
+      const normalizedContributorEmail =
+        currentUserEmail?.trim() && currentUserEmail.length > 0
+          ? currentUserEmail
+          : session.user.email?.toLowerCase() ?? null;
+
       const { data, error } = await supabase
         .from('myth_variants')
         .insert({
@@ -779,8 +848,14 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
           name,
           source,
           sort_order: sortOrder,
+          created_by_user_id: session.user.id,
+          contributor_email: normalizedContributorEmail,
+          contributor_name: contributorName,
+          contributor_type: contributorType,
         })
-        .select('id, name, source, sort_order')
+        .select(
+          'id, name, source, sort_order, created_by_user_id, contributor_email, contributor_name, contributor_type, contribution_request_id',
+        )
         .single();
 
       if (error) {
@@ -793,6 +868,13 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
         name: row.name ?? name,
         source: row.source ?? source,
         plotPoints: [],
+        contributor: {
+          type: (row.contributor_type as VariantContributorType | null) ?? contributorType,
+          email: (row.contributor_email ?? normalizedContributorEmail ?? undefined)?.toLowerCase(),
+          name: row.contributor_name ?? contributorName,
+          userId: row.created_by_user_id ?? session.user.id,
+          contributionRequestId: row.contribution_request_id ?? null,
+        },
       };
 
       setMyths((prev) =>

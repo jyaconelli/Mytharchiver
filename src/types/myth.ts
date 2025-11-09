@@ -14,11 +14,23 @@ export interface PlotPoint {
   collaboratorCategories?: CollaboratorCategoryAssignment[];
 }
 
+export type VariantContributorType = 'owner' | 'collaborator' | 'invitee' | 'unknown';
+
+export interface VariantContributor {
+  type: VariantContributorType;
+  email?: string | null;
+  name?: string | null;
+  userId?: string | null;
+  avatarUrl?: string | null;
+  contributionRequestId?: string | null;
+}
+
 export interface MythVariant {
   id: string;
   name: string;
   source: string;
   plotPoints: PlotPoint[];
+  contributor?: VariantContributor | null;
 }
 
 export interface Myth {

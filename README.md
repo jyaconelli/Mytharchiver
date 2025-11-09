@@ -210,13 +210,27 @@ begin
 
   new_variant_id := gen_random_uuid()::text;
 
-  insert into public.myth_variants (id, myth_id, name, source, sort_order)
+  insert into public.myth_variants (
+    id,
+    myth_id,
+    name,
+    source,
+    sort_order,
+    contributor_email,
+    contributor_name,
+    contributor_type,
+    contribution_request_id
+  )
   values (
     new_variant_id,
     request_record.myth_id,
     coalesce(request_record.draft_payload->>'name', ''),
     coalesce(request_record.draft_payload->>'source', ''),
-    target_sort_order
+    target_sort_order,
+    lower(coalesce(request_record.email, '')),
+    '',
+    'invitee',
+    request_record.id
   );
 
   plot_points := coalesce(request_record.draft_payload->'plotPoints', '[]'::jsonb);
@@ -251,6 +265,43 @@ begin
   where id = request_record.id;
 
   return query select new_variant_id;
+end;
+$$;
+
+create or replace function public.delete_contribution_request_with_variant(p_request_id uuid)
+returns table (deleted_request_id uuid)
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  request_record public.myth_contribution_requests%rowtype;
+  owner_id uuid;
+begin
+  select * into request_record
+  from public.myth_contribution_requests
+  where id = p_request_id
+  for update;
+
+  if not found then
+    raise exception 'Contribution request not found';
+  end if;
+
+  select user_id into owner_id
+  from public.myth_folders
+  where id = request_record.myth_id;
+
+  if owner_id is null or owner_id <> auth.uid() then
+    raise exception 'not_authorized';
+  end if;
+
+  if request_record.submitted_variant_id is not null then
+    delete from public.myth_variants where id = request_record.submitted_variant_id;
+  end if;
+
+  delete from public.myth_contribution_requests where id = p_request_id;
+
+  return query select request_record.id;
 end;
 $$;
 

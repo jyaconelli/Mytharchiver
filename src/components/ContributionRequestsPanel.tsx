@@ -108,6 +108,7 @@ export function ContributionRequestsPanel({
   const [sendingInvites, setSendingInvites] = useState(false);
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
   const [resendingIds, setResendingIds] = useState<Set<string>>(new Set());
+  const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     setInstructionsValue(contributorInstructions);
@@ -258,11 +259,16 @@ export function ContributionRequestsPanel({
 
   const handleDeleteRequest = async (requestId: string) => {
     if (!canManage) return;
+    setDeletingIds((prev) => {
+      const next = new Set(prev);
+      next.add(requestId);
+      return next;
+    });
+    setInviteError(null);
     try {
-      const { error } = await supabase
-        .from('myth_contribution_requests')
-        .delete()
-        .eq('id', requestId);
+      const { error } = await supabase.rpc('delete_contribution_request_with_variant', {
+        p_request_id: requestId,
+      });
       if (error) {
         throw new Error(error.message);
       }
@@ -271,6 +277,12 @@ export function ContributionRequestsPanel({
       setInviteError(
         error instanceof Error ? error.message : 'Unable to delete the contribution request.',
       );
+    } finally {
+      setDeletingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(requestId);
+        return next;
+      });
     }
   };
 
@@ -464,16 +476,21 @@ export function ContributionRequestsPanel({
                                 Resend
                               </Button>
                             )}
-                            {request.status === 'draft' && (
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => handleDeleteRequest(request.id)}
-                              >
+                            <Button
+                              size="sm"
+                              variant={request.status === 'submitted' ? 'destructive' : 'ghost'}
+                              onClick={() => handleDeleteRequest(request.id)}
+                              disabled={deletingIds.has(request.id)}
+                            >
+                              {deletingIds.has(request.id) ? (
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              ) : (
                                 <Trash2 className="mr-2 h-4 w-4" />
-                                Remove
-                              </Button>
-                            )}
+                              )}
+                              {request.status === 'submitted'
+                                ? 'Delete submission'
+                                : 'Remove'}
+                            </Button>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -481,6 +498,9 @@ export function ContributionRequestsPanel({
                   </TableBody>
                 </Table>
               )}
+              <p className="text-xs text-muted-foreground">
+                Removing a submitted invite will also delete the myth variant that guest contributed.
+              </p>
             </div>
           </CardContent>
         </Card>
