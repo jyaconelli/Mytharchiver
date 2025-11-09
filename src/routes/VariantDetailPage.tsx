@@ -53,6 +53,12 @@ export function VariantDetailPage() {
     invitee: 'Guest contributor',
     unknown: 'Contributor',
   };
+  console.log(variant?.contributor)
+  const displayContributorName = (value?: string | null) => {
+    if (!value) return null;
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : null;
+  };
 
   const contributorCard = variant?.contributor ? (
     <div className="rounded-lg border bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
@@ -67,13 +73,13 @@ export function VariantDetailPage() {
             currentUserEmail &&
             variant.contributor.email === currentUserEmail
               ? 'You'
-              : variant.contributor.name ??
+              : displayContributorName(variant.contributor.name) ??
                 variant.contributor.email ??
                 'Unknown contributor'}
           </p>
-          {variant.contributor.name &&
+          {displayContributorName(variant.contributor.name) &&
             variant.contributor.email &&
-            variant.contributor.name !== variant.contributor.email && (
+            displayContributorName(variant.contributor.name) !== variant.contributor.email && (
               <p className="text-xs text-gray-500 dark:text-gray-400">
                 {variant.contributor.email}
               </p>
