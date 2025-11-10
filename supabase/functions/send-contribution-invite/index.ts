@@ -1,6 +1,8 @@
 import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.48.0';
 
+import { corsHeaders } from '../_shared/cors.ts';
+
 type MythContributionRequestRow = {
   id: string;
   email: string | null;
@@ -40,82 +42,20 @@ if (!appBaseUrl) {
   throw new Error('Missing CONTRIBUTION_INVITE_APP_URL environment variable.');
 }
 
-let appOrigin: string;
 try {
-  appOrigin = new URL(appBaseUrl).origin;
+  // Ensure CONTRIBUTION_INVITE_APP_URL is a valid absolute URL.
+  new URL(appBaseUrl);
 } catch {
   throw new Error('CONTRIBUTION_INVITE_APP_URL must be a valid absolute URL.');
 }
 
-const normalizeOrigin = (value: string | null | undefined) => {
-  if (!value) return '';
-  if (value === '*') return '*';
-  try {
-    return new URL(value).origin;
-  } catch {
-    return '';
-  }
-};
-
-const allowedOrigins = (() => {
-  const fromEnv =
-    Deno.env.get('CONTRIBUTION_INVITE_ALLOWED_ORIGINS')
-      ?.split(',')
-      .map((origin) => origin.trim())
-      .filter(Boolean) ?? [];
-
-  const defaults = [appOrigin, 'http://localhost:5173', 'http://localhost:5174'];
-  const set = new Set<string>();
-  for (const origin of [...fromEnv, ...defaults]) {
-    const normalized = normalizeOrigin(origin);
-    if (normalized) {
-      set.add(normalized);
-      if (normalized === '*') {
-        // Wildcard short-circuits everything else.
-        return new Set<string>(['*']);
-      }
-    }
-  }
-  return set;
-})();
-
-const resolveAllowedOriginHeader = (requestOrigin: string | null) => {
-  if (allowedOrigins.has('*')) {
-    return '*';
-  }
-  if (!requestOrigin) return null;
-  const normalized = normalizeOrigin(requestOrigin);
-  if (normalized && allowedOrigins.has(normalized)) {
-    return requestOrigin;
-  }
-  return null;
-};
-
-const buildCorsHeaders = (requestOrigin: string | null) => {
-  const headers: Record<string, string> = {
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-    'Access-Control-Max-Age': '86400',
-    Vary: 'Origin',
-  };
-  const allowedOrigin = resolveAllowedOriginHeader(requestOrigin);
-  if (allowedOrigin) {
-    headers['Access-Control-Allow-Origin'] = allowedOrigin;
-  }
-  return headers;
-};
-
-const jsonResponse = (
-  body: Record<string, unknown> | string,
-  status: number,
-  requestOrigin: string | null,
-) => {
+const jsonResponse = (body: Record<string, unknown> | string, status: number) => {
   const payload = typeof body === 'string' ? { error: body } : body;
   return new Response(JSON.stringify(payload), {
     status,
     headers: {
+      ...corsHeaders,
       'Content-Type': 'application/json',
-      ...buildCorsHeaders(requestOrigin),
     },
   });
 };
@@ -152,29 +92,24 @@ const buildEmailText = (mythName: string, mythDescription: string, instructions:
 };
 
 serve(async (request) => {
-  const requestOrigin = request.headers.get('origin');
-
   if (request.method === 'OPTIONS') {
-    return new Response(null, {
-      status: 204,
-      headers: buildCorsHeaders(requestOrigin),
-    });
+    return new Response('ok', { headers: corsHeaders });
   }
 
   if (request.method !== 'POST') {
-    return jsonResponse('Method not allowed', 405, requestOrigin);
+    return jsonResponse('Method not allowed', 405);
   }
 
   let payload: InvokePayload;
   try {
     payload = await request.json();
   } catch {
-    return jsonResponse('Invalid JSON payload', 400, requestOrigin);
+    return jsonResponse('Invalid JSON payload', 400);
   }
 
   const requestIds = Array.isArray(payload.requestIds) ? payload.requestIds.filter(Boolean) : [];
   if (requestIds.length === 0) {
-    return jsonResponse({ error: 'requestIds array is required.' }, 400, requestOrigin);
+    return jsonResponse({ error: 'requestIds array is required.' }, 400);
   }
 
   const { data, error } = await supabaseAdmin
@@ -185,12 +120,12 @@ serve(async (request) => {
     .in('id', requestIds);
 
   if (error) {
-    return jsonResponse({ error: error.message }, 500, requestOrigin);
+    return jsonResponse({ error: error.message }, 500);
   }
 
   const invites = (data as MythContributionRequestRow[] | null) ?? [];
   if (invites.length === 0) {
-    return jsonResponse({ error: 'No matching requests found.' }, 404, requestOrigin);
+    return jsonResponse({ error: 'No matching requests found.' }, 404);
   }
 
   const failures: { id: string; email: string; error: string }[] = [];
@@ -238,6 +173,5 @@ serve(async (request) => {
       failed: failures,
     },
     status,
-    requestOrigin,
   );
 });
