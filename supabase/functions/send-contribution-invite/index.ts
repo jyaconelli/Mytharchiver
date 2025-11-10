@@ -42,13 +42,6 @@ if (!appBaseUrl) {
   throw new Error('Missing CONTRIBUTION_INVITE_APP_URL environment variable.');
 }
 
-try {
-  // Ensure CONTRIBUTION_INVITE_APP_URL is a valid absolute URL.
-  new URL(appBaseUrl);
-} catch {
-  throw new Error('CONTRIBUTION_INVITE_APP_URL must be a valid absolute URL.');
-}
-
 const jsonResponse = (body: Record<string, unknown> | string, status: number) => {
   const payload = typeof body === 'string' ? { error: body } : body;
   return new Response(JSON.stringify(payload), {
