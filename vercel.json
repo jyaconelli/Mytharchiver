@@ -2,6 +2,10 @@
   "framework": "vite",
   "buildCommand": "yarn build",
   "outputDirectory": "build",
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/.*", "dest": "/index.html" }
+  ],
   "git": {
     "deploymentEnabled": {
       "main": true
