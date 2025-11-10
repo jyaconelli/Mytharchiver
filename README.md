@@ -65,7 +65,7 @@ create table if not exists public.myth_contribution_requests (
   myth_id uuid references public.myth_folders(id) on delete cascade,
   email text not null,
   token uuid not null default gen_random_uuid(),
-  status text not null default 'draft' check (status in ('draft','submitted','expired')),
+  status text not null default 'invited' check (status in ('invited','draft','submitted','expired')),
   draft_payload jsonb not null default '{"name":"","source":"","plotPoints":[]}'::jsonb,
   submitted_variant_id text,
   created_at timestamptz not null default timezone('utc', now()),
@@ -169,9 +169,10 @@ begin
   return query
   update public.myth_contribution_requests as r
   set draft_payload = normalized_payload,
-      updated_at = timezone('utc', now())
+      updated_at = timezone('utc', now()),
+      status = case when r.status = 'invited' then 'draft' else r.status end
   where r.token = p_token
-    and r.status = 'draft'
+    and r.status in ('invited', 'draft')
   returning r.id as request_id, r.updated_at;
 end;
 $$;
@@ -199,7 +200,7 @@ begin
     raise exception 'Invalid contribution link';
   end if;
 
-  if request_record.status <> 'draft' then
+  if request_record.status not in ('draft', 'invited') then
     return query select coalesce(request_record.submitted_variant_id, '');
   end if;
 

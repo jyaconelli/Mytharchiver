@@ -60,10 +60,21 @@ const statusVariant: Record<
   ContributionRequestStatus,
   'default' | 'secondary' | 'destructive' | 'outline'
 > = {
+  invited: 'outline',
   draft: 'secondary',
   submitted: 'default',
   expired: 'outline',
 };
+
+const statusLabel: Record<ContributionRequestStatus, string> = {
+  invited: 'Invited',
+  draft: 'Draft',
+  submitted: 'Submitted',
+  expired: 'Expired',
+};
+
+const isDraftLikeStatus = (status: ContributionRequestStatus) =>
+  status === 'invited' || status === 'draft';
 
 const formatDateTime = (value: string) => {
   const date = new Date(value);
@@ -437,9 +448,7 @@ export function ContributionRequestsPanel({
                         <TableCell className="font-medium">{request.email}</TableCell>
                         <TableCell>
                           <Badge variant={statusVariant[request.status]}>
-                            {request.status === 'draft' && 'Draft'}
-                            {request.status === 'submitted' && 'Submitted'}
-                            {request.status === 'expired' && 'Expired'}
+                            {statusLabel[request.status]}
                           </Badge>
                         </TableCell>
                         <TableCell>{formatDateTime(request.updatedAt)}</TableCell>
@@ -461,7 +470,7 @@ export function ContributionRequestsPanel({
                               <Mail className="mr-2 h-4 w-4" />
                               Email
                             </Button>
-                            {request.status === 'draft' && (
+                            {isDraftLikeStatus(request.status) && (
                               <Button
                                 size="sm"
                                 variant="outline"

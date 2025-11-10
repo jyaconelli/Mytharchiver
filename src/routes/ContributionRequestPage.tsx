@@ -63,12 +63,15 @@ const buildPayload = (draft: ContributionDraftPayload) => ({
   })),
 });
 
+const isDraftLikeStatus = (status: 'invited' | 'draft' | 'submitted' | 'expired' | null) =>
+  status === 'invited' || status === 'draft';
+
 export function ContributionRequestPage() {
   const { token } = useParams<{ token: string }>();
   const supabase = useMemo(() => getSupabaseClient(), []);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [requestStatus, setRequestStatus] = useState<'draft' | 'submitted' | 'expired' | null>(
+  const [requestStatus, setRequestStatus] = useState<'invited' | 'draft' | 'submitted' | 'expired' | null>(
     null,
   );
   const [mythName, setMythName] = useState('');
@@ -121,7 +124,7 @@ export function ContributionRequestPage() {
   }, [loadRequest]);
 
   const persistDraft = useCallback(async () => {
-    if (!token || requestStatus !== 'draft') {
+    if (!token || !isDraftLikeStatus(requestStatus)) {
       return;
     }
     setAutosaveState('saving');
@@ -143,6 +146,9 @@ export function ContributionRequestPage() {
       setLastSavedAt(new Date().toISOString());
     }
     setAutosaveState('saved');
+    if (requestStatus === 'invited') {
+      setRequestStatus('draft');
+    }
     setTimeout(() => setAutosaveState('idle'), 1500);
   }, [draft, requestStatus, supabase, token]);
 
@@ -151,7 +157,7 @@ export function ContributionRequestPage() {
       skipInitialSave.current = false;
       return;
     }
-    if (requestStatus !== 'draft' || !token) {
+    if (!isDraftLikeStatus(requestStatus) || !token) {
       return;
     }
     if (autosaveTimer.current) {
@@ -213,7 +219,7 @@ export function ContributionRequestPage() {
   };
 
   const handleSubmit = async () => {
-    if (!token || requestStatus !== 'draft') {
+    if (!token || !isDraftLikeStatus(requestStatus)) {
       return;
     }
     const hasContent = draft.plotPoints.some((point) => point.text.trim().length > 0);
@@ -423,10 +429,17 @@ export function ContributionRequestPage() {
             )}
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="secondary" onClick={() => void persistDraft()} disabled={requestStatus !== 'draft'}>
+            <Button
+              variant="secondary"
+              onClick={() => void persistDraft()}
+              disabled={!isDraftLikeStatus(requestStatus)}
+            >
               Save now
             </Button>
-            <Button onClick={handleSubmit} disabled={submitting || requestStatus !== 'draft'}>
+            <Button
+              onClick={handleSubmit}
+              disabled={submitting || !isDraftLikeStatus(requestStatus)}
+            >
               {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Submit variant
             </Button>

@@ -40,6 +40,86 @@ if (!appBaseUrl) {
   throw new Error('Missing CONTRIBUTION_INVITE_APP_URL environment variable.');
 }
 
+let appOrigin: string;
+try {
+  appOrigin = new URL(appBaseUrl).origin;
+} catch {
+  throw new Error('CONTRIBUTION_INVITE_APP_URL must be a valid absolute URL.');
+}
+
+const normalizeOrigin = (value: string | null | undefined) => {
+  if (!value) return '';
+  if (value === '*') return '*';
+  try {
+    return new URL(value).origin;
+  } catch {
+    return '';
+  }
+};
+
+const allowedOrigins = (() => {
+  const fromEnv =
+    Deno.env.get('CONTRIBUTION_INVITE_ALLOWED_ORIGINS')
+      ?.split(',')
+      .map((origin) => origin.trim())
+      .filter(Boolean) ?? [];
+
+  const defaults = [appOrigin, 'http://localhost:5173', 'http://localhost:5174'];
+  const set = new Set<string>();
+  for (const origin of [...fromEnv, ...defaults]) {
+    const normalized = normalizeOrigin(origin);
+    if (normalized) {
+      set.add(normalized);
+      if (normalized === '*') {
+        // Wildcard short-circuits everything else.
+        return new Set<string>(['*']);
+      }
+    }
+  }
+  return set;
+})();
+
+const resolveAllowedOriginHeader = (requestOrigin: string | null) => {
+  if (allowedOrigins.has('*')) {
+    return '*';
+  }
+  if (!requestOrigin) return null;
+  const normalized = normalizeOrigin(requestOrigin);
+  if (normalized && allowedOrigins.has(normalized)) {
+    return requestOrigin;
+  }
+  return null;
+};
+
+const buildCorsHeaders = (requestOrigin: string | null) => {
+  const headers: Record<string, string> = {
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Max-Age': '86400',
+    Vary: 'Origin',
+  };
+  const allowedOrigin = resolveAllowedOriginHeader(requestOrigin);
+  if (allowedOrigin) {
+    headers['Access-Control-Allow-Origin'] = allowedOrigin;
+  }
+  return headers;
+};
+
+const jsonResponse = (
+  body: Record<string, unknown> | string,
+  status: number,
+  requestOrigin: string | null,
+) => {
+  const payload = typeof body === 'string' ? { error: body } : body;
+  return new Response(JSON.stringify(payload), {
+    status,
+    headers: {
+      'Content-Type': 'application/json',
+      ...buildCorsHeaders(requestOrigin),
+    },
+  });
+};
+
 const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey);
 
 const buildEmailHtml = (mythName: string, mythDescription: string, instructions: string, inviteUrl: string) => `
@@ -72,23 +152,29 @@ const buildEmailText = (mythName: string, mythDescription: string, instructions:
 };
 
 serve(async (request) => {
+  const requestOrigin = request.headers.get('origin');
+
+  if (request.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 204,
+      headers: buildCorsHeaders(requestOrigin),
+    });
+  }
+
   if (request.method !== 'POST') {
-    return new Response('Method not allowed', { status: 405 });
+    return jsonResponse('Method not allowed', 405, requestOrigin);
   }
 
   let payload: InvokePayload;
   try {
     payload = await request.json();
   } catch {
-    return new Response('Invalid JSON payload', { status: 400 });
+    return jsonResponse('Invalid JSON payload', 400, requestOrigin);
   }
 
   const requestIds = Array.isArray(payload.requestIds) ? payload.requestIds.filter(Boolean) : [];
   if (requestIds.length === 0) {
-    return new Response(JSON.stringify({ error: 'requestIds array is required.' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return jsonResponse({ error: 'requestIds array is required.' }, 400, requestOrigin);
   }
 
   const { data, error } = await supabaseAdmin
@@ -99,18 +185,12 @@ serve(async (request) => {
     .in('id', requestIds);
 
   if (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return jsonResponse({ error: error.message }, 500, requestOrigin);
   }
 
   const invites = (data as MythContributionRequestRow[] | null) ?? [];
   if (invites.length === 0) {
-    return new Response(JSON.stringify({ error: 'No matching requests found.' }), {
-      status: 404,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return jsonResponse({ error: 'No matching requests found.' }, 404, requestOrigin);
   }
 
   const failures: { id: string; email: string; error: string }[] = [];
@@ -152,14 +232,12 @@ serve(async (request) => {
   }
 
   const status = failures.length > 0 ? 207 : 200;
-  return new Response(
-    JSON.stringify({
+  return jsonResponse(
+    {
       delivered: invites.length - failures.length,
       failed: failures,
-    }),
-    {
-      status,
-      headers: { 'Content-Type': 'application/json' },
     },
+    status,
+    requestOrigin,
   );
 });

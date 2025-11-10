@@ -99,7 +99,7 @@ export interface ContributionDraftPayload {
   plotPoints: ContributionPlotPointDraft[];
 }
 
-export type ContributionRequestStatus = 'draft' | 'submitted' | 'expired';
+export type ContributionRequestStatus = 'invited' | 'draft' | 'submitted' | 'expired';
 
 export interface ContributionRequest {
   id: string;
