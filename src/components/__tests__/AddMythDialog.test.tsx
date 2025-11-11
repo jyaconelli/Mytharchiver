@@ -16,10 +16,7 @@ describe('AddMythDialog', () => {
 
     await user.type(screen.getByLabelText(/myth name/i), 'Prometheus');
     await user.type(screen.getByLabelText(/description/i), 'Fire bringer');
-    await user.type(
-      screen.getByLabelText(/contributor instructions/i),
-      'Share source links.',
-    );
+    await user.type(screen.getByLabelText(/contributor instructions/i), 'Share source links.');
     await user.click(screen.getByRole('button', { name: /add myth/i }));
 
     expect(handleAdd).toHaveBeenCalledWith('Prometheus', 'Fire bringer', 'Share source links.');
@@ -31,9 +28,7 @@ describe('AddMythDialog', () => {
     const user = userEvent.setup();
     const handleAdd = vi.fn().mockRejectedValue(new Error('Failed to add myth'));
 
-    const { container } = render(
-      <AddMythDialog open onOpenChange={vi.fn()} onAdd={handleAdd} />,
-    );
+    const { container } = render(<AddMythDialog open onOpenChange={vi.fn()} onAdd={handleAdd} />);
 
     await user.type(screen.getByLabelText(/myth name/i), 'Prometheus');
     await user.click(screen.getByRole('button', { name: /add myth/i }));

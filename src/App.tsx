@@ -26,10 +26,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route
-          path="/auth"
-          element={session ? <Navigate to="/" replace /> : <AuthGate />}
-        />
+        <Route path="/auth" element={session ? <Navigate to="/" replace /> : <AuthGate />} />
         <Route
           path="/"
           element={
@@ -45,10 +42,7 @@ export default function App() {
           <Route path="myths/:mythId/variants/:variantId" element={<VariantDetailPage />} />
         </Route>
         <Route path="/contribute/:token" element={<ContributionRequestPage />} />
-        <Route
-          path="*"
-          element={<Navigate to={session ? '/' : '/auth'} replace />}
-        />
+        <Route path="*" element={<Navigate to={session ? '/' : '/auth'} replace />} />
       </Routes>
     </BrowserRouter>
   );

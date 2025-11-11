@@ -40,10 +40,7 @@ const normalizeDraft = (payload: ContributionDraftPayload | null): ContributionD
 
   const plotPoints = Array.isArray(payload.plotPoints)
     ? payload.plotPoints.map((point, index) => ({
-        id:
-          typeof point?.id === 'string' && point.id
-            ? point.id
-            : `plot-${Date.now()}-${index}`,
+        id: typeof point?.id === 'string' && point.id ? point.id : `plot-${Date.now()}-${index}`,
         text: typeof point?.text === 'string' ? point.text : '',
         order: typeof point?.order === 'number' ? point.order : index + 1,
       }))
@@ -106,9 +103,9 @@ export function ContributionRequestsPanel({
 }: ContributionRequestsPanelProps) {
   const supabase = useMemo(() => getSupabaseClient(), []);
   const [instructionsValue, setInstructionsValue] = useState(contributorInstructions);
-  const [instructionsStatus, setInstructionsStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>(
-    'idle',
-  );
+  const [instructionsStatus, setInstructionsStatus] = useState<
+    'idle' | 'saving' | 'saved' | 'error'
+  >('idle');
   const [instructionsError, setInstructionsError] = useState<string | null>(null);
 
   const [requests, setRequests] = useState<ContributionRequest[]>([]);
@@ -144,9 +141,7 @@ export function ContributionRequestsPanel({
     setRequestsError(null);
     const { data, error } = await supabase
       .from('myth_contribution_requests')
-      .select(
-        'id, myth_id, email, token, status, submitted_variant_id, updated_at, draft_payload',
-      )
+      .select('id, myth_id, email, token, status, submitted_variant_id, updated_at, draft_payload')
       .eq('myth_id', mythId)
       .order('created_at', { ascending: false });
 
@@ -188,9 +183,7 @@ export function ContributionRequestsPanel({
       setTimeout(() => setInstructionsStatus('idle'), 2000);
     } catch (error) {
       setInstructionsStatus('error');
-      setInstructionsError(
-        error instanceof Error ? error.message : 'Unable to save instructions.',
-      );
+      setInstructionsError(error instanceof Error ? error.message : 'Unable to save instructions.');
     }
   };
 
@@ -312,9 +305,7 @@ export function ContributionRequestsPanel({
         throw new Error(error.message ?? 'Unable to resend invite email.');
       }
     } catch (error) {
-      setInviteError(
-        error instanceof Error ? error.message : 'Unable to resend invite email.',
-      );
+      setInviteError(error instanceof Error ? error.message : 'Unable to resend invite email.');
     } finally {
       setResendingIds((prev) => {
         const next = new Set(prev);
@@ -361,9 +352,7 @@ export function ContributionRequestsPanel({
                   Save instructions
                 </Button>
                 {instructionsStatus === 'saved' && (
-                  <span className="text-sm text-emerald-600 dark:text-emerald-400">
-                    Saved ✓
-                  </span>
+                  <span className="text-sm text-emerald-600 dark:text-emerald-400">Saved ✓</span>
                 )}
               </div>
             </>
@@ -400,9 +389,7 @@ export function ContributionRequestsPanel({
                 Separate multiple addresses with commas, semicolons, or new lines.
               </p>
             </div>
-            {inviteError && (
-              <p className="text-sm text-red-600 dark:text-red-400">{inviteError}</p>
-            )}
+            {inviteError && <p className="text-sm text-red-600 dark:text-red-400">{inviteError}</p>}
             <div className="flex items-center gap-3">
               <Button onClick={handleCreateInvites} disabled={sendingInvites}>
                 {sendingInvites && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -423,7 +410,9 @@ export function ContributionRequestsPanel({
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <p className="text-sm font-medium">Active requests</p>
-                {requestsLoading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
+                {requestsLoading && (
+                  <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                )}
               </div>
               {requestsError && (
                 <p className="text-sm text-red-600 dark:text-red-400">{requestsError}</p>
@@ -496,9 +485,7 @@ export function ContributionRequestsPanel({
                               ) : (
                                 <Trash2 className="mr-2 h-4 w-4" />
                               )}
-                              {request.status === 'submitted'
-                                ? 'Delete submission'
-                                : 'Remove'}
+                              {request.status === 'submitted' ? 'Delete submission' : 'Remove'}
                             </Button>
                           </div>
                         </TableCell>
@@ -508,7 +495,8 @@ export function ContributionRequestsPanel({
                 </Table>
               )}
               <p className="text-xs text-muted-foreground">
-                Removing a submitted invite will also delete the myth variant that guest contributed.
+                Removing a submitted invite will also delete the myth variant that guest
+                contributed.
               </p>
             </div>
           </CardContent>

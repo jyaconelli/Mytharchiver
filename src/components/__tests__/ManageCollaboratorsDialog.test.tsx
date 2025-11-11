@@ -78,7 +78,11 @@ const createMyth = (overrides: Partial<Myth> = {}): Myth => ({
   ...overrides,
 });
 
-const selectOption = async (user: ReturnType<typeof userEvent['setup']>, trigger: HTMLElement, name: string) => {
+const selectOption = async (
+  user: ReturnType<(typeof userEvent)['setup']>,
+  trigger: HTMLElement,
+  name: string,
+) => {
   await user.click(trigger);
   const option = screen
     .getAllByText(name, { exact: true })
@@ -120,9 +124,7 @@ describe('ManageCollaboratorsDialog', () => {
     await user.click(screen.getByRole('button', { name: /add collaborator/i }));
     expect(onAddCollaborator).toHaveBeenCalledWith('myth-1', 'helper@example.com', 'viewer');
 
-    const editorItem = screen
-      .getByText('scribe@example.com')
-      .closest('li') as HTMLLIElement;
+    const editorItem = screen.getByText('scribe@example.com').closest('li') as HTMLLIElement;
     const roleTrigger = within(editorItem).getByRole('combobox');
     await selectOption(user, roleTrigger, 'Viewer');
     expect(onUpdateCollaboratorRole).toHaveBeenCalledWith('collab-2', 'viewer');
@@ -147,7 +149,9 @@ describe('ManageCollaboratorsDialog', () => {
         currentUserEmail="owner@example.com"
         onAddCollaborator={vi.fn().mockRejectedValue(new Error('Unable to add collaborator.'))}
         onUpdateCollaboratorRole={vi.fn().mockRejectedValue(new Error('Unable to update role.'))}
-        onRemoveCollaborator={vi.fn().mockRejectedValue(new Error('Unable to remove collaborator.'))}
+        onRemoveCollaborator={vi
+          .fn()
+          .mockRejectedValue(new Error('Unable to remove collaborator.'))}
       />,
     );
 
@@ -155,9 +159,7 @@ describe('ManageCollaboratorsDialog', () => {
     await user.click(screen.getByRole('button', { name: /add collaborator/i }));
     expect(await screen.findByText(/unable to add collaborator/i)).toBeInTheDocument();
 
-    const editorItem = screen
-      .getByText('scribe@example.com')
-      .closest('li') as HTMLLIElement;
+    const editorItem = screen.getByText('scribe@example.com').closest('li') as HTMLLIElement;
     const roleTrigger = within(editorItem).getByRole('combobox');
     await selectOption(user, roleTrigger, 'Viewer');
     expect(await screen.findByText(/unable to update role/i)).toBeInTheDocument();
@@ -188,9 +190,7 @@ describe('ManageCollaboratorsDialog', () => {
       />,
     );
 
-    expect(
-      screen.getByText(/only owners can manage collaborators/i),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/only owners can manage collaborators/i)).toBeInTheDocument();
     expect(screen.queryByLabelText(/email/i)).not.toBeInTheDocument();
   });
 });

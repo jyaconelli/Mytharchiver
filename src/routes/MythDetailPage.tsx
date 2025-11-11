@@ -37,9 +37,7 @@ export function MythDetailPage() {
     if (myth.ownerId === sessionUserId) {
       return 'owner';
     }
-    const collaborator = myth.collaborators.find(
-      (person) => person.email === currentUserEmail,
-    );
+    const collaborator = myth.collaborators.find((person) => person.email === currentUserEmail);
     return collaborator?.role ?? null;
   }, [myth, sessionUserId, currentUserEmail]);
 

@@ -1,13 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import {
-  ArrowDown,
-  ArrowUp,
-  CheckCircle2,
-  Loader2,
-  Plus,
-  Trash2,
-} from 'lucide-react';
+import { ArrowDown, ArrowUp, CheckCircle2, Loader2, Plus, Trash2 } from 'lucide-react';
 
 import { getSupabaseClient } from '../lib/supabaseClient';
 import { ContributionDraftPayload } from '../types/myth';
@@ -71,9 +64,9 @@ export function ContributionRequestPage() {
   const supabase = useMemo(() => getSupabaseClient(), []);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [requestStatus, setRequestStatus] = useState<'invited' | 'draft' | 'submitted' | 'expired' | null>(
-    null,
-  );
+  const [requestStatus, setRequestStatus] = useState<
+    'invited' | 'draft' | 'submitted' | 'expired' | null
+  >(null);
   const [mythName, setMythName] = useState('');
   const [mythDescription, setMythDescription] = useState('');
   const [instructions, setInstructions] = useState('');
@@ -313,9 +306,7 @@ export function ContributionRequestPage() {
                 </label>
                 <Input
                   value={draft.name}
-                  onChange={(event) =>
-                    setDraft((prev) => ({ ...prev, name: event.target.value }))
-                  }
+                  onChange={(event) => setDraft((prev) => ({ ...prev, name: event.target.value }))}
                   placeholder="e.g., Prometheus Steals Fire"
                 />
               </div>
@@ -351,7 +342,10 @@ export function ContributionRequestPage() {
             )}
             <div className="space-y-4">
               {draft.plotPoints.map((point, index) => (
-                <div key={point.id} className="rounded-lg border bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+                <div
+                  key={point.id}
+                  className="rounded-lg border bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900"
+                >
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
                       Step {index + 1}

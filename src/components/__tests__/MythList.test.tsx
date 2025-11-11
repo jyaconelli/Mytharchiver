@@ -43,7 +43,9 @@ describe('MythList', () => {
             id: 'v1',
             name: 'Primary',
             source: 'Oral tradition',
-            plotPoints: [{ id: 'p1', text: 'The world forms', category: 'Intro', order: 1, mythemeRefs: [] }],
+            plotPoints: [
+              { id: 'p1', text: 'The world forms', category: 'Intro', order: 1, mythemeRefs: [] },
+            ],
           },
         ],
         collaborators: [

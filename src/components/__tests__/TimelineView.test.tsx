@@ -9,11 +9,7 @@ const plotPointMock = vi.hoisted(() => vi.fn());
 vi.mock('../PlotPoint', () => ({
   PlotPoint: vi.fn((props) => {
     plotPointMock(props);
-    return (
-      <div data-testid={`timeline-${props.plotPoint.id}`}>
-        {props.plotPoint.text}
-      </div>
-    );
+    return <div data-testid={`timeline-${props.plotPoint.id}`}>{props.plotPoint.text}</div>;
   }),
 }));
 

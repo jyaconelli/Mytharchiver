@@ -139,12 +139,7 @@ beforeAll(() => {
   });
 });
 
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '../accordion';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../accordion';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -187,17 +182,9 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '../carousel';
-import {
-  ChartContainer,
-  ChartLegendContent,
-  ChartTooltipContent,
-} from '../chart';
+import { ChartContainer, ChartLegendContent, ChartTooltipContent } from '../chart';
 import { Checkbox } from '../checkbox';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '../collapsible';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../collapsible';
 import {
   Command,
   CommandDialog,
@@ -234,7 +221,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '../dialog';
-import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '../drawer';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from '../drawer';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -260,17 +255,8 @@ import {
   FormLabel,
   FormMessage,
 } from '../form';
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from '../hover-card';
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSeparator,
-  InputOTPSlot,
-} from '../input-otp';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '../hover-card';
+import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from '../input-otp';
 import { Input } from '../input';
 import { Label } from '../label';
 import {
@@ -298,22 +284,17 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from '../navigation-menu';
-import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink } from '../pagination';
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '../popover';
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+} from '../pagination';
+import { Popover, PopoverContent, PopoverTrigger } from '../popover';
 import { Progress } from '../progress';
-import {
-  RadioGroup,
-  RadioGroupItem,
-} from '../radio-group';
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from '../resizable';
+import { RadioGroup, RadioGroupItem } from '../radio-group';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../resizable';
 import { ScrollArea, ScrollBar } from '../scroll-area';
 import {
   Select,
@@ -373,26 +354,11 @@ import {
   TableHeader,
   TableRow,
 } from '../table';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '../tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../tabs';
 import { Textarea } from '../textarea';
-import {
-  Toggle,
-} from '../toggle';
-import {
-  ToggleGroup,
-  ToggleGroupItem,
-} from '../toggle-group';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '../tooltip';
+import { Toggle } from '../toggle';
+import { ToggleGroup, ToggleGroupItem } from '../toggle-group';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../tooltip';
 
 import { useForm } from 'react-hook-form';
 

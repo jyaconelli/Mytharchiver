@@ -48,9 +48,7 @@ describe('App', () => {
 
     render(<App />);
 
-    expect(
-      screen.getByText('Checking your session…', { exact: false }),
-    ).toBeInTheDocument();
+    expect(screen.getByText('Checking your session…', { exact: false })).toBeInTheDocument();
   });
 
   it('redirects unauthenticated users to the auth gate', () => {

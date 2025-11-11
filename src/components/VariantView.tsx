@@ -42,7 +42,6 @@ const createLocalId = () =>
     ? crypto.randomUUID()
     : `plot-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
-
 export function VariantView({
   variant,
   mythemes,

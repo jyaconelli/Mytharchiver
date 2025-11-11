@@ -74,7 +74,9 @@ export function VariantSelector({
               </Badge>
               {variant.contributor && (
                 <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                  <Badge variant="outline">{CONTRIBUTOR_LABEL[variant.contributor.type ?? 'unknown']}</Badge>
+                  <Badge variant="outline">
+                    {CONTRIBUTOR_LABEL[variant.contributor.type ?? 'unknown']}
+                  </Badge>
                   <span>{getContributorDisplay(variant, viewerEmail)}</span>
                 </div>
               )}

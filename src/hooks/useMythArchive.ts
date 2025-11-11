@@ -191,9 +191,7 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
       lastStep = 'loading owned myths';
       const ownedMythsResult = await supabase
         .from('myth_folders')
-        .select(
-          'id, name, description, contributor_instructions, variants, user_id, categories',
-        )
+        .select('id, name, description, contributor_instructions, variants, user_id, categories')
         .eq('user_id', session.user.id)
         .order('created_at', { ascending: true });
 
@@ -245,17 +243,14 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
       }
 
       const ownedMythRows = (ownedMythsResult.data as MythRow[] | null) ?? [];
-      const collaboratorMythIds =
-        collaboratorLinksResult.data?.map((link) => link.myth_id) ?? [];
+      const collaboratorMythIds = collaboratorLinksResult.data?.map((link) => link.myth_id) ?? [];
 
       let collaboratorMythRows: MythRow[] = [];
       if (collaboratorMythIds.length > 0) {
         lastStep = 'loading collaborator myths';
         const collaboratorMythsResult = await supabase
           .from('myth_folders')
-          .select(
-            'id, name, description, contributor_instructions, variants, user_id, categories',
-          )
+          .select('id, name, description, contributor_instructions, variants, user_id, categories')
           .in('id', collaboratorMythIds)
           .order('created_at', { ascending: true });
 
@@ -283,11 +278,11 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
       let variantRows: MythVariantRow[] = [];
       if (mythIds.length > 0) {
         lastStep = 'loading myth variants';
-      const { data, error } = await supabase
-        .from('myth_variants')
-        .select(
-          'id, myth_id, name, source, sort_order, created_at, created_by_user_id, contributor_email, contributor_name, contributor_type, contribution_request_id',
-        )
+        const { data, error } = await supabase
+          .from('myth_variants')
+          .select(
+            'id, myth_id, name, source, sort_order, created_at, created_by_user_id, contributor_email, contributor_name, contributor_type, contribution_request_id',
+          )
           .in('myth_id', mythIds)
           .order('sort_order', { ascending: true, nullsFirst: false })
           .order('created_at', { ascending: true });
@@ -318,14 +313,14 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
 
       const plotPointsByVariant = new Map<string, PlotPoint[]>();
       plotPointRows.forEach((row) => {
-        const sanitizedRefs = Array.isArray(row.mytheme_refs) ? row.mytheme_refs.filter(Boolean) : [];
+        const sanitizedRefs = Array.isArray(row.mytheme_refs)
+          ? row.mytheme_refs.filter(Boolean)
+          : [];
         const plotPoint: PlotPoint = {
           id: row.id,
           text: row.text ?? '',
           order:
-            typeof row.position === 'number' && Number.isFinite(row.position)
-              ? row.position
-              : 0,
+            typeof row.position === 'number' && Number.isFinite(row.position) ? row.position : 0,
           mythemeRefs: sanitizedRefs,
           category: row.category ?? '',
           canonicalCategoryId: row.canonical_category_id ?? null,
@@ -343,7 +338,9 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
       >();
 
       variantRows.forEach((row) => {
-        const plotPoints = (plotPointsByVariant.get(row.id) ?? []).sort((a, b) => a.order - b.order);
+        const plotPoints = (plotPointsByVariant.get(row.id) ?? []).sort(
+          (a, b) => a.order - b.order,
+        );
         plotPoints.forEach((point, index) => {
           if (!Number.isFinite(point.order) || point.order <= 0) {
             point.order = index + 1;
@@ -413,7 +410,10 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
         collaboratorEmails.add(currentUserEmail);
       }
 
-      const profileMap = new Map<string, { displayName: string | null; avatarUrl: string | null }>();
+      const profileMap = new Map<
+        string,
+        { displayName: string | null; avatarUrl: string | null }
+      >();
       if (collaboratorEmails.size > 0) {
         try {
           lastStep = 'loading collaborator profiles';
@@ -484,8 +484,7 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
               const profile = emailKey ? profileMap.get(emailKey) : null;
               const resolvedName =
                 contributor.name ?? profile?.displayName ?? contributor.email ?? null;
-              const resolvedAvatar =
-                contributor.avatarUrl ?? profile?.avatarUrl ?? null;
+              const resolvedAvatar = contributor.avatarUrl ?? profile?.avatarUrl ?? null;
 
               if (resolvedName !== contributor.name || resolvedAvatar !== contributor.avatarUrl) {
                 contributor = {
@@ -573,13 +572,9 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
           .select('plot_point_id, collaborator_category_id')
           .in('collaborator_category_id', collaboratorCategoryIds);
         if (error) {
-          throw createSupabaseError(
-            'myth_collaborator_plot_point_categories',
-            error,
-          );
+          throw createSupabaseError('myth_collaborator_plot_point_categories', error);
         }
-        collaboratorAssignmentRows =
-          (data as CollaboratorPlotPointCategoryRow[]) ?? [];
+        collaboratorAssignmentRows = (data as CollaboratorPlotPointCategoryRow[]) ?? [];
       }
 
       const canonicalCategoriesByMyth = new Map<string, MythCategory[]>();
@@ -657,11 +652,10 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
         const variants = myth.variants.map((variant) => {
           const plotPoints = variant.plotPoints.map((point) => {
             const canonicalCategoryId = canonicalCategoryIdByPlotPoint.get(point.id) ?? null;
-            const collaboratorAssignments =
-              collaboratorAssignmentsByPlotPoint.get(point.id) ?? [];
+            const collaboratorAssignments = collaboratorAssignmentsByPlotPoint.get(point.id) ?? [];
 
             const canonicalName = canonicalCategoryId
-              ? canonicalNameById.get(canonicalCategoryId) ?? point.category
+              ? (canonicalNameById.get(canonicalCategoryId) ?? point.category)
               : point.category;
 
             return {
@@ -838,7 +832,7 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
       const normalizedContributorEmail =
         currentUserEmail?.trim() && currentUserEmail.length > 0
           ? currentUserEmail
-          : session.user.email?.toLowerCase() ?? null;
+          : (session.user.email?.toLowerCase() ?? null);
 
       const { data, error } = await supabase
         .from('myth_variants')
@@ -878,9 +872,7 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
       };
 
       setMyths((prev) =>
-        prev.map((m) =>
-          m.id === mythId ? { ...m, variants: [...m.variants, newVariant] } : m,
-        ),
+        prev.map((m) => (m.id === mythId ? { ...m, variants: [...m.variants, newVariant] } : m)),
       );
     },
     [session, myths, supabase],
@@ -1009,13 +1001,13 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
         const canonicalCategoryId =
           plotPoint.canonicalCategoryId ??
           (plotPoint.category
-            ? canonicalByName.get(plotPoint.category.toLowerCase())?.id ?? null
+            ? (canonicalByName.get(plotPoint.category.toLowerCase())?.id ?? null)
             : null);
 
         const canonicalName =
           canonicalCategoryId !== null
-            ? canonicalById.get(canonicalCategoryId)?.name ?? plotPoint.category ?? ''
-            : plotPoint.category ?? '';
+            ? (canonicalById.get(canonicalCategoryId)?.name ?? plotPoint.category ?? '')
+            : (plotPoint.category ?? '');
 
         const sanitizedOrder = index + 1;
         const sanitizedText = plotPoint.text ?? '';
@@ -1089,7 +1081,6 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
             category_id: canonicalCategoryId,
           });
         }
-
       }
 
       const normalizedVariant: MythVariant = {
@@ -1111,10 +1102,7 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
         throw new Error(variantUpdateError.message);
       }
 
-      const {
-        data: existingPlotPointRows,
-        error: existingPlotPointError,
-      } = await supabase
+      const { data: existingPlotPointRows, error: existingPlotPointError } = await supabase
         .from('myth_plot_points')
         .select('id')
         .eq('variant_id', normalizedVariant.id);
@@ -1205,9 +1193,7 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
         collaboratorCategories: existingCollaboratorCategories,
       };
 
-      setMyths((prev) =>
-        prev.map((m) => (m.id === mythId ? updatedMyth : m)),
-      );
+      setMyths((prev) => prev.map((m) => (m.id === mythId ? updatedMyth : m)));
     },
     [session, myths, supabase, currentUserEmail],
   );
@@ -1364,7 +1350,7 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
                   : null;
               const categoryName =
                 canonicalCategoryId !== null
-                  ? canonicalNameById.get(canonicalCategoryId) ?? point.category
+                  ? (canonicalNameById.get(canonicalCategoryId) ?? point.category)
                   : point.category;
 
               return {
@@ -1526,11 +1512,11 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
 
     const removedRow = data as { myth_id: string };
 
-      setMyths((prev) =>
-        prev.map((m) =>
-          m.id === removedRow.myth_id
-            ? { ...m, collaborators: m.collaborators.filter((c) => c.id !== collaboratorId) }
-            : m,
+    setMyths((prev) =>
+      prev.map((m) =>
+        m.id === removedRow.myth_id
+          ? { ...m, collaborators: m.collaborators.filter((c) => c.id !== collaboratorId) }
+          : m,
       ),
     );
   }, []);
@@ -1596,7 +1582,9 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
             };
 
             const hasCategory =
-              myth.collaboratorCategories?.some((category) => category.id === existingCategory.id) ?? false;
+              myth.collaboratorCategories?.some(
+                (category) => category.id === existingCategory.id,
+              ) ?? false;
 
             if (!hasCategory) {
               setMyths((prev) =>
@@ -1604,7 +1592,10 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
                   m.id === mythId
                     ? {
                         ...m,
-                        collaboratorCategories: [...(m.collaboratorCategories ?? []), existingCategory],
+                        collaboratorCategories: [
+                          ...(m.collaboratorCategories ?? []),
+                          existingCategory,
+                        ],
                       }
                     : m,
                 ),

@@ -54,7 +54,7 @@ const setupDomMocks = () => {
   }
 };
 
-const selectCategory = async (user: ReturnType<typeof userEvent['setup']>, name: string) => {
+const selectCategory = async (user: ReturnType<(typeof userEvent)['setup']>, name: string) => {
   await user.click(screen.getByLabelText(/category/i));
   const option = screen
     .getAllByText(name, { exact: true })

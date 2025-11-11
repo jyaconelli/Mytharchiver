@@ -11,7 +11,8 @@ const { mockSignInWithPassword, mockSignUp } = vi.hoisted(() => ({
 }));
 
 function createTestImageFile(): File {
-  const base64Pixel = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8Xw8AAn0B9n/ZX6EAAAAASUVORK5CYII=';
+  const base64Pixel =
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8Xw8AAn0B9n/ZX6EAAAAASUVORK5CYII=';
   const binary = Buffer.from(base64Pixel, 'base64');
   return new File([binary], 'avatar.png', { type: 'image/png' });
 }
@@ -28,7 +29,6 @@ beforeAll(() => {
   Object.defineProperty(global.Image.prototype, 'src', {
     configurable: true,
     set(value) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this as any)._src = value;
       setTimeout(() => {
         if (this.onload) {
@@ -138,10 +138,9 @@ describe('AuthGate', () => {
     await user.upload(screen.getByLabelText(/profile image/i), file);
     const useImageButton = await screen.findByRole('button', { name: /use image/i });
     await user.click(useImageButton);
-    await waitFor(
-      () => expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
-      { timeout: 3000 },
-    );
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument(), {
+      timeout: 3000,
+    });
 
     await user.type(screen.getByLabelText(/email/i), 'new@example.com');
     await user.type(screen.getByLabelText(/display name/i), 'New User');
@@ -178,10 +177,9 @@ describe('AuthGate', () => {
     await user.upload(screen.getByLabelText(/profile image/i), file);
     const useImageButton = await screen.findByRole('button', { name: /use image/i });
     await user.click(useImageButton);
-    await waitFor(
-      () => expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
-      { timeout: 3000 },
-    );
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument(), {
+      timeout: 3000,
+    });
 
     await user.type(screen.getByLabelText(/email/i), 'existing@example.com');
     await user.type(screen.getByLabelText(/display name/i), 'Existing User');

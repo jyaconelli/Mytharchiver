@@ -62,14 +62,7 @@ describe('GridView', () => {
   });
 
   test('shows placeholder when no plot points and cannot edit', () => {
-    render(
-      <GridView
-        plotPoints={[]}
-        mythemes={mythemes}
-        categories={[]}
-        canEdit={false}
-      />,
-    );
+    render(<GridView plotPoints={[]} mythemes={mythemes} categories={[]} canEdit={false} />);
 
     expect(screen.getByText(/no plot points to display/i)).toBeInTheDocument();
     expect(plotPointMock).not.toHaveBeenCalled();

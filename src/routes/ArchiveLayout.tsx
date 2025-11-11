@@ -10,13 +10,7 @@ import { ManageCollaboratorsDialog } from '../components/ManageCollaboratorsDial
 import { Button } from '../components/ui/button';
 import { useMythArchive } from '../hooks/useMythArchive';
 import { getSupabaseClient } from '../lib/supabaseClient';
-import {
-  CollaboratorCategory,
-  CollaboratorRole,
-  Myth,
-  MythVariant,
-  Mytheme,
-} from '../types/myth';
+import { CollaboratorCategory, CollaboratorRole, Myth, MythVariant, Mytheme } from '../types/myth';
 import { LoadingAnimation } from '../components/LoadingAnimation';
 
 type ArchiveLayoutProps = {
@@ -35,20 +29,10 @@ export type ArchiveOutletContext = {
   addVariant: (mythId: string, name: string, source: string) => Promise<void>;
   updateVariant: (mythId: string, variant: MythVariant) => Promise<void>;
   updateContributorInstructions: (mythId: string, instructions: string) => Promise<void>;
-  addCollaborator: (
-    mythId: string,
-    email: string,
-    role: CollaboratorRole,
-  ) => Promise<void>;
-  updateCollaboratorRole: (
-    collaboratorId: string,
-    role: CollaboratorRole,
-  ) => Promise<void>;
+  addCollaborator: (mythId: string, email: string, role: CollaboratorRole) => Promise<void>;
+  updateCollaboratorRole: (collaboratorId: string, role: CollaboratorRole) => Promise<void>;
   removeCollaborator: (collaboratorId: string) => Promise<void>;
-  createCollaboratorCategory: (
-    mythId: string,
-    name: string,
-  ) => Promise<CollaboratorCategory>;
+  createCollaboratorCategory: (mythId: string, name: string) => Promise<CollaboratorCategory>;
   currentUserEmail: string;
   currentUserDisplayName: string | null;
   currentUserAvatarUrl: string | null;
@@ -101,7 +85,7 @@ export function ArchiveLayout({ session, supabaseClient }: ArchiveLayoutProps) {
   const selectedVariant: MythVariant | null = useMemo(
     () =>
       variantId && selectedMyth
-        ? selectedMyth.variants.find((variant) => variant.id === variantId) ?? null
+        ? (selectedMyth.variants.find((variant) => variant.id === variantId) ?? null)
         : null,
     [selectedMyth, variantId],
   );
@@ -119,18 +103,15 @@ export function ArchiveLayout({ session, supabaseClient }: ArchiveLayoutProps) {
     return collaborator?.role ?? null;
   }, [selectedMyth, sessionUserId, currentUserEmail]);
 
-  const canEditSelectedMyth =
-    selectedMythRole === 'owner' || selectedMythRole === 'editor';
+  const canEditSelectedMyth = selectedMythRole === 'owner' || selectedMythRole === 'editor';
 
   const [showAddMytheme, setShowAddMytheme] = useState(false);
   const [showManageMythemes, setShowManageMythemes] = useState(false);
   const [showManageCategories, setShowManageCategories] = useState(false);
-  const [manageCollaboratorsMythId, setManageCollaboratorsMythId] = useState<
-    string | null
-  >(null);
+  const [manageCollaboratorsMythId, setManageCollaboratorsMythId] = useState<string | null>(null);
 
   const manageCollaboratorsMyth = manageCollaboratorsMythId
-    ? myths.find((myth) => myth.id === manageCollaboratorsMythId) ?? null
+    ? (myths.find((myth) => myth.id === manageCollaboratorsMythId) ?? null)
     : null;
 
   const canManageCollaborators = Boolean(
@@ -231,11 +212,7 @@ export function ArchiveLayout({ session, supabaseClient }: ArchiveLayoutProps) {
         )}
       </main>
 
-      <AddMythemeDialog
-        open={showAddMytheme}
-        onOpenChange={setShowAddMytheme}
-        onAdd={addMytheme}
-      />
+      <AddMythemeDialog open={showAddMytheme} onOpenChange={setShowAddMytheme} onAdd={addMytheme} />
       <ManageMythemesDialog
         open={showManageMythemes}
         onOpenChange={setShowManageMythemes}
@@ -257,9 +234,7 @@ export function ArchiveLayout({ session, supabaseClient }: ArchiveLayoutProps) {
             }
           }}
           categories={selectedMyth.categories}
-          onUpdateCategories={(updated) =>
-            updateMythCategories(selectedMyth.id, updated)
-          }
+          onUpdateCategories={(updated) => updateMythCategories(selectedMyth.id, updated)}
         />
       )}
       <ManageCollaboratorsDialog

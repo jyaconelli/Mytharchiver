@@ -305,10 +305,12 @@ export function ManageCollaboratorsDialog({
 }
 
 function getInitials(label: string) {
-  return label
-    .split(/\s+/)
-    .filter(Boolean)
-    .map((word) => word[0]?.toUpperCase())
-    .join('')
-    .slice(0, 2) || '??';
+  return (
+    label
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((word) => word[0]?.toUpperCase())
+      .join('')
+      .slice(0, 2) || '??'
+  );
 }

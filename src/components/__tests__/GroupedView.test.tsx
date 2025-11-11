@@ -5,7 +5,9 @@ import { vi } from 'vitest';
 import { GroupedView } from '../GroupedView';
 import type { CollaboratorCategory } from '../../types/myth';
 
-const dropHandlers = vi.hoisted(() => [] as Array<(item: { id: string; currentCategory: string }) => void>);
+const dropHandlers = vi.hoisted(
+  () => [] as Array<(item: { id: string; currentCategory: string }) => void>,
+);
 const plotPointCalls = vi.hoisted(() => [] as Array<any>);
 
 vi.mock('../PlotPoint', () => ({

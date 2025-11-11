@@ -47,10 +47,7 @@ describe('VariantDetailPage', () => {
     render(
       <MemoryRouter initialEntries={['/myths/myth-1/variants/variant-1']}>
         <Routes>
-          <Route
-            path="/myths/:mythId/variants/:variantId"
-            element={<VariantDetailPage />}
-          />
+          <Route path="/myths/:mythId/variants/:variantId" element={<VariantDetailPage />} />
         </Routes>
       </MemoryRouter>,
     );
@@ -64,10 +61,7 @@ describe('VariantDetailPage', () => {
     render(
       <MemoryRouter initialEntries={['/myths/missing/variants/variant-1']}>
         <Routes>
-          <Route
-            path="/myths/:mythId/variants/:variantId"
-            element={<VariantDetailPage />}
-          />
+          <Route path="/myths/:mythId/variants/:variantId" element={<VariantDetailPage />} />
         </Routes>
       </MemoryRouter>,
     );
@@ -97,10 +91,7 @@ describe('VariantDetailPage', () => {
     render(
       <MemoryRouter initialEntries={['/myths/myth-1/variants/missing']}>
         <Routes>
-          <Route
-            path="/myths/:mythId/variants/:variantId"
-            element={<VariantDetailPage />}
-          />
+          <Route path="/myths/:mythId/variants/:variantId" element={<VariantDetailPage />} />
         </Routes>
       </MemoryRouter>,
     );
@@ -137,10 +128,7 @@ describe('VariantDetailPage', () => {
     render(
       <MemoryRouter initialEntries={['/myths/myth-1/variants/variant-1']}>
         <Routes>
-          <Route
-            path="/myths/:mythId/variants/:variantId"
-            element={<VariantDetailPage />}
-          />
+          <Route path="/myths/:mythId/variants/:variantId" element={<VariantDetailPage />} />
         </Routes>
       </MemoryRouter>,
     );

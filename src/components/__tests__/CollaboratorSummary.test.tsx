@@ -21,7 +21,7 @@ const createMyth = (overrides: Partial<Myth> = {}): Myth => ({
 
 describe('CollaboratorSummary', () => {
   test('shows collaborators with manage access for owner', () => {
-  const myth = createMyth({
+    const myth = createMyth({
       collaborators: [
         {
           id: 'collab-1',

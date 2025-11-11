@@ -246,7 +246,10 @@ export function VariantInsights({ plotPoints, collaborators, viewerEmail }: Vari
       if (!normalizedEmail) {
         return 'Contributor';
       }
-      const role = roleByEmail.get(normalizedEmail) ?? collaboratorInfoByEmail.get(normalizedEmail)?.role ?? null;
+      const role =
+        roleByEmail.get(normalizedEmail) ??
+        collaboratorInfoByEmail.get(normalizedEmail)?.role ??
+        null;
       if (!role) {
         return 'Contributor';
       }
@@ -258,7 +261,7 @@ export function VariantInsights({ plotPoints, collaborators, viewerEmail }: Vari
   const getDisplayName = useCallback(
     (normalizedEmail: string | null) =>
       normalizedEmail
-        ? collaboratorInfoByEmail.get(normalizedEmail)?.name ?? normalizedEmail
+        ? (collaboratorInfoByEmail.get(normalizedEmail)?.name ?? normalizedEmail)
         : 'Contributor',
     [collaboratorInfoByEmail],
   );
@@ -411,9 +414,8 @@ export function VariantInsights({ plotPoints, collaborators, viewerEmail }: Vari
                       );
                     }}
                     labelFormatter={(_label, payload) => {
-                      const normalizedLabel = (payload?.[0]?.payload?.normalizedEmail as
-                        | string
-                        | undefined) ?? '';
+                      const normalizedLabel =
+                        (payload?.[0]?.payload?.normalizedEmail as string | undefined) ?? '';
                       const displayName = getDisplayName(normalizedLabel);
                       return `${getRoleLabel(normalizedLabel)} · ${displayName}`;
                     }}

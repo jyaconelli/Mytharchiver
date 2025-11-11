@@ -58,7 +58,7 @@ vi.mock('react-hook-form@7.55.0', async () => {
 
   return {
     Controller: ({ render }: { render?: () => React.ReactNode }) =>
-      (typeof render === 'function' ? render({}) : null),
+      typeof render === 'function' ? render({}) : null,
     FormProvider: ({ children }: { children: React.ReactNode }) => (
       <ReactActual.Fragment>{children}</ReactActual.Fragment>
     ),

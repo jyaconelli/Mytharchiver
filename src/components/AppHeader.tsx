@@ -42,12 +42,13 @@ export function AppHeader({
   canManageCategories,
 }: AppHeaderProps) {
   const resolvedDisplayName = userDisplayName?.trim() || 'Signed in';
-  const avatarFallbackSource = (userDisplayName || currentUserEmail || 'Myth Archive')
-    .split(/\s+/)
-    .filter(Boolean)
-    .map((part) => part[0]?.toUpperCase())
-    .slice(0, 2)
-    .join('') || 'MA';
+  const avatarFallbackSource =
+    (userDisplayName || currentUserEmail || 'Myth Archive')
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((part) => part[0]?.toUpperCase())
+      .slice(0, 2)
+      .join('') || 'MA';
 
   return (
     <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
@@ -78,7 +79,9 @@ export function AppHeader({
                   <AvatarFallback>{avatarFallbackSource}</AvatarFallback>
                 </Avatar>
                 <div className="text-right text-sm">
-                  <p className="font-medium text-gray-800 dark:text-gray-100">{resolvedDisplayName}</p>
+                  <p className="font-medium text-gray-800 dark:text-gray-100">
+                    {resolvedDisplayName}
+                  </p>
                   <p className="text-gray-500 dark:text-gray-400">{currentUserEmail}</p>
                 </div>
               </div>

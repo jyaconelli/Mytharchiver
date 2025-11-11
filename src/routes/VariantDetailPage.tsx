@@ -53,7 +53,7 @@ export function VariantDetailPage() {
     invitee: 'Guest contributor',
     unknown: 'Contributor',
   };
-  console.log(variant?.contributor)
+  console.log(variant?.contributor);
   const displayContributorName = (value?: string | null) => {
     if (!value) return null;
     const trimmed = value.trim();
@@ -73,9 +73,9 @@ export function VariantDetailPage() {
             currentUserEmail &&
             variant.contributor.email === currentUserEmail
               ? 'You'
-              : displayContributorName(variant.contributor.name) ??
+              : (displayContributorName(variant.contributor.name) ??
                 variant.contributor.email ??
-                'Unknown contributor'}
+                'Unknown contributor')}
           </p>
           {displayContributorName(variant.contributor.name) &&
             variant.contributor.email &&

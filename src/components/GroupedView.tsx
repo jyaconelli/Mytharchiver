@@ -1,11 +1,7 @@
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
-import {
-  CollaboratorCategory,
-  PlotPoint as PlotPointType,
-  Mytheme,
-} from '../types/myth';
+import { CollaboratorCategory, PlotPoint as PlotPointType, Mytheme } from '../types/myth';
 import { PlotPoint } from './PlotPoint';
 
 const ITEM_TYPE = 'PLOT_POINT';

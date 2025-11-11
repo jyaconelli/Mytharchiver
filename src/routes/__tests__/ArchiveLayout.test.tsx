@@ -88,18 +88,14 @@ describe('ArchiveLayout', () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <Routes>
-          <Route
-            element={<ArchiveLayout session={session} supabaseClient={supabaseClient} />}
-          >
+          <Route element={<ArchiveLayout session={session} supabaseClient={supabaseClient} />}>
             <Route index element={<OutletProbe />} />
           </Route>
         </Routes>
       </MemoryRouter>,
     );
 
-    expect(
-      screen.getByText(/unable to load archive data/i),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/unable to load archive data/i)).toBeInTheDocument();
   });
 
   it('exposes archive context to children', () => {
@@ -138,9 +134,7 @@ describe('ArchiveLayout', () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <Routes>
-          <Route
-            element={<ArchiveLayout session={session} supabaseClient={supabaseClient} />}
-          >
+          <Route element={<ArchiveLayout session={session} supabaseClient={supabaseClient} />}>
             <Route index element={<OutletProbe />} />
           </Route>
         </Routes>
@@ -173,9 +167,7 @@ describe('ArchiveLayout', () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <Routes>
-          <Route
-            element={<ArchiveLayout session={session} supabaseClient={supabaseClient} />}
-          >
+          <Route element={<ArchiveLayout session={session} supabaseClient={supabaseClient} />}>
             <Route index element={<div data-testid="root" />} />
           </Route>
         </Routes>

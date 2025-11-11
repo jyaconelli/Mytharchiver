@@ -41,8 +41,14 @@ const registerDefault = (table: string, result: QueryResult) => {
 };
 
 const cloneResult = (result: QueryResult): QueryResult => ({
-  data: result.data && typeof result.data === 'object' ? JSON.parse(JSON.stringify(result.data)) : result.data,
-  error: result.error && typeof result.error === 'object' ? JSON.parse(JSON.stringify(result.error)) : result.error,
+  data:
+    result.data && typeof result.data === 'object'
+      ? JSON.parse(JSON.stringify(result.data))
+      : result.data,
+  error:
+    result.error && typeof result.error === 'object'
+      ? JSON.parse(JSON.stringify(result.error))
+      : result.error,
 });
 
 const getFallback = (table: string): QueryResult | undefined => {
@@ -217,10 +223,10 @@ describe('useMythArchive', () => {
   });
 
   const renderArchive = (email = 'owner@example.com') => {
-    const hook = renderHook(
-      ({ session }) => useMythArchive(session, email),
-      { initialProps: { session: null }, legacyRoot: true },
-    );
+    const hook = renderHook(({ session }) => useMythArchive(session, email), {
+      initialProps: { session: null },
+      legacyRoot: true,
+    });
 
     return {
       ...hook,
@@ -241,9 +247,7 @@ describe('useMythArchive', () => {
     expect(myth.name).toBe('Fire Theft');
     expect(myth.variants[0].plotPoints[0].text).toBe('Intro');
 
-    const collaboratorDetails = myth.collaborators.find(
-      (c) => c.email === 'scribe@example.com',
-    );
+    const collaboratorDetails = myth.collaborators.find((c) => c.email === 'scribe@example.com');
     expect(collaboratorDetails?.displayName).toBe('Scribe Syd');
     expect(collaboratorDetails?.avatarUrl).toBe('scribe.png');
   });
@@ -299,7 +303,9 @@ describe('useMythArchive', () => {
     expect(created?.canonicalCategories.map((category) => category.name)).toEqual(
       DEFAULT_CATEGORIES,
     );
-    const owner = created?.collaborators.find((collaborator) => collaborator.email === 'owner@example.com');
+    const owner = created?.collaborators.find(
+      (collaborator) => collaborator.email === 'owner@example.com',
+    );
     expect(owner?.role).toBe('owner');
   });
 
@@ -399,9 +405,9 @@ describe('useMythArchive', () => {
 
     expect(updatedVariant?.plotPoints[0].order).toBe(1);
     expect(updatedVariant?.plotPoints[0].canonicalCategoryId).toBe('cat-1');
-    expect(
-      updatedVariant?.plotPoints[0].collaboratorCategories?.[0].collaboratorCategoryId,
-    ).toBe('col-cat-1');
+    expect(updatedVariant?.plotPoints[0].collaboratorCategories?.[0].collaboratorCategoryId).toBe(
+      'col-cat-1',
+    );
     expect(
       result.current.myths[0].collaboratorCategories?.some(
         (category) => category.id === 'col-cat-1',
@@ -608,7 +614,11 @@ describe('useMythArchive', () => {
     });
 
     await waitFor(() =>
-      expect(result.current.myths[0].collaborators.some((collaborator) => collaborator.id === 'collab-new')).toBe(true),
+      expect(
+        result.current.myths[0].collaborators.some(
+          (collaborator) => collaborator.id === 'collab-new',
+        ),
+      ).toBe(true),
     );
 
     await act(async () => {
@@ -617,8 +627,9 @@ describe('useMythArchive', () => {
 
     await waitFor(() =>
       expect(
-        result.current.myths[0].collaborators.find((collaborator) => collaborator.id === 'collab-new')
-          ?.role,
+        result.current.myths[0].collaborators.find(
+          (collaborator) => collaborator.id === 'collab-new',
+        )?.role,
       ).toBe('editor'),
     );
 
@@ -628,7 +639,9 @@ describe('useMythArchive', () => {
 
     await waitFor(() =>
       expect(
-        result.current.myths[0].collaborators.some((collaborator) => collaborator.id === 'collab-new'),
+        result.current.myths[0].collaborators.some(
+          (collaborator) => collaborator.id === 'collab-new',
+        ),
       ).toBe(false),
     );
   });
@@ -725,9 +738,9 @@ describe('useMythArchive', () => {
   it('requires a session to create collaborator categories', async () => {
     const { result } = renderArchive();
 
-    await expect(
-      result.current.createCollaboratorCategory('myth-1', 'Notes'),
-    ).rejects.toThrow('You must be signed in to create categories.');
+    await expect(result.current.createCollaboratorCategory('myth-1', 'Notes')).rejects.toThrow(
+      'You must be signed in to create categories.',
+    );
   });
 
   it('requires non-empty collaborator category names', async () => {
@@ -737,9 +750,9 @@ describe('useMythArchive', () => {
       activateSession();
     });
 
-    await expect(
-      result.current.createCollaboratorCategory('myth-1', '   '),
-    ).rejects.toThrow('Category name is required.');
+    await expect(result.current.createCollaboratorCategory('myth-1', '   ')).rejects.toThrow(
+      'Category name is required.',
+    );
   });
 
   it('requires an existing myth when creating collaborator categories', async () => {
@@ -771,9 +784,9 @@ describe('useMythArchive', () => {
       error: { code: '23505', message: 'duplicate category' },
     });
 
-    await expect(
-      result.current.createCollaboratorCategory('myth-1', 'Notes'),
-    ).rejects.toThrow('fetch failed');
+    await expect(result.current.createCollaboratorCategory('myth-1', 'Notes')).rejects.toThrow(
+      'fetch failed',
+    );
   });
 
   it('surfaces collaborator category insert errors', async () => {
@@ -788,9 +801,9 @@ describe('useMythArchive', () => {
       error: { code: '999', message: 'insert category failed' },
     });
 
-    await expect(
-      result.current.createCollaboratorCategory('myth-1', 'Notes'),
-    ).rejects.toThrow('insert category failed');
+    await expect(result.current.createCollaboratorCategory('myth-1', 'Notes')).rejects.toThrow(
+      'insert category failed',
+    );
   });
 
   it('creates collaborator categories and handles duplicates', async () => {
@@ -871,8 +884,7 @@ function createThenable(result: QueryResult) {
     maybeSingle: () => result,
     single: () => result,
     then: (resolve: (value: QueryResult) => void) => Promise.resolve(result).then(resolve),
-    catch: (handler: (error: unknown) => void) =>
-      Promise.resolve(result).catch(handler),
+    catch: (handler: (error: unknown) => void) => Promise.resolve(result).catch(handler),
   };
   return chain;
 }
