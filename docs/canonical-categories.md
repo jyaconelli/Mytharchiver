@@ -147,7 +147,18 @@ Every run stores these metrics so owners can compare side-by-side and export rep
 
 1. **Audit Data Contracts**  
    - Confirm the current shape of `plotPoints` and `collaboratorCategories`.  
-   - Document any missing attributes needed for weights (trust, recency).
+   - Document any missing attributes needed for weights (trust, recency).  
+   - **Findings (2025-11-12)**  
+     - `PlotPoint` currently exposes `id`, `text`, `order`, `mythemeRefs`, `category`, optional `canonicalCategoryId`, and optional `collaboratorCategories` array of assignments (`src/types/myth.ts:7`). There is no timestamp or provenance per assignment, which limits recency-based weighting.  
+     - `CollaboratorCategory` holds `id`, `mythId`, `collaboratorEmail`, and `name` (`src/types/myth.ts:49`). No explicit link to variants or timestamps, so we cannot track when a collaborator last curated their categories.  
+     - `CollaboratorCategoryAssignment` carries `plotPointId`, `collaboratorCategoryId`, `collaboratorEmail`, `categoryName` (`src/types/myth.ts:55`). Missing: numeric `weight`, assignment timestamp, source variant id, and collaborator trust metadata.  
+     - `MythCollaborator` includes `role`, `email`, `displayName`, `avatarUrl` but lacks any trust/reliability score or contribution counters to inform weighting (`src/types/myth.ts:33`).  
+     - `Myth` aggregates `canonicalCategories` and `collaboratorCategories`, so matrix builders can access all required sets (`src/types/myth.ts:21`).  
+   - **Recommended additions**  
+     - Add optional `assignedAt`, `lastEditedBy`, and `weight` fields to `CollaboratorCategoryAssignment` for recency and confidence scoring.  
+     - Extend `MythCollaborator` with `trustScore`, `lastContributionAt`, and `totalAssignments` to support weighting strategies.  
+     - Track version/timestamp on `CollaboratorCategory` to detect stale personal taxonomies.  
+     - Consider storing denormalized `variantId` on `PlotPoint` or assignments so we can filter runs by variant subsets if needed.
 2. **Matrix Builders**  
    - Implement services that generate `A` (assignment matrix) and `W` (agreement matrix) from the existing database/API.  
    - Add unit tests covering edge cases (multiple collaborators, zero-weight categories).  
@@ -193,7 +204,7 @@ function dotProduct(v1: number[], v2: number[]) {
      - Support streaming/batched construction for large `|P|` to avoid loading the whole matrix in memory; store sparse matrices when most entries are 0.
      - Normalize weights per collaborator (e.g., divide by number of points they labeled) if trust weighting is enabled.
      - Emit diagnostics (missing categories, duplicate assignments) so analytics teams can catch data quality issues before optimization steps run.
-     - Provide an interface layer (`MatrixProvider`) so algorithm modes can request `A` or `W` with specific options (e.g., normalized, pruned, filtered to subset of plot points).
+     - Provide an interface layer (`MatrixProvider`) so algorithm modes can request `A` or `W` with specific options (e.g., normalized, pruned, filtered to subset of plot points). _Implemented via `src/lib/matrixProvider.ts` with tests covering assignment-only and assignment+agreement preparation (2025-11-12)._
 3. **Metric Library**  
    - Create reusable purity, entropy, coverage, agreement-gain calculators.  
    - Ensure they ingest generic `plotPoint → canonicalCategory` mappings so every algorithm mode can share them.  
@@ -248,7 +259,8 @@ function computeAgreementGain(W: number[][], canonicalMap: Record<string, string
      - Normalize entropy to `[0,1]` by dividing by `log2(#collaboratorCategories)` so owners can compare across runs.
      - Provide higher-order helpers (e.g., `buildCategoryStats(assignments, collaboratorLookup)`) so each algorithm mode only passes raw assignments.
      - Expose metric bundles via an interface (`MetricSuite.run(inputs) → MetricResult`) to keep API uniform.
-     - Include unit tests with contrived datasets (single-category dominance, evenly mixed, empty clusters) to ensure metrics behave as expected.
+     - Include unit tests with contrived datasets (single-category dominance, evenly mixed, empty clusters) to ensure metrics behave as expected. _Implemented via `src/lib/canonicalization/metrics.ts` and `src/lib/canonicalization/__tests__/metrics.test.ts`._
+      - Canonicalization algorithm contracts live in `src/lib/canonicalization/types.ts`, ensuring every future mode returns `assignments`, `prevalence`, and shared metrics via the same TypeScript interface.
 4. **Algorithm Mode: Agreement Graph**  
    - Build modular graph construction + modularity optimization (Louvain or spectral).  
    - Wire metrics + prevalence tables; surface JSON schema for the UI.  
@@ -288,7 +300,7 @@ function louvain(graph: Graph): Record<string, string> {
      - Keep graph representation sparse (e.g., adjacency lists storing only positive weights) to scale to thousands of plot points.
      - Modularize community post-processing so future objectives (ratio cut, normalized cut) reuse the same hooks.
      - Provide guard rails for disconnected components by labeling tiny isolates as `uncertain` or merging into nearest heavy cluster.
-     - Emit structured run artifacts (`communities`, `prevalence`, `metrics`, `diagnostics`) for the UI + run history service.
+     - Emit structured run artifacts (`communities`, `prevalence`, `metrics`, `diagnostics`) for the UI + run history service. _Implemented via `AgreementGraphRunner` in `src/lib/canonicalization/graphRunner.ts` with tests in `src/lib/canonicalization/__tests__/graphRunner.test.ts`._
 5. **Algorithm Mode: Factorization**  
    - Add NMF/SVD runner with configurable rank, regularization, and convergence tolerances.  
    - Compare outputs against graph mode to validate shared metrics.  
@@ -328,6 +340,7 @@ function nmf(A: Matrix, options: FactorizationOptions) {
      - Add “soft assignment” output (top-N canonical memberships per plot point with weights) so UI can show uncertainty bars.
      - Provide multiple initialization strategies (random, NNDSVD) and allow seeding for reproducibility.
      - Record convergence curves (residual vs. iteration) and expose them to the run history for debugging stuck factorizations.
+      - Initial implementation lives in `src/lib/canonicalization/factorizationRunner.ts` with coverage in `src/lib/canonicalization/__tests__/factorizationRunner.test.ts`.
 6. **Algorithm Mode: Consensus Labeling**  
    - Model ILP/metaheuristic solver with parameter hooks (`splitPenalty`, `mergePenalty`, etc.).  
    - Provide fallback heuristic for large datasets when ILP is infeasible.  
@@ -378,6 +391,7 @@ function refineWithAnnealing(state, A: Matrix, opts: ConsensusOptions) {
      - Provide deterministic seeds for reproducibility and allow owners to set time budgets that cap annealing steps or MILP solve time.
      - For metaheuristics, expose diagnostics such as objective history, acceptance ratio, and temperature schedule to help debugging.
      - Build an “explain moves” helper that surfaces the highest-impact swaps/merges so owners understand why the algorithm made certain decisions.
+      - Initial heuristic implementation provided in `src/lib/canonicalization/consensusRunner.ts` with tests in `src/lib/canonicalization/__tests__/consensusRunner.test.ts`.
 7. **Algorithm Mode: Hierarchical Merge/Split**  
    - Implement merge heuristic + optional entropy-based auto-split.  
    - Expose dendrogram/step data for the UI elbow plot.  
@@ -418,6 +432,7 @@ function runHierarchicalMode(A: Matrix, options: HierarchicalOptions) {
      - Record dendrogram-friendly data (`step`, `pair`, `score`, cluster ids) so the UI can draw the merge tree and elbow plot.
      - Provide safeguards for oscillations: if `delta` criterion is selected and merges no longer improve the objective, terminate even before hitting the target count.
      - For `autoSplit`, evaluate cluster entropy and recursively split via k-means on collaborator distributions (still label-aware) until entropy falls below the threshold or clusters would become too small.
+      - Prototype lives in `src/lib/canonicalization/hierarchicalRunner.ts` with tests in `src/lib/canonicalization/__tests__/hierarchicalRunner.test.ts`.
 8. **Run Orchestrator + History Store**  
    - Unify parameter schemas, kick off selected algorithm mode, persist run configs/results, and expose comparison diffs.  
    - **Pseudo-code outline**
