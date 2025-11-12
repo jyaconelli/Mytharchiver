@@ -6,6 +6,7 @@ export interface CanonicalizationRunRecord extends CanonicalizationResult {
   mode: string;
   params: Record<string, unknown>;
   timestamp: string;
+  categoryLabels?: Record<string, string>;
 }
 
 export interface RunHistoryStore {

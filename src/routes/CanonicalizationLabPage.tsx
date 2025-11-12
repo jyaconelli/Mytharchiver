@@ -1,10 +1,5 @@
 import { useParams } from 'react-router-dom';
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { CalendarClockIcon, PlayIcon } from 'lucide-react';
 
 import { useArchive } from './ArchiveLayout';
@@ -42,6 +37,7 @@ type CanonicalizationRunRow = {
   prevalence: CanonicalPrevalenceRow[] | null;
   metrics: MetricsRow | null;
   diagnostics: Record<string, unknown> | null;
+  category_labels: Record<string, string> | null;
   status: 'queued' | 'running' | 'succeeded' | 'failed';
   created_at: string;
 };
@@ -117,6 +113,10 @@ export function CanonicalizationLabPage() {
   const [selectedCanonicalId, setSelectedCanonicalId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [savingLabels, setSavingLabels] = useState<Record<string, boolean>>({});
+  const [labelErrors, setLabelErrors] = useState<Record<string, string | null>>({});
+  const [labelDrafts, setLabelDrafts] = useState<Record<string, string>>({});
+  const [plotPointsVisibility, setPlotPointsVisibility] = useState<Record<string, boolean>>({});
   const [lastSimulation, setLastSimulation] = useState<string | null>(null);
 
   const fetchRuns = useCallback(
@@ -127,7 +127,7 @@ export function CanonicalizationLabPage() {
       const { data, error } = await supabase
         .from('canonicalization_runs')
         .select(
-          'id, myth_id, mode, params, assignments, prevalence, metrics, diagnostics, status, created_at',
+          'id, myth_id, mode, params, assignments, prevalence, metrics, diagnostics, category_labels, status, created_at',
         )
         .eq('myth_id', mythId)
         .order('created_at', { ascending: false })
@@ -184,8 +184,43 @@ export function CanonicalizationLabPage() {
     }
   }, [activeRun]);
 
-  const selectedCategory =
-    activeRun?.categories.find((category) => category.id === selectedCanonicalId) ?? null;
+  const toggleCategorySelection = useCallback((canonicalId: string) => {
+    setSelectedCanonicalId((previous) => (previous === canonicalId ? null : canonicalId));
+  }, []);
+
+  useEffect(() => {
+    if (!activeRun) {
+      setLabelDrafts({});
+      setLabelErrors({});
+      setSavingLabels({});
+      return;
+    }
+    const drafts: Record<string, string> = {};
+    activeRun.categories.forEach((category) => {
+      drafts[category.id] = category.label;
+    });
+    setLabelDrafts(drafts);
+    setLabelErrors({});
+    setSavingLabels({});
+  }, [activeRun]);
+
+  useEffect(() => {
+    if (!activeRun) {
+      setPlotPointsVisibility({});
+      return;
+    }
+    setPlotPointsVisibility((previous) => {
+      const next: Record<string, boolean> = {};
+      activeRun.categories.forEach((category) => {
+        next[category.id] = previous[category.id] ?? false;
+      });
+      return next;
+    });
+  }, [activeRun]);
+
+  const updateLabelDraft = useCallback((canonicalId: string, value: string) => {
+    setLabelDrafts((previous) => ({ ...previous, [canonicalId]: value }));
+  }, []);
 
   const handleRun = useCallback(async () => {
     if (!mythId) return;
@@ -221,6 +256,48 @@ export function CanonicalizationLabPage() {
     }
   }, [fetchRuns, mythId, params, supabase]);
 
+  const handleRename = useCallback(
+    async (canonicalId?: string) => {
+      const targetId = canonicalId ?? selectedCanonicalId;
+      if (!selectedRunId || !targetId) return;
+      const nextLabel = (labelDrafts[targetId] ?? '').trim();
+      setSavingLabels((prev) => ({ ...prev, [targetId]: true }));
+      setLabelErrors((prev) => ({ ...prev, [targetId]: null }));
+      try {
+        const { error } = await supabase.rpc('canonicalization_set_label', {
+          p_run_id: selectedRunId,
+          p_canonical_id: targetId,
+          p_label: nextLabel,
+        });
+        if (error) {
+          throw new Error(error.message ?? 'Unable to rename category');
+        }
+        await fetchRuns(selectedRunId);
+      } catch (err) {
+        setLabelErrors((prev) => ({
+          ...prev,
+          [targetId]: err instanceof Error ? err.message : 'Unable to rename category',
+        }));
+      } finally {
+        setSavingLabels((prev) => ({ ...prev, [targetId]: false }));
+      }
+    },
+    [fetchRuns, labelDrafts, selectedCanonicalId, selectedRunId, supabase],
+  );
+
+  const togglePlotPointsAccordion = useCallback((canonicalId: string) => {
+    setPlotPointsVisibility((previous) => ({
+      ...previous,
+      [canonicalId]: !previous[canonicalId],
+    }));
+  }, []);
+
+  const getLabelDraft = (canonicalId: string) => labelDrafts[canonicalId] ?? '';
+  const getLabelError = (canonicalId?: string) =>
+    canonicalId ? (labelErrors[canonicalId] ?? null) : null;
+  const isSavingLabel = (canonicalId?: string) =>
+    canonicalId ? Boolean(savingLabels[canonicalId]) : false;
+
   if (isInitialLoad) {
     return (
       <div className="py-16">
@@ -234,8 +311,8 @@ export function CanonicalizationLabPage() {
       <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-6 text-yellow-900 dark:border-yellow-900/50 dark:bg-yellow-950/30 dark:text-yellow-200">
         <h2 className="text-lg font-semibold">Myth not found</h2>
         <p className="mt-2 text-sm">
-          This canonicalization workspace needs a valid myth. Return to the archive and select a myth
-          you own.
+          This canonicalization workspace needs a valid myth. Return to the archive and select a
+          myth you own.
         </p>
       </div>
     );
@@ -250,7 +327,8 @@ export function CanonicalizationLabPage() {
           <p className="text-xs uppercase tracking-wide text-muted-foreground">Canonicalization</p>
           <h2 className="text-2xl font-semibold">{myth.name} · Canonicalization Lab</h2>
           <p className="text-sm text-muted-foreground">
-            Launch consolidation runs and inspect collaborator influence without leaving the archive.
+            Launch consolidation runs and inspect collaborator influence without leaving the
+            archive.
           </p>
         </div>
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -289,7 +367,9 @@ export function CanonicalizationLabPage() {
                 key={card.label}
                 className="rounded-lg border border-border bg-card p-4 shadow-sm dark:border-white/5"
               >
-                <p className="text-xs uppercase tracking-wide text-muted-foreground">{card.label}</p>
+                <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                  {card.label}
+                </p>
                 <p className="mt-2 text-2xl font-semibold">{card.value}</p>
               </div>
             ))}
@@ -303,8 +383,8 @@ export function CanonicalizationLabPage() {
 
           {!runsLoading && runViews.length === 0 && (
             <div className="rounded-lg border border-dashed border-border bg-muted/20 p-6 text-center text-sm text-muted-foreground">
-              No canonicalization runs yet. Configure parameters on the left and click “Run Analysis”
-              to generate the first set of metrics.
+              No canonicalization runs yet. Configure parameters on the left and click “Run
+              Analysis” to generate the first set of metrics.
             </div>
           )}
 
@@ -323,45 +403,181 @@ export function CanonicalizationLabPage() {
                   </div>
                 </div>
                 <div className="mt-4 space-y-4">
-                  {activeRun.categories.map((category) => (
-                    <button
-                      type="button"
-                      key={category.id}
-                      onClick={() => setSelectedCanonicalId(category.id)}
-                      className={`w-full rounded-lg border p-4 text-left transition ${
-                        category.id === selectedCanonicalId
-                          ? 'border-blue-500 bg-blue-50/40 dark:bg-blue-500/10'
-                          : 'border-border hover:border-blue-300 dark:border-white/5'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between text-sm font-medium">
-                        <span>{category.label}</span>
-                        <span className="text-muted-foreground">{category.size} pts</span>
+                  {activeRun.categories.map((category) => {
+                    const isSelected = category.id === selectedCanonicalId;
+                    const plotPointsExpanded = plotPointsVisibility[category.id] ?? false;
+
+                    return (
+                      <div key={category.id} className="space-y-3">
+                        <div
+                          role="button"
+                          tabIndex={0}
+                          aria-expanded={isSelected}
+                          aria-controls={`cluster-detail-${category.id}`}
+                          onClick={() => toggleCategorySelection(category.id)}
+                          onKeyDown={(event) => {
+                            if (event.key === 'Enter' || event.key === ' ') {
+                              event.preventDefault();
+                              toggleCategorySelection(category.id);
+                            }
+                          }}
+                          className={`w-full rounded-lg border p-4 text-left transition focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+                            isSelected
+                              ? 'border-blue-500 bg-blue-50/40 dark:bg-blue-500/10'
+                              : 'border-border hover:border-blue-300 dark:border-white/5'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between text-sm font-medium">
+                            <span>{category.label}</span>
+                            <span className="text-muted-foreground">{category.size} pts</span>
+                          </div>
+                          <div className="mt-3 flex items-end gap-2">
+                            <div className="flex-1">
+                              <Label htmlFor={`category-input-${category.id}`} className="text-xs">
+                                Category name
+                              </Label>
+                              <Input
+                                id={`category-input-${category.id}`}
+                                value={getLabelDraft(category.id) || category.label}
+                                onClick={(event) => event.stopPropagation()}
+                                onChange={(event) => {
+                                  event.stopPropagation();
+                                  updateLabelDraft(category.id, event.currentTarget.value);
+                                }}
+                                className="mt-1"
+                                placeholder="Category name"
+                              />
+                            </div>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                handleRename(category.id);
+                              }}
+                              disabled={isSavingLabel(category.id) || !selectedRunId}
+                            >
+                              {isSavingLabel(category.id) ? 'Saving…' : 'Save'}
+                            </Button>
+                          </div>
+                          {getLabelError(category.id) && (
+                            <p className="mt-1 text-xs text-red-500" role="alert">
+                              {getLabelError(category.id)}
+                            </p>
+                          )}
+                          <div className="mt-3 flex h-3 overflow-hidden rounded bg-muted">
+                            {category.contributors.map((contributor) => (
+                              <div
+                                key={contributor.id}
+                                className="h-full text-[10px]/3 text-center text-white first:rounded-l last:rounded-r"
+                                style={{
+                                  width: `${contributor.share * 100}%`,
+                                  backgroundColor: contributor.color,
+                                }}
+                                title={`${contributor.name} · ${Math.round(contributor.share * 100)}%`}
+                              />
+                            ))}
+                          </div>
+                          <p className="mt-2 text-xs text-muted-foreground">
+                            Top contributors:{' '}
+                            {category.contributors
+                              .slice(0, 3)
+                              .map(
+                                (contributor) =>
+                                  `${contributor.name} (${Math.round(contributor.share * 100)}%)`,
+                              )
+                              .join(', ')}
+                          </p>
+                        </div>
+
+                        {isSelected && (
+                          <section
+                            aria-labelledby={`cluster-detail-${category.id}-header`}
+                            id={`cluster-detail-${category.id}`}
+                            className="rounded-lg border border-border p-4"
+                          >
+                            <h3
+                              id={`cluster-detail-${category.id}-header`}
+                              className="text-lg font-semibold"
+                            >
+                              {category.label} · Detail
+                            </h3>
+                            <div className="mt-3 grid gap-4 lg:grid-cols-2">
+                              <div>
+                                <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                                  Collaborator Influence
+                                </p>
+                                <ul className="mt-2 space-y-2 text-sm">
+                                  {category.contributors.map((contributor) => (
+                                    <li
+                                      key={contributor.id}
+                                      className="flex items-center justify-between rounded border border-border/60 px-3 py-2"
+                                    >
+                                      <span className="flex items-center gap-2">
+                                        <span
+                                          className="inline-block size-3 rounded-full"
+                                          style={{ backgroundColor: contributor.color }}
+                                          aria-hidden
+                                        />
+                                        {contributor.name}
+                                      </span>
+                                      <span className="text-muted-foreground">
+                                        {Math.round(contributor.share * 100)}%
+                                      </span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                              <div>
+                                <div className="flex items-center justify-between">
+                                  <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                                    Plot Points
+                                  </p>
+                                  <Button
+                                    variant="link"
+                                    size="sm"
+                                    className="h-auto px-0 text-xs font-semibold"
+                                    onClick={(event) => {
+                                      event.stopPropagation();
+                                      togglePlotPointsAccordion(category.id);
+                                    }}
+                                  >
+                                    {plotPointsExpanded
+                                      ? 'Collapse'
+                                      : `Show all`}
+                                  </Button>
+                                </div>
+
+                                <ul className="mt-2 space-y-2 text-sm">
+                                  {category.samples
+                                    .slice(0, plotPointsExpanded ? category.samples.length : 2)
+                                    .map((sample, index) => (
+                                      <li
+                                        key={`${category.id}-sample-${index}`}
+                                        className="rounded bg-muted p-3"
+                                      >
+                                        {sample}
+                                      </li>
+                                    ))}
+                                  {category.samples.length === 0 && (
+                                    <li className="rounded bg-muted/40 p-3 text-muted-foreground">
+                                      No sample plot points available.
+                                    </li>
+                                  )}
+                                </ul>
+                                {!plotPointsExpanded && category.samples.length - 2 > 0 && (
+                                  <span className="mt-2 text-xs text-muted-foreground">
+                                    + {category.samples.length - 2} more point
+                                    {category.samples.length - 2 > 1 ? 's' : ''}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </section>
+                        )}
                       </div>
-                      <div className="mt-3 flex h-3 overflow-hidden rounded bg-muted">
-                        {category.contributors.map((contributor) => (
-                          <div
-                            key={contributor.id}
-                            className="h-full text-[10px]/3 text-center text-white first:rounded-l last:rounded-r"
-                            style={{
-                              width: `${contributor.share * 100}%`,
-                              backgroundColor: contributor.color,
-                            }}
-                            title={`${contributor.name} · ${Math.round(contributor.share * 100)}%`}
-                          />
-                        ))}
-                      </div>
-                      <p className="mt-2 text-xs text-muted-foreground">
-                        Top contributors:{' '}
-                        {category.contributors
-                          .slice(0, 3)
-                          .map(
-                            (contributor) => `${contributor.name} (${Math.round(contributor.share * 100)}%)`,
-                          )
-                          .join(', ')}
-                      </p>
-                    </button>
-                  ))}
+                    );
+                  })}
                 </div>
               </section>
 
@@ -399,64 +615,6 @@ export function CanonicalizationLabPage() {
                   </table>
                 </div>
               </section>
-
-              {selectedCategory && (
-                <section
-                  aria-labelledby="cluster-detail"
-                  className="rounded-lg border border-border p-4"
-                >
-                  <h3 id="cluster-detail" className="text-lg font-semibold">
-                    {selectedCategory.label} · Detail
-                  </h3>
-                  <div className="mt-3 grid gap-4 lg:grid-cols-2">
-                    <div>
-                      <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                        Collaborator Influence
-                      </p>
-                      <ul className="mt-2 space-y-2 text-sm">
-                        {selectedCategory.contributors.map((contributor) => (
-                          <li
-                            key={contributor.id}
-                            className="flex items-center justify-between rounded border border-border/60 px-3 py-2"
-                          >
-                            <span className="flex items-center gap-2">
-                              <span
-                                className="inline-block size-3 rounded-full"
-                                style={{ backgroundColor: contributor.color }}
-                                aria-hidden
-                              />
-                              {contributor.name}
-                            </span>
-                            <span className="text-muted-foreground">
-                              {Math.round(contributor.share * 100)}%
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div>
-                      <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                        Representative Plot Points
-                      </p>
-                      <ul className="mt-2 space-y-2 text-sm">
-                        {selectedCategory.samples.map((sample, index) => (
-                          <li
-                            key={`${selectedCategory.id}-sample-${index}`}
-                            className="rounded bg-muted p-3"
-                          >
-                            {sample}
-                          </li>
-                        ))}
-                        {selectedCategory.samples.length === 0 && (
-                          <li className="rounded bg-muted/40 p-3 text-muted-foreground">
-                            No sample plot points available.
-                          </li>
-                        )}
-                      </ul>
-                    </div>
-                  </div>
-                </section>
-              )}
             </>
           )}
         </div>
@@ -532,7 +690,9 @@ function ParameterRail({
           <div className="flex items-center justify-between gap-2">
             <div>
               <p className="text-sm font-medium">Auto-detect Category Count</p>
-              <p className="text-xs text-muted-foreground">Uses elbow/Gap heuristics (not yet wired).</p>
+              <p className="text-xs text-muted-foreground">
+                Uses elbow/Gap heuristics (not yet wired).
+              </p>
             </div>
             <Switch
               checked={params.useAutoK}
@@ -693,6 +853,7 @@ function transformRunRow(row: CanonicalizationRunRow, myth: Myth): Canonicalizat
   const entropyMap = metrics.entropyByCanonical ?? {};
   const prevalence = Array.isArray(row.prevalence) ? row.prevalence : [];
   const prevalenceMap = new Map(prevalence.map((entry) => [entry.canonicalId, entry.totals]));
+  const labelMap = row.category_labels ?? {};
 
   const groups = new Map<
     string,
@@ -714,7 +875,7 @@ function transformRunRow(row: CanonicalizationRunRow, myth: Myth): Canonicalizat
       const samples = buildSamples(group.assignments, plotPointLookup);
       return {
         id: canonicalId,
-        label: canonicalId,
+        label: labelMap[canonicalId] ?? canonicalId,
         size: group.assignments.length,
         purity: purityMap[canonicalId] ?? 0,
         entropy: entropyMap[canonicalId] ?? 0,
@@ -725,6 +886,12 @@ function transformRunRow(row: CanonicalizationRunRow, myth: Myth): Canonicalizat
   );
 
   categories.sort((a, b) => b.size - a.size);
+
+  categories.forEach((category, index) => {
+    if (!labelMap[category.id]) {
+      category.label = `Category ${index + 1}`;
+    }
+  });
 
   const averagePurity = computeAverage(Object.values(purityMap));
   const averageEntropy = computeAverage(Object.values(entropyMap));
@@ -769,7 +936,10 @@ function buildContributors(
     .sort((a, b) => b.share - a.share);
 }
 
-function buildSamples(assignments: CanonicalAssignmentRow[], plotPointLookup: Map<string, PlotPoint>) {
+function buildSamples(
+  assignments: CanonicalAssignmentRow[],
+  plotPointLookup: Map<string, PlotPoint>,
+) {
   return assignments
     .map((assignment) => plotPointLookup.get(assignment.plotPointId)?.text ?? null)
     .filter((text): text is string => Boolean(text))

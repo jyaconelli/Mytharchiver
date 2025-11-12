@@ -102,6 +102,7 @@ class SupabaseRunHistoryStore implements RunHistoryStore {
         metrics: record.metrics ?? {},
         diagnostics: record.diagnostics ?? {},
         artifacts: record.artifacts ?? null,
+        category_labels: record.categoryLabels ?? {},
         status: 'succeeded',
         created_by: this.userId,
       });
@@ -327,6 +328,7 @@ serve(async (request) => {
       mode,
       params,
       status: 'failed',
+      category_labels: {},
       error_message: message,
       created_by: user.id,
     });

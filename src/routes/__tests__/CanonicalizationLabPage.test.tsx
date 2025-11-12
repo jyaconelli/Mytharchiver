@@ -13,6 +13,7 @@ const supabaseMock = {
   functions: {
     invoke: vi.fn(),
   },
+  rpc: vi.fn(),
 };
 
 vi.mock('../ArchiveLayout', () => ({
@@ -73,6 +74,7 @@ const sampleRunRow = {
     agreementGain: 4.5,
   },
   diagnostics: null,
+  category_labels: { 'canon-a': 'Anvil Path' },
   status: 'succeeded' as const,
   created_at: '2025-11-10T00:00:00Z',
 };
@@ -117,6 +119,7 @@ describe('CanonicalizationLabPage', () => {
   beforeEach(() => {
     useArchiveMock.mockReset();
     supabaseMock.functions.invoke.mockReset();
+    supabaseMock.rpc.mockReset();
     setupSupabaseRunsResponse({ data: [sampleRunRow], error: null });
   });
 
@@ -177,6 +180,33 @@ describe('CanonicalizationLabPage', () => {
     await waitFor(() => expect(supabaseMock.functions.invoke).toHaveBeenCalledTimes(1));
     expect(supabaseMock.functions.invoke).toHaveBeenCalledWith('canonicalization-run', {
       body: expect.objectContaining({ mythId: 'myth-1' }),
+    });
+  });
+
+  it('renames a category via RPC', async () => {
+    useArchiveMock.mockReturnValue({
+      myths: [baseMyth],
+      isInitialLoad: false,
+    });
+    setupSupabaseRunsResponse(
+      { data: [sampleRunRow], error: null },
+      { data: [sampleRunRow], error: null },
+    );
+    supabaseMock.rpc.mockResolvedValue({ data: null, error: null });
+
+    renderWithRouter('/myths/myth-1/canonicalization');
+
+    const inputs = await screen.findAllByLabelText(/Category name/i);
+    const input = inputs[0];
+    fireEvent.change(input, { target: { value: 'Custom Name' } });
+    const saveButtons = screen.getAllByRole('button', { name: /save/i });
+    fireEvent.click(saveButtons[0]);
+
+    await waitFor(() => expect(supabaseMock.rpc).toHaveBeenCalledTimes(1));
+    expect(supabaseMock.rpc).toHaveBeenCalledWith('canonicalization_set_label', {
+      p_run_id: 'run-1',
+      p_canonical_id: 'canon-a',
+      p_label: 'Custom Name',
     });
   });
 });

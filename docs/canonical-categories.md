@@ -839,5 +839,11 @@ Future Enhancements
 
 Nightly scheduled runs (cron), WebSocket/real-time channels broadcasting run completion, action auditing for rename/merge events, eventual consistency between canonicalization_runs and canonical categories stored on myths.
 
+### Current Backend Implementation (November 2025)
+
+- `supabase/migrations/20241115_add_canonicalization_runs.sql` adds the base run table and myth pointer; `supabase/migrations/20241116_add_category_labels.sql` adds the `category_labels` JSONB column plus the `canonicalization_set_label` RPC so owners can rename buckets per run.
+- `supabase/functions/canonicalization-run/index.ts` authenticates the owner, assembles plot points + collaborator assignments, runs the orchestrator, persists results (assignments, prevalence, metrics, labels, diagnostics) to `canonicalization_runs`, and updates `myth_folders.last_canonical_run_id`.
+- Shared canonicalization code now lives under `supabase/functions/_shared/canonicalization` while the front-end re-exports from `src/lib`, guaranteeing parity between Edge Functions and UI logic.
+- The Canonicalization Lab UI already uses the Edge Function + Supabase RPCs for listing runs, launching new analyses, and renaming categories inline.
 
 
