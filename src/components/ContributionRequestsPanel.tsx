@@ -377,7 +377,7 @@ export function ContributionRequestsPanel({
           </CardHeader>
           <CardContent className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="contribution-emails">Invite collaborators</Label>
+              <Label htmlFor="contribution-emails">Invite contributors</Label>
               <Textarea
                 id="contribution-emails"
                 value={emailInput}
