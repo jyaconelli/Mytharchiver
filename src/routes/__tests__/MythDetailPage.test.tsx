@@ -101,4 +101,77 @@ describe('MythDetailPage', () => {
     expect(screen.getByText('Fire Theft')).toBeInTheDocument();
     expect(screen.getByText(/scribe syd/i)).toBeInTheDocument();
   });
+
+  it('shows canonicalization callout for owners', () => {
+    useArchiveMock.mockReturnValue({
+      ...baseContext,
+      myths: [
+        {
+          id: 'myth-1',
+          name: 'Fire Theft',
+          description: 'story',
+          contributorInstructions: '',
+          ownerId: 'user-1',
+          categories: [],
+          variants: [],
+          collaborators: [],
+          canonicalCategories: [],
+          collaboratorCategories: [],
+        },
+      ],
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/myths/myth-1']}>
+        <Routes>
+          <Route path="/myths/:mythId" element={<MythDetailPage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByTestId('canonicalization-callout')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /open lab/i })).toHaveAttribute(
+      'href',
+      '/myths/myth-1/canonicalization',
+    );
+  });
+
+  it('hides canonicalization callout for non-owners', () => {
+    useArchiveMock.mockReturnValue({
+      ...baseContext,
+      currentUserEmail: 'editor@example.com',
+      sessionUserId: 'user-2',
+      myths: [
+        {
+          id: 'myth-1',
+          name: 'Fire Theft',
+          description: 'story',
+          contributorInstructions: '',
+          ownerId: 'user-1',
+          categories: [],
+          variants: [],
+          collaborators: [
+            {
+              id: 'collab-1',
+              mythId: 'myth-1',
+              email: 'editor@example.com',
+              role: 'editor',
+            },
+          ],
+          canonicalCategories: [],
+          collaboratorCategories: [],
+        },
+      ],
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/myths/myth-1']}>
+        <Routes>
+          <Route path="/myths/:mythId" element={<MythDetailPage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    expect(screen.queryByTestId('canonicalization-callout')).not.toBeInTheDocument();
+  });
 });

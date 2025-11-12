@@ -8,6 +8,7 @@ import { ArchiveLayout } from './routes/ArchiveLayout';
 import { MythListPage } from './routes/MythListPage';
 import { MythDetailPage } from './routes/MythDetailPage';
 import { VariantDetailPage } from './routes/VariantDetailPage';
+import { CanonicalizationLabPage } from './routes/CanonicalizationLabPage';
 import { ContributionRequestPage } from './routes/ContributionRequestPage';
 import { LoadingAnimation } from './components/LoadingAnimation';
 
@@ -40,6 +41,7 @@ export default function App() {
           <Route index element={<MythListPage />} />
           <Route path="myths/:mythId" element={<MythDetailPage />} />
           <Route path="myths/:mythId/variants/:variantId" element={<VariantDetailPage />} />
+          <Route path="myths/:mythId/canonicalization" element={<CanonicalizationLabPage />} />
         </Route>
         <Route path="/contribute/:token" element={<ContributionRequestPage />} />
         <Route path="*" element={<Navigate to={session ? '/' : '/auth'} replace />} />

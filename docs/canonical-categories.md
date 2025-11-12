@@ -479,6 +479,7 @@ class CanonicalizationOrchestrator {
      - History store should support querying by group id, date range, and algorithm for comparison charts; consider lightweight event sourcing or append-only table.
      - Capture diff snapshots (plot points that changed canonical assignments, metric deltas) during orchestrator execution to avoid recomputing in the UI.
      - Add retry/backoff + alerting hooks so failed runs (e.g., factorization didn’t converge) surface meaningful errors to the owner tab instead of generic “500”.
+      - Implemented via `CanonicalizationOrchestrator` + `InMemoryRunHistoryStore` (`src/lib/canonicalization/orchestrator.ts`, `historyStore.ts`) with coverage in `src/lib/canonicalization/__tests__/orchestrator.test.ts`.
 9. **Canonicalization Lab UI Shell**  
    - Scaffold parameter rail, summary cards, visualization panel, cluster detail drawer, and run history sidebar with mocked data.  
    - **Pseudo-code outline (React-esque)**
@@ -511,6 +512,7 @@ const CanonicalizationLab = () => {
      - Break components into Storybook stories (ParameterRail, SummaryCards, ClusterDrawer) to iterate on interactions with design.
      - Include loading/error/empty states from day one so connecting the real orchestrator is seamless.
      - Instrument key interactions (parameter tweaks, run comparisons) with analytics hooks to understand owner workflows once shipped.
+      - Implemented initial shell via `CanonicalizationLabPage` (`src/routes/CanonicalizationLabPage.tsx`) plus tests in `src/routes/__tests__/CanonicalizationLabPage.test.tsx`; wired into `App` for `/myths/:mythId/canonicalization`.
 10. **Wire Real Data to UI**  
     - Connect API endpoints delivering run results, prevalence tables, and metrics.  
     - Add diff overlays, warning badges, and export actions.  
