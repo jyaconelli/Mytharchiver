@@ -175,6 +175,8 @@ export function CanonicalizationLabPage() {
   }, [runs, myth]);
 
   const activeRun = runViews.find((run) => run.id === selectedRunId) ?? runViews[0] ?? null;
+  const activeRunId = activeRun?.id ?? null;
+  const canRenameCategory = Boolean(selectedRunId ?? activeRunId);
 
   useEffect(() => {
     if (activeRun?.categories.length) {
@@ -259,20 +261,21 @@ export function CanonicalizationLabPage() {
   const handleRename = useCallback(
     async (canonicalId?: string) => {
       const targetId = canonicalId ?? selectedCanonicalId;
-      if (!selectedRunId || !targetId) return;
+      const runId = selectedRunId ?? activeRunId;
+      if (!runId || !targetId) return;
       const nextLabel = (labelDrafts[targetId] ?? '').trim();
       setSavingLabels((prev) => ({ ...prev, [targetId]: true }));
       setLabelErrors((prev) => ({ ...prev, [targetId]: null }));
       try {
         const { error } = await supabase.rpc('canonicalization_set_label', {
-          p_run_id: selectedRunId,
+          p_run_id: runId,
           p_canonical_id: targetId,
           p_label: nextLabel,
         });
         if (error) {
           throw new Error(error.message ?? 'Unable to rename category');
         }
-        await fetchRuns(selectedRunId);
+        await fetchRuns(runId);
       } catch (err) {
         setLabelErrors((prev) => ({
           ...prev,
@@ -282,7 +285,7 @@ export function CanonicalizationLabPage() {
         setSavingLabels((prev) => ({ ...prev, [targetId]: false }));
       }
     },
-    [fetchRuns, labelDrafts, selectedCanonicalId, selectedRunId, supabase],
+    [activeRunId, fetchRuns, labelDrafts, selectedCanonicalId, selectedRunId, supabase],
   );
 
   const togglePlotPointsAccordion = useCallback((canonicalId: string) => {
@@ -414,6 +417,7 @@ export function CanonicalizationLabPage() {
                           tabIndex={0}
                           aria-expanded={isSelected}
                           aria-controls={`cluster-detail-${category.id}`}
+                          data-testid="canonical-category-card"
                           onClick={() => toggleCategorySelection(category.id)}
                           onKeyDown={(event) => {
                             if (event.key === 'Enter' || event.key === ' ') {
@@ -455,7 +459,7 @@ export function CanonicalizationLabPage() {
                                 event.stopPropagation();
                                 handleRename(category.id);
                               }}
-                              disabled={isSavingLabel(category.id) || !selectedRunId}
+                              disabled={isSavingLabel(category.id) || !canRenameCategory}
                             >
                               {isSavingLabel(category.id) ? 'Saving…' : 'Save'}
                             </Button>

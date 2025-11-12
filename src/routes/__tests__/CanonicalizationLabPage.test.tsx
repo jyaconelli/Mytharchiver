@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import React from 'react';
@@ -199,8 +199,9 @@ describe('CanonicalizationLabPage', () => {
     const inputs = await screen.findAllByLabelText(/Category name/i);
     const input = inputs[0];
     fireEvent.change(input, { target: { value: 'Custom Name' } });
-    const saveButtons = screen.getAllByRole('button', { name: /save/i });
-    fireEvent.click(saveButtons[0]);
+    const categoryCards = screen.getAllByTestId('canonical-category-card');
+    const saveButton = within(categoryCards[0]).getByRole('button', { name: /^save$/i });
+    fireEvent.click(saveButton);
 
     await waitFor(() => expect(supabaseMock.rpc).toHaveBeenCalledTimes(1));
     expect(supabaseMock.rpc).toHaveBeenCalledWith('canonicalization_set_label', {
