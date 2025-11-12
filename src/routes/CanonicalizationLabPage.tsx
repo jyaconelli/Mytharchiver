@@ -16,6 +16,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../components/ui/select';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '../components/ui/accordion';
 import type { Myth, PlotPoint } from '../types/myth';
 
 type AlgorithmMode = 'graph' | 'factorization' | 'consensus' | 'hierarchical';
@@ -185,10 +191,6 @@ export function CanonicalizationLabPage() {
       setSelectedCanonicalId(null);
     }
   }, [activeRun]);
-
-  const toggleCategorySelection = useCallback((canonicalId: string) => {
-    setSelectedCanonicalId((previous) => (previous === canonicalId ? null : canonicalId));
-  }, []);
 
   useEffect(() => {
     if (!activeRun) {
@@ -405,36 +407,35 @@ export function CanonicalizationLabPage() {
                     </p>
                   </div>
                 </div>
-                <div className="mt-4 space-y-4">
+                <Accordion
+                  type="single"
+                  collapsible
+                  value={selectedCanonicalId ?? ''}
+                  onValueChange={(value) => setSelectedCanonicalId(value || null)}
+                  className="mt-4 space-y-4"
+                >
                   {activeRun.categories.map((category) => {
                     const isSelected = category.id === selectedCanonicalId;
                     const plotPointsExpanded = plotPointsVisibility[category.id] ?? false;
 
                     return (
-                      <div key={category.id} className="space-y-3">
-                        <div
-                          role="button"
-                          tabIndex={0}
-                          aria-expanded={isSelected}
-                          aria-controls={`cluster-detail-${category.id}`}
-                          data-testid="canonical-category-card"
-                          onClick={() => toggleCategorySelection(category.id)}
-                          onKeyDown={(event) => {
-                            if (event.key === 'Enter' || event.key === ' ') {
-                              event.preventDefault();
-                              toggleCategorySelection(category.id);
-                            }
-                          }}
-                          className={`w-full rounded-lg border p-4 text-left transition focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-                            isSelected
-                              ? 'border-blue-500 bg-blue-50/40 dark:bg-blue-500/10'
-                              : 'border-border hover:border-blue-300 dark:border-white/5'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between text-sm font-medium">
-                            <span>{category.label}</span>
-                            <span className="text-muted-foreground">{category.size} pts</span>
-                          </div>
+                      <AccordionItem
+                        key={category.id}
+                        value={category.id}
+                        data-testid="canonical-category-card"
+                        className={`rounded-lg border border-border transition data-[state=open]:shadow-md ${
+                          isSelected
+                            ? 'border-blue-500 bg-blue-50/40 dark:bg-blue-500/10'
+                            : 'bg-card dark:border-white/5'
+                        }`}
+                      >
+                        <div className="p-4">
+                          <AccordionTrigger className="w-full rounded-md p-0 text-left hover:no-underline focus-visible:ring-2 focus-visible:ring-blue-400">
+                            <div className="flex w-full items-center justify-between text-sm font-medium">
+                              <span>{category.label}</span>
+                              <span className="text-muted-foreground">{category.size} pts</span>
+                            </div>
+                          </AccordionTrigger>
                           <div className="mt-3 flex items-end gap-2">
                             <div className="flex-1">
                               <Label htmlFor={`category-input-${category.id}`} className="text-xs">
@@ -492,97 +493,95 @@ export function CanonicalizationLabPage() {
                               )
                               .join(', ')}
                           </p>
-                        </div>
-
-                        {isSelected && (
-                          <section
-                            aria-labelledby={`cluster-detail-${category.id}-header`}
-                            id={`cluster-detail-${category.id}`}
-                            className="rounded-lg border border-border p-4"
-                          >
-                            <h3
-                              id={`cluster-detail-${category.id}-header`}
-                              className="text-lg font-semibold"
+                          <AccordionContent className="pt-4">
+                            <section
+                              aria-labelledby={`cluster-detail-${category.id}-header`}
+                              id={`cluster-detail-${category.id}`}
+                              className="rounded-lg border border-border p-4"
                             >
-                              {category.label} · Detail
-                            </h3>
-                            <div className="mt-3 grid gap-4 lg:grid-cols-2">
-                              <div>
-                                <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                                  Collaborator Influence
-                                </p>
-                                <ul className="mt-2 space-y-2 text-sm">
-                                  {category.contributors.map((contributor) => (
-                                    <li
-                                      key={contributor.id}
-                                      className="flex items-center justify-between rounded border border-border/60 px-3 py-2"
-                                    >
-                                      <span className="flex items-center gap-2">
-                                        <span
-                                          className="inline-block size-3 rounded-full"
-                                          style={{ backgroundColor: contributor.color }}
-                                          aria-hidden
-                                        />
-                                        {contributor.name}
-                                      </span>
-                                      <span className="text-muted-foreground">
-                                        {Math.round(contributor.share * 100)}%
-                                      </span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                              <div>
-                                <div className="flex items-center justify-between">
+                              <h3
+                                id={`cluster-detail-${category.id}-header`}
+                                className="text-lg font-semibold"
+                              >
+                                {category.label} · Detail
+                              </h3>
+                              <div className="mt-3 grid gap-4 lg:grid-cols-2">
+                                <div>
                                   <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                                    Plot Points
+                                    Collaborator Influence
                                   </p>
-                                  <Button
-                                    variant="link"
-                                    size="sm"
-                                    className="h-auto px-0 text-xs font-semibold"
-                                    onClick={(event) => {
-                                      event.stopPropagation();
-                                      togglePlotPointsAccordion(category.id);
-                                    }}
-                                  >
-                                    {plotPointsExpanded
-                                      ? 'Collapse'
-                                      : `Show all`}
-                                  </Button>
-                                </div>
-
-                                <ul className="mt-2 space-y-2 text-sm">
-                                  {category.samples
-                                    .slice(0, plotPointsExpanded ? category.samples.length : 2)
-                                    .map((sample, index) => (
+                                  <ul className="mt-2 space-y-2 text-sm">
+                                    {category.contributors.map((contributor) => (
                                       <li
-                                        key={`${category.id}-sample-${index}`}
-                                        className="rounded bg-muted p-3"
+                                        key={contributor.id}
+                                        className="flex items-center justify-between rounded border border-border/60 px-3 py-2"
                                       >
-                                        {sample}
+                                        <span className="flex items-center gap-2">
+                                          <span
+                                            className="inline-block size-3 rounded-full"
+                                            style={{ backgroundColor: contributor.color }}
+                                            aria-hidden
+                                          />
+                                          {contributor.name}
+                                        </span>
+                                        <span className="text-muted-foreground">
+                                          {Math.round(contributor.share * 100)}%
+                                        </span>
                                       </li>
                                     ))}
-                                  {category.samples.length === 0 && (
-                                    <li className="rounded bg-muted/40 p-3 text-muted-foreground">
-                                      No sample plot points available.
-                                    </li>
+                                  </ul>
+                                </div>
+                                <div>
+                                  <div className="flex items-center justify-between">
+                                    <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                                      Representative Plot Points
+                                    </p>
+                                    <Button
+                                      variant="link"
+                                      size="sm"
+                                      className="h-auto px-0 text-xs font-semibold"
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+                                        togglePlotPointsAccordion(category.id);
+                                      }}
+                                    >
+                                      {plotPointsExpanded
+                                        ? 'Hide all plot points'
+                                        : 'See all plot points'}
+                                    </Button>
+                                  </div>
+                                  {plotPointsExpanded && (
+                                    <ul className="mt-2 space-y-2 text-sm">
+                                      {category.samples.map((sample, index) => (
+                                        <li
+                                          key={`${category.id}-sample-${index}`}
+                                          className="rounded bg-muted p-3"
+                                        >
+                                          {sample}
+                                        </li>
+                                      ))}
+                                      {category.samples.length === 0 && (
+                                        <li className="rounded bg-muted/40 p-3 text-muted-foreground">
+                                          No sample plot points available.
+                                        </li>
+                                      )}
+                                    </ul>
                                   )}
-                                </ul>
-                                {!plotPointsExpanded && category.samples.length - 2 > 0 && (
-                                  <span className="mt-2 text-xs text-muted-foreground">
-                                    + {category.samples.length - 2} more point
-                                    {category.samples.length - 2 > 1 ? 's' : ''}
-                                  </span>
-                                )}
+                                  {!plotPointsExpanded && (
+                                    <p className="mt-2 text-sm text-muted-foreground">
+                                      Plot points hidden. Select “See all plot points” to review every
+                                      sample.
+                                    </p>
+                                  )}
+                                </div>
                               </div>
-                            </div>
-                          </section>
-                        )}
-                      </div>
+                            </section>
+                          </AccordionContent>
+                        </div>
+                      </AccordionItem>
                     );
                   })}
-                </div>
+                </Accordion>
               </section>
 
               <section aria-labelledby="metrics-table">
