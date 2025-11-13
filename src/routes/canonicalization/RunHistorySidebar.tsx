@@ -33,7 +33,7 @@ export function RunHistorySidebar({ runs, selectedRunId, onSelect }: RunHistoryS
               }}
               disabled={isDisabled}
               variant="outline"
-              className={`w-full justify-start border px-3 py-2 text-left text-sm transition ${
+              className={`w-full justify-start border px-3 py-8 text-left text-sm transition ${
                 run.id === selectedRunId
                   ? 'border-blue-500 bg-blue-50/40 font-semibold dark:bg-blue-500/10'
                   : 'border-border hover:border-blue-300 dark:border-white/5'
