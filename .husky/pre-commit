@@ -1,5 +1,21 @@
 STASH_NAME="pre-commit-$(date +%s)"
 STASHED=false
+STASH_REF=""
+
+cleanup() {
+  if [ "$STASHED" = true ]; then
+    echo "Restoring stashed changes..."
+    if git rev-parse --verify "$STASH_REF" >/dev/null 2>&1; then
+      if ! git stash pop -q "$STASH_REF" >/dev/null 2>&1; then
+        echo "Failed to reapply stashed changes. Please run 'git stash pop' manually."
+        exit 1
+      fi
+    fi
+    STASHED=false
+  fi
+}
+
+trap cleanup EXIT INT TERM
 
 has_unstaged_changes() {
   if ! git diff --quiet --ignore-submodules --; then
@@ -17,20 +33,11 @@ if has_unstaged_changes; then
     echo "Failed to stash working tree changes. Aborting commit."
     exit 1
   }
+  STASH_REF=$(git stash list -n 1 --format='%gd')
   STASHED=true
 fi
 
 yarn test
 TEST_RESULT=$?
-
-if [ "$STASHED" = true ]; then
-  echo "Restoring stashed changes..."
-  if git stash list | grep -q "$STASH_NAME"; then
-    git stash pop -q >/dev/null 2>&1 || {
-      echo "Failed to reapply stashed changes. Please run 'git stash pop' manually."
-      exit 1
-    }
-  fi
-fi
 
 exit $TEST_RESULT
