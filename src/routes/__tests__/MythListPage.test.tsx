@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { MythListPage } from '../MythListPage';
 
-const useArchiveMock = vi.fn();
+const useMythsContextMock = vi.fn();
 const navigateMock = vi.fn();
 
 vi.mock('react-router-dom', async (importOriginal) => {
@@ -16,8 +16,8 @@ vi.mock('react-router-dom', async (importOriginal) => {
   };
 });
 
-vi.mock('../ArchiveLayout', () => ({
-  useArchive: () => useArchiveMock(),
+vi.mock('../../providers/MythArchiveProvider', () => ({
+  useMythsContext: () => useMythsContextMock(),
 }));
 
 vi.mock('../../components/AddMythDialog', () => ({
@@ -29,7 +29,7 @@ describe('MythListPage', () => {
   const addMythMock = vi.fn();
 
   beforeEach(() => {
-    useArchiveMock.mockReturnValue({
+    useMythsContextMock.mockReturnValue({
       myths: [
         {
           id: 'myth-1',
@@ -45,7 +45,7 @@ describe('MythListPage', () => {
         },
       ],
       addMyth: addMythMock,
-      currentUserEmail: 'user@example.com',
+      loading: false,
     });
     navigateMock.mockClear();
   });

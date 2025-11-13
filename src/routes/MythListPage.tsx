@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 
 import { MythList } from '../components/MythList';
 import { AddMythDialog } from '../components/AddMythDialog';
-import { useArchive } from './ArchiveLayout';
+import { useMythsContext } from '../providers/MythArchiveProvider';
 
 export function MythListPage() {
-  const { myths, addMyth } = useArchive();
+  const { myths, addMyth } = useMythsContext();
   const navigate = useNavigate();
   const [showAddMyth, setShowAddMyth] = useState(false);
 

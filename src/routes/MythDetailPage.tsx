@@ -5,25 +5,25 @@ import { VariantSelector } from '../components/VariantSelector';
 import { CollaboratorSummary } from '../components/CollaboratorSummary';
 import { AddVariantDialog } from '../components/AddVariantDialog';
 import { ContributionRequestsPanel } from '../components/ContributionRequestsPanel';
-import { useArchive } from './ArchiveLayout';
+import { useArchiveLayoutContext } from './ArchiveLayout';
+import { useMythsContext } from '../providers/MythArchiveProvider';
 import { CollaboratorRole } from '../types/myth';
 import { LoadingAnimation } from '../components/LoadingAnimation';
 
 export function MythDetailPage() {
   const { mythId } = useParams<{ mythId: string }>();
   const navigate = useNavigate();
+  const { myths, addVariant, updateContributorInstructions, loading } = useMythsContext();
   const {
-    myths,
-    addVariant,
     currentUserEmail,
     currentUserDisplayName,
     currentUserAvatarUrl,
     sessionUserId,
     openManageCollaborators,
-    updateContributorInstructions,
-    isInitialLoad,
-  } = useArchive();
+  } = useArchiveLayoutContext();
   const [showAddVariant, setShowAddVariant] = useState(false);
+
+  const isInitialLoad = loading && myths.length === 0;
 
   const myth = useMemo(
     () => myths.find((candidate) => candidate.id === mythId) ?? null,

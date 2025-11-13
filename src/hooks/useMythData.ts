@@ -11,7 +11,6 @@ import {
   MythCategory,
   MythCollaborator,
   MythVariant,
-  Mytheme,
   PlotPoint,
   VariantContributor,
   VariantContributorType,
@@ -39,12 +38,6 @@ type UserProfileRow = {
   email: string | null;
   display_name: string | null;
   avatar_url: string | null;
-};
-
-type MythemeRow = {
-  id: string;
-  name: string;
-  type: 'character' | 'event' | 'place' | 'object';
 };
 
 type ProfileSettingsRow = {
@@ -168,20 +161,19 @@ const createSupabaseError = (context: string, error: PostgrestErrorLike) => {
   return enriched;
 };
 
-export function useMythArchive(session: Session | null, currentUserEmail: string) {
+export function useMythData(session: Session | null, currentUserEmail: string) {
   const supabase = getSupabaseClient();
-  const [dataLoading, setDataLoading] = useState(false);
-  const [dataError, setDataError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [myths, setMyths] = useState<Myth[]>([]);
-  const [mythemes, setMythemes] = useState<Mytheme[]>([]);
 
-  const loadArchiveData = useCallback(async () => {
+  const loadMyths = useCallback(async () => {
     if (!session) {
       return;
     }
 
-    setDataLoading(true);
-    setDataError(null);
+    setLoading(true);
+    setError(null);
 
     let lastStep = 'start';
     try {
@@ -218,17 +210,6 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
         }
       } else {
         collaboratorLinksResult = { data: [], error: null };
-      }
-
-      lastStep = 'loading mythemes';
-      const mythemesResult = await supabase
-        .from('mythemes')
-        .select('id, name, type')
-        .eq('user_id', session.user.id)
-        .order('name');
-
-      if (mythemesResult.error) {
-        throw createSupabaseError('mythemes', mythemesResult.error);
       }
 
       lastStep = 'loading profile settings';
@@ -468,7 +449,6 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
         collaboratorsByMyth.set(row.myth_id, existing);
       });
 
-      const mythemeRows = (mythemesResult.data as MythemeRow[] | null) ?? [];
       const categoriesValue =
         (settingsResult.data as ProfileSettingsRow | null)?.categories ?? null;
 
@@ -683,32 +663,30 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
       });
 
       setMyths(enrichedMyths);
-      setMythemes(mythemeRows);
     } catch (error) {
-      console.error(`loadArchiveData failed during step "${lastStep}"`, error);
+      console.error(`loadMyths failed during step "${lastStep}"`, error);
       if (error instanceof Error && 'cause' in error) {
         const cause = (error as Error & { cause?: unknown }).cause;
         if (cause) {
           console.error('Supabase error cause:', cause);
         }
       }
-      setDataError(error instanceof Error ? error.message : 'Unable to load your myth archive.');
+      setError(error instanceof Error ? error.message : 'Unable to load your myth archive.');
     } finally {
-      setDataLoading(false);
+      setLoading(false);
     }
-  }, [session]);
+  }, [session, supabase, currentUserEmail]);
 
   useEffect(() => {
     if (!session) {
       setMyths([]);
-      setMythemes([]);
-      setDataLoading(false);
-      setDataError(null);
+      setLoading(false);
+      setError(null);
       return;
     }
 
-    loadArchiveData();
-  }, [session, loadArchiveData]);
+    loadMyths();
+  }, [session, loadMyths]);
 
   const addMyth = useCallback(
     async (name: string, description: string, contributorInstructions = '') => {
@@ -1198,41 +1176,6 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
     [session, myths, supabase, currentUserEmail],
   );
 
-  const addMytheme = useCallback(
-    async (name: string, type: 'character' | 'event' | 'place' | 'object') => {
-      if (!session) {
-        throw new Error('You must be signed in to add mythemes.');
-      }
-
-      const { data, error } = await supabase
-        .from('mythemes')
-        .insert({
-          name,
-          type,
-          user_id: session.user.id,
-        })
-        .select('id, name, type')
-        .single();
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      setMythemes((prev) => [...prev, data as MythemeRow]);
-    },
-    [session],
-  );
-
-  const deleteMytheme = useCallback(async (id: string) => {
-    const { error } = await supabase.from('mythemes').delete().eq('id', id);
-
-    if (error) {
-      throw new Error(error.message);
-    }
-
-    setMythemes((prev) => prev.filter((mytheme) => mytheme.id !== id));
-  }, []);
-
   const updateMythCategories = useCallback(
     async (mythId: string, updatedCategories: string[]) => {
       if (!session) {
@@ -1402,125 +1345,6 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
     [session, supabase],
   );
 
-  const addCollaborator = useCallback(
-    async (mythId: string, email: string, role: CollaboratorRole) => {
-      if (!session) {
-        throw new Error('You must be signed in to manage collaborators.');
-      }
-
-      const normalizedEmail = email.trim().toLowerCase();
-      if (!normalizedEmail) {
-        throw new Error('Email is required.');
-      }
-
-      const myth = myths.find((m) => m.id === mythId);
-      if (!myth) {
-        throw new Error('Myth not found.');
-      }
-
-      if (myth.collaborators.some((collaborator) => collaborator.email === normalizedEmail)) {
-        throw new Error('This collaborator has already been added.');
-      }
-
-      const { data, error } = await supabase
-        .from('myth_collaborators')
-        .insert({
-          myth_id: mythId,
-          email: normalizedEmail,
-          role,
-        })
-        .select('id, myth_id, email, role')
-        .single();
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      const collaboratorRow = data as CollaboratorRow;
-      const profile = await supabase
-        .from('profiles')
-        .select('email, display_name, avatar_url')
-        .eq('email', normalizedEmail)
-        .maybeSingle();
-
-      if (profile.error && profile.error.code !== 'PGRST116') {
-        throw new Error(profile.error.message);
-      }
-
-      const collaborator: MythCollaborator = {
-        id: collaboratorRow.id,
-        mythId: collaboratorRow.myth_id,
-        email: (collaboratorRow.email ?? '').toLowerCase(),
-        role: collaboratorRow.role,
-        displayName: profile.data?.display_name ?? null,
-        avatarUrl: profile.data?.avatar_url ?? null,
-      };
-
-      setMyths((prev) =>
-        prev.map((m) =>
-          m.id === mythId ? { ...m, collaborators: [...m.collaborators, collaborator] } : m,
-        ),
-      );
-    },
-    [session, myths],
-  );
-
-  const updateCollaboratorRole = useCallback(
-    async (collaboratorId: string, role: CollaboratorRole) => {
-      const { data, error } = await supabase
-        .from('myth_collaborators')
-        .update({ role })
-        .eq('id', collaboratorId)
-        .select('id, myth_id, email, role')
-        .single();
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      const updatedRow = data as CollaboratorRow;
-
-      setMyths((prev) =>
-        prev.map((m) =>
-          m.id === updatedRow.myth_id
-            ? {
-                ...m,
-                collaborators: m.collaborators.map((collaborator) =>
-                  collaborator.id === collaboratorId
-                    ? { ...collaborator, role: updatedRow.role }
-                    : collaborator,
-                ),
-              }
-            : m,
-        ),
-      );
-    },
-    [],
-  );
-
-  const removeCollaborator = useCallback(async (collaboratorId: string) => {
-    const { data, error } = await supabase
-      .from('myth_collaborators')
-      .delete()
-      .eq('id', collaboratorId)
-      .select('myth_id, id')
-      .single();
-
-    if (error) {
-      throw new Error(error.message);
-    }
-
-    const removedRow = data as { myth_id: string };
-
-    setMyths((prev) =>
-      prev.map((m) =>
-        m.id === removedRow.myth_id
-          ? { ...m, collaborators: m.collaborators.filter((c) => c.id !== collaboratorId) }
-          : m,
-      ),
-    );
-  }, []);
-
   const createCollaboratorCategory = useCallback(
     async (mythId: string, name: string) => {
       if (!session) {
@@ -1634,21 +1458,16 @@ export function useMythArchive(session: Session | null, currentUserEmail: string
   );
 
   return {
-    dataLoading,
-    dataError,
     myths,
-    mythemes,
-    loadArchiveData,
+    loading,
+    error,
+    loadMyths,
     addMyth,
     addVariant,
     updateVariant,
-    addMytheme,
-    deleteMytheme,
     updateMythCategories,
     updateContributorInstructions,
-    addCollaborator,
-    updateCollaboratorRole,
-    removeCollaborator,
     createCollaboratorCategory,
+    setMyths,
   };
 }

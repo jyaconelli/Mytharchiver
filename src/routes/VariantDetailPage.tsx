@@ -3,7 +3,8 @@ import { useParams } from 'react-router-dom';
 
 import { VariantView } from '../components/VariantView';
 import { CollaboratorSummary } from '../components/CollaboratorSummary';
-import { useArchive } from './ArchiveLayout';
+import { useArchiveLayoutContext } from './ArchiveLayout';
+import { useMythemesContext, useMythsContext } from '../providers/MythArchiveProvider';
 import { CollaboratorRole, VariantContributorType } from '../types/myth';
 import { LoadingAnimation } from '../components/LoadingAnimation';
 import { Badge } from '../components/ui/badge';
@@ -11,18 +12,17 @@ import { UserCircle2 } from 'lucide-react';
 
 export function VariantDetailPage() {
   const { mythId, variantId } = useParams<{ mythId: string; variantId: string }>();
+  const { myths, updateVariant, createCollaboratorCategory, loading } = useMythsContext();
+  const { mythemes } = useMythemesContext();
   const {
-    myths,
-    mythemes,
-    updateVariant,
     currentUserEmail,
     currentUserDisplayName,
     currentUserAvatarUrl,
     sessionUserId,
-    createCollaboratorCategory,
     openManageCollaborators,
-    isInitialLoad,
-  } = useArchive();
+  } = useArchiveLayoutContext();
+
+  const isInitialLoad = loading && myths.length === 0;
 
   const myth = useMemo(
     () => myths.find((candidate) => candidate.id === mythId) ?? null,

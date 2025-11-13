@@ -5,10 +5,19 @@ import React from 'react';
 
 import { MythDetailPage } from '../MythDetailPage';
 
-const useArchiveMock = vi.fn();
+const useMythsContextMock = vi.fn();
+const useArchiveLayoutContextMock = vi.fn();
+
+vi.mock('../../providers/MythArchiveProvider', () => ({
+  useMythsContext: () => useMythsContextMock(),
+}));
 
 vi.mock('../ArchiveLayout', () => ({
-  useArchive: () => useArchiveMock(),
+  useArchiveLayoutContext: () => useArchiveLayoutContextMock(),
+}));
+
+vi.mock('../../components/ContributionRequestsPanel', () => ({
+  ContributionRequestsPanel: () => <div data-testid="contribution-requests" />,
 }));
 
 vi.mock('../../components/LoadingAnimation', () => ({
@@ -17,25 +26,29 @@ vi.mock('../../components/LoadingAnimation', () => ({
   ),
 }));
 
-const baseContext = {
+const baseMythsContext = {
   myths: [],
   addVariant: vi.fn(),
   updateContributorInstructions: vi.fn(),
+  loading: false,
+};
+
+const baseLayoutContext = {
   currentUserEmail: 'owner@example.com',
   currentUserDisplayName: 'Owner One',
   currentUserAvatarUrl: 'owner.png',
   sessionUserId: 'user-1',
   openManageCollaborators: vi.fn(),
-  isInitialLoad: false,
 };
 
 describe('MythDetailPage', () => {
   beforeEach(() => {
-    useArchiveMock.mockReturnValue(baseContext);
+    useMythsContextMock.mockReturnValue(baseMythsContext);
+    useArchiveLayoutContextMock.mockReturnValue(baseLayoutContext);
   });
 
   it('shows loading state during initial load', () => {
-    useArchiveMock.mockReturnValue({ ...baseContext, isInitialLoad: true });
+    useMythsContextMock.mockReturnValue({ ...baseMythsContext, loading: true });
 
     render(
       <MemoryRouter initialEntries={['/myths/myth-1']}>
@@ -49,7 +62,7 @@ describe('MythDetailPage', () => {
   });
 
   it('renders not found message when myth is missing', () => {
-    useArchiveMock.mockReturnValue(baseContext);
+    useMythsContextMock.mockReturnValue(baseMythsContext);
 
     render(
       <MemoryRouter initialEntries={['/myths/unknown']}>
@@ -63,8 +76,8 @@ describe('MythDetailPage', () => {
   });
 
   it('renders myth details with collaborator summary', () => {
-    useArchiveMock.mockReturnValue({
-      ...baseContext,
+    useMythsContextMock.mockReturnValue({
+      ...baseMythsContext,
       myths: [
         {
           id: 'myth-1',
@@ -103,8 +116,8 @@ describe('MythDetailPage', () => {
   });
 
   it('shows canonicalization callout for owners', () => {
-    useArchiveMock.mockReturnValue({
-      ...baseContext,
+    useMythsContextMock.mockReturnValue({
+      ...baseMythsContext,
       myths: [
         {
           id: 'myth-1',
@@ -137,10 +150,8 @@ describe('MythDetailPage', () => {
   });
 
   it('hides canonicalization callout for non-owners', () => {
-    useArchiveMock.mockReturnValue({
-      ...baseContext,
-      currentUserEmail: 'editor@example.com',
-      sessionUserId: 'user-2',
+    useMythsContextMock.mockReturnValue({
+      ...baseMythsContext,
       myths: [
         {
           id: 'myth-1',
@@ -162,6 +173,11 @@ describe('MythDetailPage', () => {
           collaboratorCategories: [],
         },
       ],
+    });
+    useArchiveLayoutContextMock.mockReturnValue({
+      ...baseLayoutContext,
+      currentUserEmail: 'editor@example.com',
+      sessionUserId: 'user-2',
     });
 
     render(
