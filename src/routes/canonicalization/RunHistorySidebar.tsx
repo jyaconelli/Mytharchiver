@@ -25,7 +25,7 @@ export function RunHistorySidebar({ runs, selectedRunId, onSelect }: RunHistoryS
           <p className="text-sm text-muted-foreground">No runs recorded yet.</p>
         )}
         {runs.map((run) => {
-          const label = `${formatModeLabel(run.mode)} · ${formatShortTimestamp(run.created_at)}`;
+          const label = `${formatModeLabel(run.mode)}`;
           const isDisabled = run.status !== 'succeeded';
           const params = (run.params ?? {}) as Partial<ParameterState>;
           const useAutoK = params.useAutoK ?? DEFAULT_PARAMS.useAutoK;
@@ -56,7 +56,7 @@ export function RunHistorySidebar({ runs, selectedRunId, onSelect }: RunHistoryS
                   <li>
                     Category count:{' '}
                     {useAutoK
-                      ? `Auto-detect (hint ${targetCount} categories)`
+                      ? `Auto-detect (picked ${targetCount} categories)`
                       : `${targetCount} canonical categories`}
                   </li>
                   <li>
@@ -84,7 +84,7 @@ export function RunHistorySidebar({ runs, selectedRunId, onSelect }: RunHistoryS
                 onClick={() => {
                   if (!isDisabled) onSelect(run.id);
                 }}
-                disabled={isDisabled}
+                // disabled={isDisabled}
                 variant="outline"
                 className={`w-full justify-start border px-3 py-8 text-left text-sm transition ${
                   run.id === selectedRunId
@@ -95,11 +95,15 @@ export function RunHistorySidebar({ runs, selectedRunId, onSelect }: RunHistoryS
                 <div className="flex w-full flex-col">
                   <span>{label}</span>
                   <span className="text-xs text-muted-foreground capitalize">
-                    Status: {run.status}
+                    {formatShortTimestamp(run.created_at)} · {run.status}
                   </span>
                 </div>
+                <InfoTooltip
+                  label={`Show run details for ${label}`}
+                  content={tooltipContent}
+                  align="end"
+                />
               </Button>
-              <InfoTooltip label={`Show run details for ${label}`} content={tooltipContent} align="end" />
             </div>
           );
         })}

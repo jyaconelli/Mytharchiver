@@ -135,7 +135,8 @@ describe('CanonicalizationLabPage', () => {
     expect(screen.getByTestId('canonicalization-lab')).toBeInTheDocument();
     expect(screen.getByTestId('parameter-rail')).toBeInTheDocument();
     expect(screen.getByTestId('run-history')).toBeInTheDocument();
-    await screen.findByText(/Agreement Graph ·/i);
+    await screen.findByText(/Agreement Graph/i);
+    await screen.findByText(/Succeeded/i);
   });
 
   it('shows loading animation when archive data is still loading', () => {

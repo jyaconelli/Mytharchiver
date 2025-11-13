@@ -15,6 +15,7 @@ export type CanonicalizationMode =
 
 export interface CanonicalizationParameters {
   targetCanonicalCount?: number;
+  useAutoK?: boolean;
   [key: string]: unknown;
 }
 

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { MatrixProvider } from '../../matrixProvider';
 import { ConsensusRunner } from '../consensusRunner';
@@ -118,5 +118,102 @@ describe('CanonicalizationOrchestrator', () => {
     expect(history).toHaveLength(2);
     const modes = history.map((run) => run.mode).sort();
     expect(modes).toEqual(['consensus', 'graph']);
+  });
+
+  it('auto-detects the target count when useAutoK is enabled', async () => {
+    const matrixProvider = new InstrumentedMatrixProvider(plotPoints);
+    const historyStore = new InMemoryRunHistoryStore();
+    const autoKResolver = vi.fn().mockReturnValue({
+      selectedK: 2,
+      reason: 'gap',
+      candidateRange: { min: 2, max: 6 },
+    });
+
+    const orchestrator = new CanonicalizationOrchestrator({
+      matrixProvider,
+      plotPoints,
+      collaboratorCategories,
+      algorithms: {
+        graph: new AgreementGraphRunner(),
+        factorization: new FactorizationRunner(),
+        consensus: new ConsensusRunner(),
+        hierarchical: new HierarchicalRunner(),
+      },
+      historyStore,
+      idFactory: () => 'auto-run',
+      autoKResolver,
+    });
+
+    const run = await orchestrator.run({
+      mythId: 'myth',
+      mode: 'consensus',
+      params: { useAutoK: true },
+    });
+
+    expect(autoKResolver).toHaveBeenCalledTimes(1);
+    expect(run.params.targetCanonicalCount).toBe(2);
+    expect(run.diagnostics?.autoK).toBeDefined();
+    expect(matrixProvider.lastAgreement).toBe(true);
+  });
+
+  it('throws when auto-detected K exceeds available plot points', async () => {
+    const matrixProvider = new InstrumentedMatrixProvider(plotPoints);
+    const historyStore = new InMemoryRunHistoryStore();
+    const autoKResolver = vi.fn().mockReturnValue({
+      selectedK: 4,
+      reason: 'gap',
+      candidateRange: { min: 2, max: 6 },
+    });
+
+    const orchestrator = new CanonicalizationOrchestrator({
+      matrixProvider,
+      plotPoints,
+      collaboratorCategories,
+      algorithms: {
+        graph: new AgreementGraphRunner(),
+        factorization: new FactorizationRunner(),
+        consensus: new ConsensusRunner(),
+        hierarchical: new HierarchicalRunner(),
+      },
+      historyStore,
+      idFactory: () => 'auto-run',
+      autoKResolver,
+    });
+
+    await expect(
+      orchestrator.run({
+        mythId: 'myth',
+        mode: 'consensus',
+        params: { useAutoK: true },
+      }),
+    ).rejects.toThrow('Cannot request 4 canonical categories with only 3 plot points available.');
+
+    expect(autoKResolver).toHaveBeenCalledTimes(1);
+  });
+
+  it('throws when manual target K exceeds available plot points', async () => {
+    const matrixProvider = new InstrumentedMatrixProvider(plotPoints);
+    const historyStore = new InMemoryRunHistoryStore();
+    const orchestrator = new CanonicalizationOrchestrator({
+      matrixProvider,
+      plotPoints,
+      collaboratorCategories,
+      algorithms: {
+        graph: new AgreementGraphRunner(),
+        factorization: new FactorizationRunner(),
+        consensus: new ConsensusRunner(),
+        hierarchical: new HierarchicalRunner(),
+      },
+      historyStore,
+      idFactory: () => 'manual-error',
+    });
+
+    await expect(
+      orchestrator.run({
+        mythId: 'myth',
+        mode: 'graph',
+        params: { targetCanonicalCount: 5 },
+      }),
+    ).rejects.toThrow('Cannot request 5 canonical categories with only 3 plot points available.');
   });
 });

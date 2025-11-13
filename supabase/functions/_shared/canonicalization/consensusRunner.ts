@@ -21,9 +21,7 @@ interface ConsensusState {
   objective: number;
 }
 
-export class ConsensusRunner
-  implements CanonicalizationAlgorithm<ConsensusParams>
-{
+export class ConsensusRunner implements CanonicalizationAlgorithm<ConsensusParams> {
   readonly mode = 'consensus';
 
   async run(
@@ -52,9 +50,7 @@ export class ConsensusRunner
       diagnostics: {
         finalObjective: state.objective,
         iterations: params.maxIterations ?? 25,
-        canonicalCount: new Set(
-          state.assignments.map((assignment) => assignment.canonicalId),
-        ).size,
+        canonicalCount: new Set(state.assignments.map((assignment) => assignment.canonicalId)).size,
       },
     };
   }
@@ -95,9 +91,7 @@ function performConsensusSearch(
 
       candidateCanonicals.forEach((canonicalId) => {
         const modified = assignments.map((assignment) =>
-          assignment.plotPointId === point.id
-            ? { ...assignment, canonicalId }
-            : assignment,
+          assignment.plotPointId === point.id ? { ...assignment, canonicalId } : assignment,
         );
         const nextObjective = computeObjective(modified, input, params, targetK);
         if (nextObjective < bestObjective) {
@@ -131,8 +125,7 @@ function initializeAssignments(plotPoints: CanonicalizationInput['plotPoints'], 
   const assignments: CanonicalAssignment[] = [];
   plotPoints.forEach((point, index) => {
     const dominant =
-      point.collaboratorCategories?.[0]?.collaboratorCategoryId ??
-      `initial-${index % targetK}`;
+      point.collaboratorCategories?.[0]?.collaboratorCategoryId ?? `initial-${index % targetK}`;
     assignments.push({
       plotPointId: point.id,
       canonicalId: dominant,
@@ -154,9 +147,7 @@ function enforceTargetCount(assignments: CanonicalAssignment[], targetK: number)
     const target = canonicalIds[0];
     if (!smallest || !target) break;
     assignments = assignments.map((assignment) =>
-      assignment.canonicalId === smallest
-        ? { ...assignment, canonicalId: target }
-        : assignment,
+      assignment.canonicalId === smallest ? { ...assignment, canonicalId: target } : assignment,
     );
     canonicalCounts = calculateCounts(assignments);
     canonicalIds = Array.from(canonicalCounts.keys());
@@ -204,10 +195,7 @@ function enforceTargetCount(assignments: CanonicalAssignment[], targetK: number)
 function calculateCounts(assignments: CanonicalAssignment[]) {
   const counts = new Map<string, number>();
   assignments.forEach((assignment) => {
-    counts.set(
-      assignment.canonicalId,
-      (counts.get(assignment.canonicalId) ?? 0) + 1,
-    );
+    counts.set(assignment.canonicalId, (counts.get(assignment.canonicalId) ?? 0) + 1);
   });
   return counts;
 }

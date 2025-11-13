@@ -56,7 +56,7 @@ export function ParameterRail({
 
       <div className="mt-4 space-y-4 text-sm">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 justify-between">
             <Label htmlFor="algorithm-select">Algorithm Mode</Label>
             <InfoTooltip
               label="Explain algorithm modes"
@@ -92,9 +92,9 @@ export function ParameterRail({
         </div>
 
         <div className="space-y-2 rounded-lg border border-border/70 p-3">
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex-col items-center justify-between gap-2">
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 justify-between">
                 <p className="text-sm font-medium">Auto-detect Category Count</p>
                 <InfoTooltip
                   label="Explain auto-detect"
@@ -105,7 +105,6 @@ export function ParameterRail({
                   }
                 />
               </div>
-              <p className="text-xs text-muted-foreground">Uses elbow/Gap heuristics (not yet wired).</p>
             </div>
             <Switch
               checked={params.useAutoK}
@@ -114,7 +113,7 @@ export function ParameterRail({
             />
           </div>
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 justify-between">
               <Label htmlFor="target-k-input">Target Canonical Count</Label>
               <InfoTooltip
                 label="Explain target canonical count"
@@ -137,7 +136,7 @@ export function ParameterRail({
         </div>
 
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 justify-between">
             <Label htmlFor="optimization-select">Optimization Goal</Label>
             <InfoTooltip
               label="Explain optimization goals"
@@ -175,7 +174,7 @@ export function ParameterRail({
         </div>
 
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 justify-between">
             <Label htmlFor="min-cluster-input">Minimum Cluster Size</Label>
             <InfoTooltip
               label="Explain minimum cluster size"
