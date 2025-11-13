@@ -1,4 +1,5 @@
 import type { Myth } from '../../types/myth';
+import { ALGORITHM_MODE_DETAILS, METRIC_CARD_COPY } from './copy';
 import type {
   CanonicalAssignmentRow,
   CanonicalCategoryView,
@@ -6,27 +7,38 @@ import type {
   CanonicalizationRunRow,
   CanonicalizationRunView,
   PlotPointLookup,
+  SummaryCard,
 } from './types';
 
-export function buildSummaryCards(run: CanonicalizationRunView | null) {
-  if (!run) {
-    return [
-      { label: 'Coverage', value: '—' },
-      { label: 'Avg Purity', value: '—' },
-      { label: 'Avg Entropy', value: '—' },
-      { label: 'Agreement Gain', value: '—' },
-    ];
-  }
+export function buildSummaryCards(run: CanonicalizationRunView | null): SummaryCard[] {
+  return METRIC_CARD_COPY.map((card) => {
+    let value = '—';
+    if (run) {
+      switch (card.key) {
+        case 'coverage':
+          value = `${Math.round(run.coverage * 100)}%`;
+          break;
+        case 'averagePurity':
+          value = `${Math.round(run.averagePurity * 100)}%`;
+          break;
+        case 'averageEntropy':
+          value = `${Math.round(run.averageEntropy * 100)}%`;
+          break;
+        case 'agreementGain':
+          value =
+            typeof run.agreementGain === 'number' ? `${run.agreementGain.toFixed(1)} pts` : '—';
+          break;
+        default:
+          value = '—';
+      }
+    }
 
-  return [
-    { label: 'Coverage', value: `${Math.round(run.coverage * 100)}%` },
-    { label: 'Avg Purity', value: `${Math.round(run.averagePurity * 100)}%` },
-    { label: 'Avg Entropy', value: `${Math.round(run.averageEntropy * 100)}%` },
-    {
-      label: 'Agreement Gain',
-      value: typeof run.agreementGain === 'number' ? `${run.agreementGain.toFixed(1)} pts` : '—',
-    },
-  ];
+    return {
+      label: card.label,
+      value,
+      description: card.description,
+    } satisfies SummaryCard;
+  });
 }
 
 export function transformRunRow(
@@ -144,18 +156,7 @@ function computeAverage(values: number[]) {
 }
 
 export function formatModeLabel(mode: CanonicalizationRunRow['mode']) {
-  switch (mode) {
-    case 'graph':
-      return 'Agreement Graph';
-    case 'factorization':
-      return 'Factorization';
-    case 'consensus':
-      return 'Consensus Labeling';
-    case 'hierarchical':
-      return 'Hierarchical';
-    default:
-      return mode;
-  }
+  return ALGORITHM_MODE_DETAILS[mode]?.label ?? mode;
 }
 
 export function formatTimestamp(value: string) {

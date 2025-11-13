@@ -75,7 +75,13 @@ export type PlotPointLookup = Map<string, PlotPoint>;
 
 export const RUN_LIMIT = 20;
 
+export type SummaryCard = {
+  label: string;
+  value: string;
+  description: string;
+};
+
 export type CanonicalizationTransforms = {
   transformRunRow: (row: CanonicalizationRunRow, myth: Myth) => CanonicalizationRunView | null;
-  buildSummaryCards: (run: CanonicalizationRunView | null) => { label: string; value: string }[];
+  buildSummaryCards: (run: CanonicalizationRunView | null) => SummaryCard[];
 };

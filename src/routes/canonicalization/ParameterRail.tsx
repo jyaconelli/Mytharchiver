@@ -1,5 +1,6 @@
 import { PlayIcon } from 'lucide-react';
 
+import { InfoTooltip } from '../../components/InfoTooltip';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
@@ -11,15 +12,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../../components/ui/select';
+import { DEFAULT_PARAMS } from './constants';
+import { ALGORITHM_MODE_DETAILS, OPTIMIZATION_GOAL_DETAILS, PARAMETER_TIPS } from './copy';
 import type { AlgorithmMode, ParameterState } from './types';
-
-export const DEFAULT_PARAMS: ParameterState = {
-  algorithm: 'graph',
-  targetCanonicalCount: 5,
-  useAutoK: false,
-  optimizationGoal: 'purity',
-  minClusterSize: 3,
-};
 
 type ParameterRailProps = {
   params: ParameterState;
@@ -61,7 +56,24 @@ export function ParameterRail({
 
       <div className="mt-4 space-y-4 text-sm">
         <div>
-          <Label htmlFor="algorithm-select">Algorithm Mode</Label>
+          <div className="flex items-center gap-2">
+            <Label htmlFor="algorithm-select">Algorithm Mode</Label>
+            <InfoTooltip
+              label="Explain algorithm modes"
+              content={
+                <div className="space-y-2 text-xs">
+                  <p>{PARAMETER_TIPS.algorithm}</p>
+                  <ul className="list-disc space-y-1 pl-4">
+                    {Object.entries(ALGORITHM_MODE_DETAILS).map(([key, detail]) => (
+                      <li key={key}>
+                        <span className="font-semibold">{detail.label}:</span> {detail.description}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              }
+            />
+          </div>
           <Select
             value={params.algorithm}
             onValueChange={(value: AlgorithmMode) => onChange({ ...params, algorithm: value })}
@@ -70,10 +82,11 @@ export function ParameterRail({
               <SelectValue placeholder="Select mode" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="graph">Agreement Graph</SelectItem>
-              <SelectItem value="factorization">Assignment Factorization</SelectItem>
-              <SelectItem value="consensus">Consensus Labeling</SelectItem>
-              <SelectItem value="hierarchical">Hierarchical Merge/Split</SelectItem>
+              {Object.entries(ALGORITHM_MODE_DETAILS).map(([value, detail]) => (
+                <SelectItem key={value} value={value}>
+                  {detail.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -81,10 +94,18 @@ export function ParameterRail({
         <div className="space-y-2 rounded-lg border border-border/70 p-3">
           <div className="flex items-center justify-between gap-2">
             <div>
-              <p className="text-sm font-medium">Auto-detect Category Count</p>
-              <p className="text-xs text-muted-foreground">
-                Uses elbow/Gap heuristics (not yet wired).
-              </p>
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-medium">Auto-detect Category Count</p>
+                <InfoTooltip
+                  label="Explain auto-detect"
+                  content={
+                    <div className="space-y-1 text-xs">
+                      <p>{PARAMETER_TIPS.autoDetect}</p>
+                    </div>
+                  }
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">Uses elbow/Gap heuristics (not yet wired).</p>
             </div>
             <Switch
               checked={params.useAutoK}
@@ -93,7 +114,13 @@ export function ParameterRail({
             />
           </div>
           <div>
-            <Label htmlFor="target-k-input">Target Canonical Count</Label>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="target-k-input">Target Canonical Count</Label>
+              <InfoTooltip
+                label="Explain target canonical count"
+                content={<p className="text-xs">{PARAMETER_TIPS.targetCanonicalCount}</p>}
+              />
+            </div>
             <Input
               id="target-k-input"
               type="number"
@@ -110,7 +137,24 @@ export function ParameterRail({
         </div>
 
         <div>
-          <Label htmlFor="optimization-select">Optimization Goal</Label>
+          <div className="flex items-center gap-2">
+            <Label htmlFor="optimization-select">Optimization Goal</Label>
+            <InfoTooltip
+              label="Explain optimization goals"
+              content={
+                <div className="space-y-2 text-xs">
+                  <p>{PARAMETER_TIPS.optimizationGoal}</p>
+                  <ul className="list-disc space-y-1 pl-4">
+                    {Object.entries(OPTIMIZATION_GOAL_DETAILS).map(([key, detail]) => (
+                      <li key={key}>
+                        <span className="font-semibold">{detail.label}:</span> {detail.description}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              }
+            />
+          </div>
           <Select
             value={params.optimizationGoal}
             onValueChange={(value: ParameterState['optimizationGoal']) =>
@@ -121,15 +165,23 @@ export function ParameterRail({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="purity">Purity maximization</SelectItem>
-              <SelectItem value="variance">Variance minimization</SelectItem>
-              <SelectItem value="consensus">Consensus stability</SelectItem>
+              {Object.entries(OPTIMIZATION_GOAL_DETAILS).map(([value, detail]) => (
+                <SelectItem key={value} value={value}>
+                  {detail.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
 
         <div>
-          <Label htmlFor="min-cluster-input">Minimum Cluster Size</Label>
+          <div className="flex items-center gap-2">
+            <Label htmlFor="min-cluster-input">Minimum Cluster Size</Label>
+            <InfoTooltip
+              label="Explain minimum cluster size"
+              content={<p className="text-xs">{PARAMETER_TIPS.minClusterSize}</p>}
+            />
+          </div>
           <Input
             id="min-cluster-input"
             type="number"

@@ -4,7 +4,8 @@ import { CalendarClockIcon } from 'lucide-react';
 
 import { useArchive } from './ArchiveLayout';
 import { CanonicalCategoryList } from './canonicalization/CanonicalCategoryList';
-import { DEFAULT_PARAMS, ParameterRail } from './canonicalization/ParameterRail';
+import { DEFAULT_PARAMS } from './canonicalization/constants';
+import { ParameterRail } from './canonicalization/ParameterRail';
 import { RunHistorySidebar } from './canonicalization/RunHistorySidebar';
 import type {
   CanonicalizationRunRow,
@@ -19,6 +20,7 @@ import {
 } from './canonicalization/utils';
 import { getSupabaseClient } from '../lib/supabaseClient';
 import { LoadingAnimation } from '../components/LoadingAnimation';
+import { InfoTooltip } from '../components/InfoTooltip';
 import type { Myth } from '../types/myth';
 import { Button } from '../components/ui/button';
 import {
@@ -321,9 +323,16 @@ export function CanonicalizationLabPage() {
                 key={card.label}
                 className="rounded-lg border border-border bg-card p-4 shadow-sm dark:border-white/5"
               >
-                <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                  {card.label}
-                </p>
+                <div className="flex items-start justify-between gap-2">
+                  <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                    {card.label}
+                  </p>
+                  <InfoTooltip
+                    label={`Explain ${card.label}`}
+                    align="end"
+                    content={<p className="text-xs leading-relaxed">{card.description}</p>}
+                  />
+                </div>
                 <p className="mt-2 text-2xl font-semibold">{card.value}</p>
               </div>
             ))}
