@@ -53,7 +53,7 @@ export function VariantDetailPage() {
     invitee: 'Guest contributor',
     unknown: 'Contributor',
   };
-  console.log(variant?.contributor);
+
   const displayContributorName = (value?: string | null) => {
     if (!value) return null;
     const trimmed = value.trim();

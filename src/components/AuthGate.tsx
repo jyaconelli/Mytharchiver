@@ -279,7 +279,7 @@ export function AuthGate() {
                   autoComplete="name"
                   value={displayName}
                   onChange={(event) => setDisplayName(event.target.value)}
-                  placeholder="Persephone Scholar"
+                  placeholder="Display name"
                   required
                 />
               </div>
@@ -401,7 +401,7 @@ export function AuthGate() {
                     </div>
                   </div>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Square images look best. We store a base64-encoded copy with your profile.
+                    Square images look best.
                   </p>
                 </div>
               </>

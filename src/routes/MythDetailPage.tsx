@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { VariantSelector } from '../components/VariantSelector';
 import { CollaboratorSummary } from '../components/CollaboratorSummary';
@@ -43,6 +43,7 @@ export function MythDetailPage() {
 
   const canEdit = selectedMythRole === 'owner' || selectedMythRole === 'editor';
   const canManageInvites = selectedMythRole === 'owner';
+  const isOwner = selectedMythRole === 'owner';
 
   if (isInitialLoad) {
     return (
@@ -69,6 +70,26 @@ export function MythDetailPage() {
         <h2>{myth.name}</h2>
         <p className="text-gray-600 dark:text-gray-400 mt-1">{myth.description}</p>
       </div>
+
+      {isOwner && (
+        <div
+          className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-900 dark:border-blue-900/50 dark:bg-blue-950/20 dark:text-blue-100"
+          data-testid="canonicalization-callout"
+        >
+          <div>
+            <p className="font-medium">Canonicalization Lab</p>
+            <p className="text-xs text-blue-900/80 dark:text-blue-200/80">
+              Run category consolidation experiments and review contributor statistics.
+            </p>
+          </div>
+          <Link
+            className="rounded-md border border-blue-400 bg-white px-3 py-1.5 text-sm font-medium text-blue-700 transition hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-900/40 dark:text-blue-100"
+            to={`/myths/${myth.id}/canonicalization`}
+          >
+            Open Lab
+          </Link>
+        </div>
+      )}
 
       <CollaboratorSummary
         myth={myth}
