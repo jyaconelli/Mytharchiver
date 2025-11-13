@@ -244,12 +244,12 @@ export function AuthGate() {
   const passwordsMatch = password === confirmPassword;
 
   return (
-    <div className="min-h-screen grid grid-cols-3 max-md:grid-cols-1 max-md:px-4 text-gray-900 dark:bg-gray-950 dark:text-gray-100">
+    <div className="min-h-screen grid grid-cols-3 max-md:grid-cols-1 max-md:px-4 text-gray-900 dark:bg-gray-800 dark:text-gray-100">
       <div className="col-start-2 max-md:col-start-1 flex w-full max-w-4xl flex-col items-center space-y-6 py-4 text-center">
         <img
           src={logoUrl}
           alt="Myth Archive"
-          className="h-48 w-48 bg-white object-contain dark:border-gray-800"
+          className="h-48 w-48 object-contain dark:border-gray-800"
         />
         <div className="space-y-2">
           <h1 className="font-display text-4xl text-gray-900 dark:text-gray-100">Myth Archive</h1>
