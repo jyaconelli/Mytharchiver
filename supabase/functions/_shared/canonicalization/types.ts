@@ -11,7 +11,8 @@ export type CanonicalizationMode =
   | 'graph'
   | 'factorization'
   | 'consensus'
-  | 'hierarchical';
+  | 'hierarchical'
+  | 'directive';
 
 export interface CanonicalizationParameters {
   targetCanonicalCount?: number;

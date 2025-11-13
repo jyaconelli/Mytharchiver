@@ -7,6 +7,7 @@ import { FactorizationRunner } from '../factorizationRunner';
 import { HierarchicalRunner } from '../hierarchicalRunner';
 import { CanonicalizationOrchestrator } from '../orchestrator';
 import { InMemoryRunHistoryStore } from '../historyStore';
+import { DirectiveSearchRunner } from '../directiveRunner';
 
 const plotPoints = [
   {
@@ -90,6 +91,7 @@ describe('CanonicalizationOrchestrator', () => {
         factorization: new FactorizationRunner(),
         consensus: new ConsensusRunner(),
         hierarchical: new HierarchicalRunner(),
+        directive: new DirectiveSearchRunner(),
       },
       historyStore,
       idFactory: () => 'run-fixed',
@@ -138,6 +140,7 @@ describe('CanonicalizationOrchestrator', () => {
         factorization: new FactorizationRunner(),
         consensus: new ConsensusRunner(),
         hierarchical: new HierarchicalRunner(),
+        directive: new DirectiveSearchRunner(),
       },
       historyStore,
       idFactory: () => 'auto-run',
@@ -174,6 +177,7 @@ describe('CanonicalizationOrchestrator', () => {
         factorization: new FactorizationRunner(),
         consensus: new ConsensusRunner(),
         hierarchical: new HierarchicalRunner(),
+        directive: new DirectiveSearchRunner(),
       },
       historyStore,
       idFactory: () => 'auto-run',

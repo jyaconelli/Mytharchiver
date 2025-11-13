@@ -9,6 +9,7 @@ import { AgreementGraphRunner } from '../_shared/canonicalization/graphRunner.ts
 import { FactorizationRunner } from '../_shared/canonicalization/factorizationRunner.ts';
 import { ConsensusRunner } from '../_shared/canonicalization/consensusRunner.ts';
 import { HierarchicalRunner } from '../_shared/canonicalization/hierarchicalRunner.ts';
+import { DirectiveSearchRunner } from '../_shared/canonicalization/directiveRunner.ts';
 import {
   CanonicalizationOrchestrator,
 } from '../_shared/canonicalization/orchestrator.ts';
@@ -153,7 +154,7 @@ serve(async (request) => {
   }
 
   const mode = (payload.mode ?? 'graph') as CanonicalizationMode;
-  if (!['graph', 'factorization', 'consensus', 'hierarchical'].includes(mode)) {
+  if (!['graph', 'factorization', 'consensus', 'hierarchical', 'directive'].includes(mode)) {
     return jsonResponse('Unsupported algorithm mode', 400);
   }
 
@@ -296,6 +297,7 @@ serve(async (request) => {
       factorization: new FactorizationRunner(),
       consensus: new ConsensusRunner(),
       hierarchical: new HierarchicalRunner(),
+      directive: new DirectiveSearchRunner(),
     },
     historyStore,
     idFactory: () => crypto.randomUUID(),

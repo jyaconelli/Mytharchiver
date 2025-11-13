@@ -35,6 +35,12 @@ const ENFORCEMENT_BY_MODE: EnforcementMatrix = {
     optimizationGoal: 'na',
     minClusterSize: 'na',
   },
+  directive: {
+    autoDetect: 'strict',
+    targetCanonicalCount: 'strict',
+    optimizationGoal: 'strict',
+    minClusterSize: 'strict',
+  },
 };
 
 export function getParameterEnforcement(mode: AlgorithmMode) {

@@ -18,6 +18,11 @@ export const ALGORITHM_MODE_DETAILS: Record<AlgorithmMode, { label: string; desc
     label: 'Hierarchical Merge/Split',
     description: 'Agglomeratively merges related plot points and splits noisy clusters until stability is reached.',
   },
+  directive: {
+    label: 'Directive Search',
+    description:
+      'Runs a goal-driven local search that repeatedly reassigns plot points to maximize the chosen optimization metric (purity, variance, or consensus).',
+  },
 };
 
 export const OPTIMIZATION_GOAL_DETAILS: Record<

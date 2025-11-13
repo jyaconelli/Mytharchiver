@@ -126,7 +126,7 @@ export class CanonicalizationOrchestrator {
 }
 
 function modeRequiresAgreement(mode: CanonicalizationMode) {
-  return mode === 'graph' || mode === 'hierarchical';
+  return mode === 'graph' || mode === 'hierarchical' || mode === 'directive';
 }
 
 function ensureValidTargetCount(target: number, availablePlotPoints: number) {
