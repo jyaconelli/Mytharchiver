@@ -101,7 +101,7 @@ export function ParameterRail({
         <div className="space-y-2 rounded-lg border border-border/70 p-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2 text-sm font-medium">
-              <p>Auto-detect Category Count</p>
+              <p>Auto Category Count</p>
               <ParameterIndicator level={autoDetectStatus} />
             </div>
             <InfoTooltip
