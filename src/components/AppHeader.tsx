@@ -3,6 +3,7 @@ import { ArrowLeft, LogOut, Settings } from 'lucide-react';
 
 import logoUrl from '../assets/logo.png';
 
+import { ThemeModeSelector } from './ThemeModeSelector';
 import { Button } from './ui/button';
 import {
   DropdownMenu,
@@ -69,22 +70,26 @@ export function AppHeader({
             </div>
           </div>
           <div className="flex items-center gap-3">
+            <ThemeModeSelector />
             {currentUserEmail && (
-              <div className="flex items-center gap-3">
-                <Avatar className="h-9 w-9 border border-indigo-100 bg-white text-sm font-medium text-indigo-600 dark:border-indigo-900/40 dark:bg-gray-900 dark:text-indigo-300">
-                  <AvatarImage
-                    src={userAvatarUrl && userAvatarUrl.trim() ? userAvatarUrl : undefined}
-                    alt={resolvedDisplayName}
-                  />
-                  <AvatarFallback>{avatarFallbackSource}</AvatarFallback>
-                </Avatar>
-                <div className="text-right text-sm">
-                  <p className="font-medium text-gray-800 dark:text-gray-100">
-                    {resolvedDisplayName}
-                  </p>
-                  <p className="text-gray-500 dark:text-gray-400">{currentUserEmail}</p>
+              <>
+                <span className="h-6 w-px bg-gray-200 dark:bg-gray-700" aria-hidden="true" />
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-9 w-9 border border-indigo-100 bg-white text-sm font-medium text-indigo-600 dark:border-indigo-900/40 dark:bg-gray-900 dark:text-indigo-300">
+                    <AvatarImage
+                      src={userAvatarUrl && userAvatarUrl.trim() ? userAvatarUrl : undefined}
+                      alt={resolvedDisplayName}
+                    />
+                    <AvatarFallback>{avatarFallbackSource}</AvatarFallback>
+                  </Avatar>
+                  <div className="text-right text-sm">
+                    <p className="font-medium text-gray-800 dark:text-gray-100">
+                      {resolvedDisplayName}
+                    </p>
+                    <p className="text-gray-500 dark:text-gray-400">{currentUserEmail}</p>
+                  </div>
                 </div>
-              </div>
+              </>
             )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

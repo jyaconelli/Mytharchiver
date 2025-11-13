@@ -81,10 +81,6 @@ vi.mock('recharts@2.15.2', () => {
   };
 });
 
-vi.mock('next-themes', () => ({
-  useTheme: () => ({ theme: 'light' }),
-}));
-
 vi.mock('sonner', () => ({
   Toaster: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) =>
     React.createElement('div', { 'data-sonner-toaster': true, ...props }, children),
@@ -343,6 +339,7 @@ import {
 import { Skeleton } from '../skeleton';
 import { Slider } from '../slider';
 import { Toaster } from '../sonner';
+import { ThemeProvider } from '../../../providers/ThemeProvider';
 import { Switch } from '../switch';
 import {
   Table,
@@ -1016,7 +1013,11 @@ describe('UI component snapshots', () => {
   });
 
   test('Sonner toaster', () => {
-    const { asFragment } = render(<Toaster position="bottom-right" />);
+    const { asFragment } = render(
+      <ThemeProvider>
+        <Toaster position="bottom-right" />
+      </ThemeProvider>,
+    );
     expect(asFragment()).toMatchSnapshot();
   });
 
