@@ -127,6 +127,7 @@ describe('CanonicalizationLabPage', () => {
     useArchiveMock.mockReturnValue({
       myths: [baseMyth],
       isInitialLoad: false,
+      loadArchiveData: vi.fn(),
     });
 
     renderWithRouter('/myths/myth-1/canonicalization');
@@ -141,6 +142,7 @@ describe('CanonicalizationLabPage', () => {
     useArchiveMock.mockReturnValue({
       myths: [],
       isInitialLoad: true,
+      loadArchiveData: vi.fn(),
     });
 
     renderWithRouter('/myths/myth-1/canonicalization');
@@ -152,6 +154,7 @@ describe('CanonicalizationLabPage', () => {
     useArchiveMock.mockReturnValue({
       myths: [],
       isInitialLoad: false,
+      loadArchiveData: vi.fn(),
     });
 
     renderWithRouter('/myths/missing-id/canonicalization');
@@ -163,6 +166,7 @@ describe('CanonicalizationLabPage', () => {
     useArchiveMock.mockReturnValue({
       myths: [baseMyth],
       isInitialLoad: false,
+      loadArchiveData: vi.fn(),
     });
     setupSupabaseRunsResponse(
       { data: [sampleRunRow], error: null },
@@ -187,6 +191,7 @@ describe('CanonicalizationLabPage', () => {
     useArchiveMock.mockReturnValue({
       myths: [baseMyth],
       isInitialLoad: false,
+      loadArchiveData: vi.fn(),
     });
     setupSupabaseRunsResponse(
       { data: [sampleRunRow], error: null },
@@ -209,5 +214,31 @@ describe('CanonicalizationLabPage', () => {
       p_canonical_id: 'canon-a',
       p_label: 'Custom Name',
     });
+  });
+
+  it('applies canonical categories after confirmation', async () => {
+    const loadArchiveData = vi.fn().mockResolvedValue(undefined);
+    useArchiveMock.mockReturnValue({
+      myths: [baseMyth],
+      isInitialLoad: false,
+      loadArchiveData,
+    });
+    supabaseMock.rpc.mockResolvedValue({ data: null, error: null });
+
+    renderWithRouter('/myths/myth-1/canonicalization');
+
+    const applyButton = await screen.findByRole('button', {
+      name: /apply canonical categories/i,
+    });
+    fireEvent.click(applyButton);
+
+    fireEvent.click(screen.getByRole('button', { name: /apply categories/i }));
+
+    await waitFor(() =>
+      expect(supabaseMock.rpc).toHaveBeenCalledWith('canonicalization_apply_run', {
+        p_run_id: 'run-1',
+      }),
+    );
+    expect(loadArchiveData).toHaveBeenCalled();
   });
 });

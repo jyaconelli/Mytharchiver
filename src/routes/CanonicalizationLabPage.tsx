@@ -20,11 +20,23 @@ import {
 import { getSupabaseClient } from '../lib/supabaseClient';
 import { LoadingAnimation } from '../components/LoadingAnimation';
 import type { Myth } from '../types/myth';
+import { Button } from '../components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '../components/ui/alert-dialog';
 
 export function CanonicalizationLabPage() {
   const { mythId } = useParams<{ mythId: string }>();
   const supabase = useMemo(() => getSupabaseClient(), []);
-  const { myths, isInitialLoad } = useArchive();
+  const { myths, isInitialLoad, loadArchiveData } = useArchive();
   const myth = myths.find((candidate) => candidate.id === mythId) ?? null;
 
   const [params, setParams] = useState<ParameterState>(DEFAULT_PARAMS);
@@ -40,6 +52,8 @@ export function CanonicalizationLabPage() {
   const [labelDrafts, setLabelDrafts] = useState<Record<string, string>>({});
   const [plotPointsVisibility, setPlotPointsVisibility] = useState<Record<string, boolean>>({});
   const [lastSimulation, setLastSimulation] = useState<string | null>(null);
+  const [isApplying, setIsApplying] = useState(false);
+  const [applyError, setApplyError] = useState<string | null>(null);
 
   const fetchRuns = useCallback(
     async (preferredRunId?: string) => {
@@ -213,6 +227,31 @@ export function CanonicalizationLabPage() {
     }));
   }, []);
 
+  useEffect(() => {
+    setApplyError(null);
+  }, [activeRunId]);
+
+  const handleApplyCategories = useCallback(async () => {
+    if (!activeRunId) return;
+    setIsApplying(true);
+    setApplyError(null);
+    try {
+      const { error } = await supabase.rpc('canonicalization_apply_run', {
+        p_run_id: activeRunId,
+      });
+      if (error) {
+        throw new Error(error.message ?? 'Failed to apply canonical categories.');
+      }
+      await loadArchiveData();
+    } catch (err) {
+      setApplyError(
+        err instanceof Error ? err.message : 'Failed to apply canonical categories.',
+      );
+    } finally {
+      setIsApplying(false);
+    }
+  }, [activeRunId, loadArchiveData, supabase]);
+
   if (isInitialLoad) {
     return (
       <div className="py-16">
@@ -288,6 +327,44 @@ export function CanonicalizationLabPage() {
                 <p className="mt-2 text-2xl font-semibold">{card.value}</p>
               </div>
             ))}
+          </div>
+
+          <div className="rounded-lg border border-dashed border-border bg-muted/20 px-4 py-3">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <div>
+                <p className="text-sm font-medium text-foreground">Apply canonical categories</p>
+                <p className="text-sm text-muted-foreground">
+                  Applying a run will overwrite this myth's canonical categories and update every
+                  plot point to match the selected run.
+                </p>
+              </div>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button disabled={!activeRunId || isApplying} variant="secondary">
+                    {isApplying ? 'Applying…' : 'Apply Canonical Categories'}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Apply canonical categories?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will replace the myth's canonical categories with the selections from
+                      this run and assign every plot point to those categories. Any previous
+                      application will be overwritten.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => handleApplyCategories()} disabled={isApplying}>
+                      {isApplying ? 'Applying…' : 'Apply categories'}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+            {applyError && (
+              <p className="mt-2 text-sm text-red-600 dark:text-red-400">{applyError}</p>
+            )}
           </div>
 
           {runsLoading && runViews.length === 0 && (
