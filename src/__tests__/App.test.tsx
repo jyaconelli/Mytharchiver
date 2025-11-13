@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
 
 import App from '../App';
@@ -38,6 +39,13 @@ const baseSession = {
 };
 
 describe('App', () => {
+  const renderApp = () =>
+    render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+
   beforeEach(() => {
     vi.clearAllMocks();
     mockUseSupabaseAuth.mockReturnValue({ session: null, authLoading: false });
@@ -46,7 +54,7 @@ describe('App', () => {
   it('renders a loading indicator while authentication state is pending', () => {
     mockUseSupabaseAuth.mockReturnValue({ session: null, authLoading: true });
 
-    render(<App />);
+    renderApp();
 
     expect(screen.getByText('Checking your session…', { exact: false })).toBeInTheDocument();
   });
@@ -54,7 +62,7 @@ describe('App', () => {
   it('redirects unauthenticated users to the auth gate', () => {
     mockUseSupabaseAuth.mockReturnValue({ session: null, authLoading: false });
 
-    render(<App />);
+    renderApp();
 
     expect(AuthGateMock).toHaveBeenCalled();
     expect(screen.getByTestId('auth-gate')).toBeInTheDocument();
@@ -64,7 +72,7 @@ describe('App', () => {
   it('renders the archive layout when a session is present', () => {
     mockUseSupabaseAuth.mockReturnValue({ session: baseSession, authLoading: false });
 
-    render(<App />);
+    renderApp();
 
     expect(ArchiveLayoutMock).toHaveBeenCalledTimes(1);
     const props = ArchiveLayoutMock.mock.calls[0]?.[0];
