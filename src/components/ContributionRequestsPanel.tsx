@@ -335,6 +335,7 @@ export function ContributionRequestsPanel({
                   value={instructionsValue}
                   onChange={(event) => setInstructionsValue(event.target.value)}
                   rows={5}
+
                   placeholder="Share any context or formatting rules you need contributors to follow."
                 />
               </div>

@@ -24,7 +24,7 @@ export function LoadingAnimation({
         src={loadingGif}
         alt="Loading"
         style={{ width: size, height: size }}
-        className="select-none"
+        className="select-none invert"
         role="status"
         draggable={false}
       />

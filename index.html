@@ -6,6 +6,17 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link rel="icon" type="image/png" href="/favicon.png" />
       <title>Myth Archiving Tool</title>
+      <script>
+        (function () {
+          var cookieMatch = document.cookie.match(/(?:^|; )themePreference=([^;]*)/);
+          var storedPreference = cookieMatch ? decodeURIComponent(cookieMatch[1]) : null;
+          var preference = storedPreference === 'light' || storedPreference === 'dark' || storedPreference === 'system' ? storedPreference : 'system';
+          var prefersDark = typeof window.matchMedia === 'function' &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var useDark = preference === 'dark' || (preference === 'system' && prefersDark);
+          document.documentElement.classList.toggle('dark', useDark);
+        })();
+      </script>
     </head>
 
     <body>
