@@ -109,7 +109,7 @@ export function ParameterRail({
             </div>
             <Switch
               checked={params.useAutoK}
-              onCheckedChange={(checked) => onChange({ ...params, useAutoK: checked })}
+              onCheckedChange={(checked: boolean) => onChange({ ...params, useAutoK: checked })}
               disabled={isRunning}
             />
           </div>
