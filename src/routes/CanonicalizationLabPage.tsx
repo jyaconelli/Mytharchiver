@@ -18,6 +18,7 @@ import {
   formatTimestamp,
   transformRunRow,
 } from './canonicalization/utils';
+import { getParameterEnforcement } from './canonicalization/enforcement';
 import { getSupabaseClient } from '../lib/supabaseClient';
 import { LoadingAnimation } from '../components/LoadingAnimation';
 import { InfoTooltip } from '../components/InfoTooltip';
@@ -163,15 +164,31 @@ export function CanonicalizationLabPage() {
     setIsSubmitting(true);
     setSubmitError(null);
     try {
+      const enforcement = getParameterEnforcement(params.algorithm);
+      const canUseAutoDetect = enforcement.autoDetect !== 'na';
+      const useAutoK = canUseAutoDetect && params.useAutoK;
+      const targetSupported = enforcement.targetCanonicalCount !== 'na';
+      const optimizationSupported = enforcement.optimizationGoal !== 'na';
+      const minClusterSupported = enforcement.minClusterSize !== 'na';
+
+      const paramPayload: Record<string, unknown> = {};
+      if (canUseAutoDetect) {
+        paramPayload.useAutoK = useAutoK;
+      }
+      if (targetSupported && !useAutoK) {
+        paramPayload.targetCanonicalCount = params.targetCanonicalCount;
+      }
+      if (optimizationSupported) {
+        paramPayload.optimizationGoal = params.optimizationGoal;
+      }
+      if (minClusterSupported) {
+        paramPayload.minClusterSize = params.minClusterSize;
+      }
+
       const payload = {
         mythId,
         mode: params.algorithm,
-        params: {
-          targetCanonicalCount: params.useAutoK ? undefined : params.targetCanonicalCount,
-          useAutoK: params.useAutoK,
-          optimizationGoal: params.optimizationGoal,
-          minClusterSize: params.minClusterSize,
-        },
+        params: paramPayload,
       };
       const { data, error } = await supabase.functions.invoke('canonicalization-run', {
         body: payload,
@@ -454,4 +471,3 @@ export function CanonicalizationLabPage() {
     </div>
   );
 }
-

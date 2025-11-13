@@ -14,6 +14,7 @@ import {
 } from '../../components/ui/select';
 import { DEFAULT_PARAMS } from './constants';
 import { ALGORITHM_MODE_DETAILS, OPTIMIZATION_GOAL_DETAILS, PARAMETER_TIPS } from './copy';
+import { getParameterEnforcement, type EnforcementLevel } from './enforcement';
 import type { AlgorithmMode, ParameterState } from './types';
 
 type ParameterRailProps = {
@@ -33,6 +34,12 @@ export function ParameterRail({
   isRunning,
   errorMessage,
 }: ParameterRailProps) {
+  const enforcement = getParameterEnforcement(params.algorithm);
+  const autoDetectStatus = enforcement.autoDetect;
+  const targetStatus = enforcement.targetCanonicalCount;
+  const optimizationStatus = enforcement.optimizationGoal;
+  const minClusterStatus = enforcement.minClusterSize;
+
   return (
     <aside
       className="rounded-2xl border border-border bg-card p-4 shadow-sm dark:border-white/5"
@@ -92,29 +99,34 @@ export function ParameterRail({
         </div>
 
         <div className="space-y-2 rounded-lg border border-border/70 p-3">
-          <div className="flex-col items-center justify-between gap-2">
-            <div>
-              <div className="flex items-center gap-2 justify-between">
-                <p className="text-sm font-medium">Auto-detect Category Count</p>
-                <InfoTooltip
-                  label="Explain auto-detect"
-                  content={
-                    <div className="space-y-1 text-xs">
-                      <p>{PARAMETER_TIPS.autoDetect}</p>
-                    </div>
-                  }
-                />
-              </div>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-2 text-sm font-medium">
+              <p>Auto-detect Category Count</p>
+              <ParameterIndicator level={autoDetectStatus} />
             </div>
+            <InfoTooltip
+              label="Explain auto-detect"
+              content={
+                <div className="space-y-1 text-xs">
+                  <p>{PARAMETER_TIPS.autoDetect}</p>
+                </div>
+              }
+            />
+          </div>
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-xs text-muted-foreground">
+              Sweeps elbow + Gap heuristics to pick a stable category count automatically.
+            </p>
             <Switch
-              checked={params.useAutoK}
+              checked={params.useAutoK && autoDetectStatus !== 'na'}
               onCheckedChange={(checked: boolean) => onChange({ ...params, useAutoK: checked })}
-              disabled={isRunning}
+              disabled={isRunning || autoDetectStatus === 'na'}
             />
           </div>
           <div>
-            <div className="flex items-center gap-2 justify-between">
+            <div className="flex items-center gap-2">
               <Label htmlFor="target-k-input">Target Canonical Count</Label>
+              <ParameterIndicator level={targetStatus} />
               <InfoTooltip
                 label="Explain target canonical count"
                 content={<p className="text-xs">{PARAMETER_TIPS.targetCanonicalCount}</p>}
@@ -130,14 +142,15 @@ export function ParameterRail({
                 onChange({ ...params, targetCanonicalCount: Number(event.currentTarget.value) })
               }
               className="mt-1"
-              disabled={params.useAutoK || isRunning}
+              disabled={params.useAutoK || isRunning || targetStatus === 'na'}
             />
           </div>
         </div>
 
         <div>
-          <div className="flex items-center gap-2 justify-between">
+          <div className="flex items-center gap-2">
             <Label htmlFor="optimization-select">Optimization Goal</Label>
+            <ParameterIndicator level={optimizationStatus} />
             <InfoTooltip
               label="Explain optimization goals"
               content={
@@ -159,6 +172,7 @@ export function ParameterRail({
             onValueChange={(value: ParameterState['optimizationGoal']) =>
               onChange({ ...params, optimizationGoal: value })
             }
+            disabled={isRunning || optimizationStatus === 'na'}
           >
             <SelectTrigger id="optimization-select" className="mt-1">
               <SelectValue />
@@ -174,8 +188,9 @@ export function ParameterRail({
         </div>
 
         <div>
-          <div className="flex items-center gap-2 justify-between">
+          <div className="flex items-center gap-2">
             <Label htmlFor="min-cluster-input">Minimum Cluster Size</Label>
+            <ParameterIndicator level={minClusterStatus} />
             <InfoTooltip
               label="Explain minimum cluster size"
               content={<p className="text-xs">{PARAMETER_TIPS.minClusterSize}</p>}
@@ -191,7 +206,7 @@ export function ParameterRail({
               onChange({ ...params, minClusterSize: Number(event.currentTarget.value) })
             }
             className="mt-1"
-            disabled={isRunning}
+            disabled={isRunning || minClusterStatus === 'na'}
           />
         </div>
       </div>
@@ -205,11 +220,51 @@ export function ParameterRail({
         <PlayIcon className="size-4" />
         {isRunning ? 'Running…' : 'Run Analysis'}
       </Button>
+      <ParameterLegend />
       {errorMessage && (
         <p className="mt-3 text-xs text-red-500" role="alert">
           {errorMessage}
         </p>
       )}
     </aside>
+  );
+}
+
+const INDICATOR_META: Record<EnforcementLevel, { colorClass: string; label: string }> = {
+  strict: {
+    colorClass: 'bg-emerald-500',
+    label: 'Strictly enforced',
+  },
+  influence: {
+    colorClass: 'bg-amber-400',
+    label: 'Heuristic influence only',
+  },
+  na: {
+    colorClass: 'bg-slate-400 dark:bg-slate-500',
+    label: 'Not used by this mode',
+  },
+};
+
+function ParameterIndicator({ level }: { level: EnforcementLevel }) {
+  const meta = INDICATOR_META[level];
+  return (
+    <span
+      className={`inline-flex h-2.5 w-2.5 rounded-full ${meta.colorClass}`}
+      title={meta.label}
+      aria-label={meta.label}
+    />
+  );
+}
+
+function ParameterLegend() {
+  return (
+    <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+      {Object.entries(INDICATOR_META).map(([level, meta]) => (
+        <div key={level} className="flex items-center gap-2">
+          <ParameterIndicator level={level as EnforcementLevel} />
+          <span>{meta.label}</span>
+        </div>
+      ))}
+    </div>
   );
 }
