@@ -1,6 +1,11 @@
 import type { Myth, PlotPoint } from '../../types/myth';
 
-export type AlgorithmMode = 'graph' | 'factorization' | 'consensus' | 'hierarchical';
+export type AlgorithmMode =
+  | 'graph'
+  | 'factorization'
+  | 'consensus'
+  | 'hierarchical'
+  | 'directive';
 
 export type ParameterState = {
   algorithm: AlgorithmMode;
