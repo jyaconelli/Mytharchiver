@@ -1,7 +1,9 @@
 import { renderHook, waitFor, act } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { ReactNode } from 'react';
 
-import { useMythArchive } from '../useMythArchive';
+import { MythArchiveProvider, useMythArchive } from '../../providers/MythArchiveProvider';
+import { useMythData } from '../useMythData';
 import { DEFAULT_CATEGORIES, type MythVariant } from '../../types/myth';
 
 type QueryResult = { data: any; error: any };
@@ -83,11 +85,11 @@ vi.mock('../../lib/supabaseClient', () => ({
   getSupabaseClient: () => supabaseStub,
 }));
 
-const createSession = () =>
+const createSession = (email = 'owner@example.com') =>
   ({
     user: {
       id: 'user-1',
-      email: 'owner@example.com',
+      email,
       user_metadata: {
         display_name: 'Owner One',
         avatar_url: 'owner.png',
@@ -223,23 +225,19 @@ describe('useMythArchive', () => {
   });
 
   const renderArchive = (email = 'owner@example.com') => {
-    const hook = renderHook(({ session }) => useMythArchive(session, email), {
-      initialProps: { session: null },
+    const session = createSession(email);
+    const wrapper = ({ children }: { children: ReactNode }) => (
+      <MythArchiveProvider session={session}>{children}</MythArchiveProvider>
+    );
+
+    return renderHook(() => useMythArchive(), {
+      wrapper,
       legacyRoot: true,
     });
-
-    return {
-      ...hook,
-      activateSession: (session = createSession()) => hook.rerender({ session }),
-    };
   };
 
   it('loads myths, variants, and collaborator profiles', async () => {
-    const { result, activateSession } = renderArchive();
-
-    await act(async () => {
-      activateSession();
-    });
+    const { result } = renderArchive();
 
     await waitFor(() => expect(result.current.myths.length).toBe(1));
 
@@ -253,11 +251,7 @@ describe('useMythArchive', () => {
   });
 
   it('adds a myth with canonical categories', async () => {
-    const { result, activateSession } = renderArchive();
-
-    await act(async () => {
-      activateSession();
-    });
+    const { result } = renderArchive();
 
     await waitFor(() => expect(result.current.myths.length).toBe(1));
 
@@ -310,11 +304,7 @@ describe('useMythArchive', () => {
   });
 
   it('adds and updates variants', async () => {
-    const { result, activateSession } = renderArchive();
-
-    await act(async () => {
-      activateSession();
-    });
+    const { result } = renderArchive();
 
     await waitFor(() => expect(result.current.myths.length).toBe(1));
 
@@ -472,11 +462,7 @@ describe('useMythArchive', () => {
       error: null,
     });
 
-    const { result, activateSession } = renderArchive();
-
-    await act(async () => {
-      activateSession();
-    });
+    const { result } = renderArchive();
 
     await waitFor(() => expect(result.current.myths.length).toBe(1));
     await waitFor(() => expect(result.current.myths[0].variants.length).toBe(2));
@@ -490,11 +476,7 @@ describe('useMythArchive', () => {
   });
 
   it('manages mythemes', async () => {
-    const { result, activateSession } = renderArchive();
-
-    await act(async () => {
-      activateSession();
-    });
+    const { result } = renderArchive();
 
     await waitFor(() => expect(result.current.myths.length).toBe(1));
 
@@ -519,11 +501,7 @@ describe('useMythArchive', () => {
   });
 
   it('updates canonical categories', async () => {
-    const { result, activateSession } = renderArchive();
-
-    await act(async () => {
-      activateSession();
-    });
+    const { result } = renderArchive();
 
     await waitFor(() => expect(result.current.myths.length).toBe(1));
 
@@ -572,11 +550,7 @@ describe('useMythArchive', () => {
   });
 
   it('manages collaborators', async () => {
-    const { result, activateSession } = renderArchive();
-
-    await act(async () => {
-      activateSession();
-    });
+    const { result } = renderArchive();
 
     await waitFor(() => expect(result.current.myths.length).toBe(1));
 
@@ -647,11 +621,7 @@ describe('useMythArchive', () => {
   });
 
   it('prevents adding duplicate collaborators', async () => {
-    const { result, activateSession } = renderArchive();
-
-    await act(async () => {
-      activateSession();
-    });
+    const { result } = renderArchive();
 
     await waitFor(() => expect(result.current.myths.length).toBe(1));
 
@@ -661,11 +631,7 @@ describe('useMythArchive', () => {
   });
 
   it('surfaces collaborator insert errors', async () => {
-    const { result, activateSession } = renderArchive();
-
-    await act(async () => {
-      activateSession();
-    });
+    const { result } = renderArchive();
 
     await waitFor(() => expect(result.current.myths.length).toBe(1));
 
@@ -677,11 +643,7 @@ describe('useMythArchive', () => {
   });
 
   it('surfaces collaborator profile lookup errors', async () => {
-    const { result, activateSession } = renderArchive();
-
-    await act(async () => {
-      activateSession();
-    });
+    const { result } = renderArchive();
 
     await waitFor(() => expect(result.current.myths.length).toBe(1));
 
@@ -706,11 +668,7 @@ describe('useMythArchive', () => {
   });
 
   it('surfaces collaborator role update errors', async () => {
-    const { result, activateSession } = renderArchive();
-
-    await act(async () => {
-      activateSession();
-    });
+    const { result } = renderArchive();
 
     await waitFor(() => expect(result.current.myths.length).toBe(1));
 
@@ -722,11 +680,7 @@ describe('useMythArchive', () => {
   });
 
   it('surfaces collaborator removal errors', async () => {
-    const { result, activateSession } = renderArchive();
-
-    await act(async () => {
-      activateSession();
-    });
+    const { result } = renderArchive();
 
     await waitFor(() => expect(result.current.myths.length).toBe(1));
 
@@ -736,7 +690,9 @@ describe('useMythArchive', () => {
   });
 
   it('requires a session to create collaborator categories', async () => {
-    const { result } = renderArchive();
+    const { result } = renderHook(() => useMythData(null, 'owner@example.com'), {
+      legacyRoot: true,
+    });
 
     await expect(result.current.createCollaboratorCategory('myth-1', 'Notes')).rejects.toThrow(
       'You must be signed in to create categories.',
@@ -744,11 +700,7 @@ describe('useMythArchive', () => {
   });
 
   it('requires non-empty collaborator category names', async () => {
-    const { result, activateSession } = renderArchive();
-
-    await act(async () => {
-      activateSession();
-    });
+    const { result } = renderArchive();
 
     await expect(result.current.createCollaboratorCategory('myth-1', '   ')).rejects.toThrow(
       'Category name is required.',
@@ -756,11 +708,7 @@ describe('useMythArchive', () => {
   });
 
   it('requires an existing myth when creating collaborator categories', async () => {
-    const { result, activateSession } = renderArchive();
-
-    await act(async () => {
-      activateSession();
-    });
+    const { result } = renderArchive();
 
     await expect(
       result.current.createCollaboratorCategory('missing-myth', 'Notes'),
@@ -768,11 +716,9 @@ describe('useMythArchive', () => {
   });
 
   it('surfaces collaborator category fetch errors after unique violations', async () => {
-    const { result, activateSession } = renderArchive();
+    const { result } = renderArchive();
 
-    await act(async () => {
-      activateSession();
-    });
+    await waitFor(() => expect(result.current.myths.length).toBe(1));
 
     prependResult('myth_collaborator_categories', {
       data: null,
@@ -790,11 +736,9 @@ describe('useMythArchive', () => {
   });
 
   it('surfaces collaborator category insert errors', async () => {
-    const { result, activateSession } = renderArchive();
+    const { result } = renderArchive();
 
-    await act(async () => {
-      activateSession();
-    });
+    await waitFor(() => expect(result.current.myths.length).toBe(1));
 
     prependResult('myth_collaborator_categories', {
       data: null,
@@ -807,11 +751,7 @@ describe('useMythArchive', () => {
   });
 
   it('creates collaborator categories and handles duplicates', async () => {
-    const { result, activateSession } = renderArchive();
-
-    await act(async () => {
-      activateSession();
-    });
+    const { result } = renderArchive();
 
     await waitFor(() => expect(result.current.myths.length).toBe(1));
 

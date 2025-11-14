@@ -5,7 +5,7 @@ import React from 'react';
 
 import { CanonicalizationLabPage } from '../CanonicalizationLabPage';
 
-const useArchiveMock = vi.fn();
+const useMythsContextMock = vi.fn();
 const mockLimit = vi.fn();
 
 const supabaseMock = {
@@ -16,8 +16,8 @@ const supabaseMock = {
   rpc: vi.fn(),
 };
 
-vi.mock('../ArchiveLayout', () => ({
-  useArchive: () => useArchiveMock(),
+vi.mock('../../providers/MythArchiveProvider', () => ({
+  useMythsContext: () => useMythsContextMock(),
 }));
 
 vi.mock('../../lib/supabaseClient', () => ({
@@ -117,17 +117,17 @@ function renderWithRouter(initialEntry: string) {
 
 describe('CanonicalizationLabPage', () => {
   beforeEach(() => {
-    useArchiveMock.mockReset();
+    useMythsContextMock.mockReset();
     supabaseMock.functions.invoke.mockReset();
     supabaseMock.rpc.mockReset();
     setupSupabaseRunsResponse({ data: [sampleRunRow], error: null });
   });
 
   it('renders parameter rail, summary cards, and history when myth exists', async () => {
-    useArchiveMock.mockReturnValue({
+    useMythsContextMock.mockReturnValue({
       myths: [baseMyth],
-      isInitialLoad: false,
-      loadArchiveData: vi.fn(),
+      loading: false,
+      loadMyths: vi.fn(),
     });
 
     renderWithRouter('/myths/myth-1/canonicalization');
@@ -140,10 +140,10 @@ describe('CanonicalizationLabPage', () => {
   });
 
   it('shows loading animation when archive data is still loading', () => {
-    useArchiveMock.mockReturnValue({
+    useMythsContextMock.mockReturnValue({
       myths: [],
-      isInitialLoad: true,
-      loadArchiveData: vi.fn(),
+      loading: true,
+      loadMyths: vi.fn(),
     });
 
     renderWithRouter('/myths/myth-1/canonicalization');
@@ -152,10 +152,10 @@ describe('CanonicalizationLabPage', () => {
   });
 
   it('renders myth not found state if myth is missing', () => {
-    useArchiveMock.mockReturnValue({
+    useMythsContextMock.mockReturnValue({
       myths: [],
-      isInitialLoad: false,
-      loadArchiveData: vi.fn(),
+      loading: false,
+      loadMyths: vi.fn(),
     });
 
     renderWithRouter('/myths/missing-id/canonicalization');
@@ -164,10 +164,10 @@ describe('CanonicalizationLabPage', () => {
   });
 
   it('invokes supabase function when running analysis', async () => {
-    useArchiveMock.mockReturnValue({
+    useMythsContextMock.mockReturnValue({
       myths: [baseMyth],
-      isInitialLoad: false,
-      loadArchiveData: vi.fn(),
+      loading: false,
+      loadMyths: vi.fn(),
     });
     setupSupabaseRunsResponse(
       { data: [sampleRunRow], error: null },
@@ -189,10 +189,10 @@ describe('CanonicalizationLabPage', () => {
   });
 
   it('renames a category via RPC', async () => {
-    useArchiveMock.mockReturnValue({
+    useMythsContextMock.mockReturnValue({
       myths: [baseMyth],
-      isInitialLoad: false,
-      loadArchiveData: vi.fn(),
+      loading: false,
+      loadMyths: vi.fn(),
     });
     setupSupabaseRunsResponse(
       { data: [sampleRunRow], error: null },
@@ -218,11 +218,11 @@ describe('CanonicalizationLabPage', () => {
   });
 
   it('applies canonical categories after confirmation', async () => {
-    const loadArchiveData = vi.fn().mockResolvedValue(undefined);
-    useArchiveMock.mockReturnValue({
+    const loadMyths = vi.fn().mockResolvedValue(undefined);
+    useMythsContextMock.mockReturnValue({
       myths: [baseMyth],
-      isInitialLoad: false,
-      loadArchiveData,
+      loading: false,
+      loadMyths,
     });
     supabaseMock.rpc.mockResolvedValue({ data: null, error: null });
 
@@ -240,6 +240,6 @@ describe('CanonicalizationLabPage', () => {
         p_run_id: 'run-1',
       }),
     );
-    expect(loadArchiveData).toHaveBeenCalled();
+    expect(loadMyths).toHaveBeenCalled();
   });
 });

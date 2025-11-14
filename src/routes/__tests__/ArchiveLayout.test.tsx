@@ -3,12 +3,18 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import React from 'react';
 
-import { ArchiveLayout, useArchive } from '../ArchiveLayout';
+import { ArchiveLayout, useArchiveLayoutContext } from '../ArchiveLayout';
 
 const useMythArchiveMock = vi.fn();
+const useMythsContextMock = vi.fn();
+const useMythemesContextMock = vi.fn();
+const useCollaboratorActionsMock = vi.fn();
 
-vi.mock('../../hooks/useMythArchive', () => ({
+vi.mock('../../providers/MythArchiveProvider', () => ({
   useMythArchive: (...args: unknown[]) => useMythArchiveMock(...args),
+  useMythsContext: () => useMythsContextMock(),
+  useMythemesContext: () => useMythemesContextMock(),
+  useCollaboratorActions: () => useCollaboratorActionsMock(),
 }));
 
 vi.mock('../../components/AppHeader', () => ({
@@ -39,58 +45,57 @@ const session = {
 } as any;
 
 const OutletProbe = () => {
-  const ctx = useArchive();
-  return <div data-testid="context-size">{ctx.myths.length}</div>;
+  const ctx = useArchiveLayoutContext();
+  return <div data-testid="context-email">{ctx.currentUserEmail}</div>;
 };
 
 describe('ArchiveLayout', () => {
   beforeEach(() => {
     useMythArchiveMock.mockReturnValue({
-      myths: [],
-      mythemes: [],
       dataLoading: false,
       dataError: null,
       loadArchiveData: vi.fn(),
+    });
+    useMythsContextMock.mockReturnValue({
+      myths: [],
+      loading: false,
       addMyth: vi.fn(),
       addVariant: vi.fn(),
       updateVariant: vi.fn(),
+      updateContributorInstructions: vi.fn(),
+      updateMythCategories: vi.fn(),
+      createCollaboratorCategory: vi.fn(),
+    });
+    useMythemesContextMock.mockReturnValue({
+      mythemes: [],
       addMytheme: vi.fn(),
       deleteMytheme: vi.fn(),
-      updateMythCategories: vi.fn(),
+    });
+    useCollaboratorActionsMock.mockReturnValue({
       addCollaborator: vi.fn(),
       updateCollaboratorRole: vi.fn(),
       removeCollaborator: vi.fn(),
-      createCollaboratorCategory: vi.fn(),
-      updateContributorInstructions: vi.fn(),
     });
   });
 
   it('renders error banner when data fails to load', () => {
     useMythArchiveMock.mockReturnValueOnce({
-      myths: [],
-      mythemes: [],
       dataLoading: false,
       dataError: 'Boom',
       loadArchiveData: vi.fn(),
-      addMyth: vi.fn(),
-      addVariant: vi.fn(),
-      updateVariant: vi.fn(),
-      addMytheme: vi.fn(),
-      deleteMytheme: vi.fn(),
-      updateMythCategories: vi.fn(),
-      addCollaborator: vi.fn(),
-      updateCollaboratorRole: vi.fn(),
-      removeCollaborator: vi.fn(),
-      createCollaboratorCategory: vi.fn(),
-      updateContributorInstructions: vi.fn(),
     });
 
     render(
       <MemoryRouter initialEntries={['/']}>
         <Routes>
-          <Route element={<ArchiveLayout session={session} supabaseClient={supabaseClient} />}>
-            <Route index element={<OutletProbe />} />
-          </Route>
+          <Route
+            path="/"
+            element={
+              <ArchiveLayout session={session} supabaseClient={supabaseClient}>
+                <OutletProbe />
+              </ArchiveLayout>
+            }
+          />
         </Routes>
       </MemoryRouter>,
     );
@@ -98,8 +103,8 @@ describe('ArchiveLayout', () => {
     expect(screen.getByText(/unable to load archive data/i)).toBeInTheDocument();
   });
 
-  it('exposes archive context to children', () => {
-    useMythArchiveMock.mockReturnValueOnce({
+  it('exposes layout context to children', () => {
+    useMythsContextMock.mockReturnValueOnce({
       myths: [
         {
           id: 'myth-1',
@@ -114,62 +119,51 @@ describe('ArchiveLayout', () => {
           collaboratorCategories: [],
         },
       ],
-      mythemes: [],
-      dataLoading: false,
-      dataError: null,
-      loadArchiveData: vi.fn(),
+      loading: false,
       addMyth: vi.fn(),
       addVariant: vi.fn(),
       updateVariant: vi.fn(),
-      addMytheme: vi.fn(),
-      deleteMytheme: vi.fn(),
-      updateMythCategories: vi.fn(),
-      addCollaborator: vi.fn(),
-      updateCollaboratorRole: vi.fn(),
-      removeCollaborator: vi.fn(),
-      createCollaboratorCategory: vi.fn(),
       updateContributorInstructions: vi.fn(),
+      updateMythCategories: vi.fn(),
+      createCollaboratorCategory: vi.fn(),
     });
 
     render(
       <MemoryRouter initialEntries={['/']}>
         <Routes>
-          <Route element={<ArchiveLayout session={session} supabaseClient={supabaseClient} />}>
-            <Route index element={<OutletProbe />} />
-          </Route>
+          <Route
+            path="/"
+            element={
+              <ArchiveLayout session={session} supabaseClient={supabaseClient}>
+                <OutletProbe />
+              </ArchiveLayout>
+            }
+          />
         </Routes>
       </MemoryRouter>,
     );
 
-    expect(screen.getByTestId('context-size')).toHaveTextContent('1');
+    expect(screen.getByTestId('context-email')).toHaveTextContent('owner@example.com');
   });
 
   it('allows signing out via header menu', async () => {
     useMythArchiveMock.mockReturnValueOnce({
-      myths: [],
-      mythemes: [],
       dataLoading: false,
       dataError: null,
       loadArchiveData: vi.fn(),
-      addMyth: vi.fn(),
-      addVariant: vi.fn(),
-      updateVariant: vi.fn(),
-      addMytheme: vi.fn(),
-      deleteMytheme: vi.fn(),
-      updateMythCategories: vi.fn(),
-      addCollaborator: vi.fn(),
-      updateCollaboratorRole: vi.fn(),
-      removeCollaborator: vi.fn(),
-      createCollaboratorCategory: vi.fn(),
-      updateContributorInstructions: vi.fn(),
     });
 
     render(
       <MemoryRouter initialEntries={['/']}>
         <Routes>
-          <Route element={<ArchiveLayout session={session} supabaseClient={supabaseClient} />}>
-            <Route index element={<div data-testid="root" />} />
-          </Route>
+          <Route
+            path="/"
+            element={
+              <ArchiveLayout session={session} supabaseClient={supabaseClient}>
+                <div data-testid="root" />
+              </ArchiveLayout>
+            }
+          />
         </Routes>
       </MemoryRouter>,
     );

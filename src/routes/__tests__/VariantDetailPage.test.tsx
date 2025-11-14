@@ -5,10 +5,17 @@ import React from 'react';
 
 import { VariantDetailPage } from '../VariantDetailPage';
 
-const useArchiveMock = vi.fn();
+const useMythsContextMock = vi.fn();
+const useMythemesContextMock = vi.fn();
+const useArchiveLayoutContextMock = vi.fn();
+
+vi.mock('../../providers/MythArchiveProvider', () => ({
+  useMythsContext: () => useMythsContextMock(),
+  useMythemesContext: () => useMythemesContextMock(),
+}));
 
 vi.mock('../ArchiveLayout', () => ({
-  useArchive: () => useArchiveMock(),
+  useArchiveLayoutContext: () => useArchiveLayoutContextMock(),
 }));
 
 vi.mock('../../components/VariantView', () => ({
@@ -23,26 +30,34 @@ vi.mock('../../components/LoadingAnimation', () => ({
   ),
 }));
 
-const baseContext = {
+const baseMythsContext = {
   myths: [],
-  mythemes: [],
   updateVariant: vi.fn(),
+  createCollaboratorCategory: vi.fn(),
+  loading: false,
+};
+
+const baseMythemesContext = {
+  mythemes: [],
+};
+
+const baseLayoutContext = {
   currentUserEmail: 'owner@example.com',
   currentUserDisplayName: 'Owner One',
   currentUserAvatarUrl: 'owner.png',
   sessionUserId: 'user-1',
-  createCollaboratorCategory: vi.fn(),
   openManageCollaborators: vi.fn(),
-  isInitialLoad: false,
 };
 
 describe('VariantDetailPage', () => {
   beforeEach(() => {
-    useArchiveMock.mockReturnValue(baseContext);
+    useMythsContextMock.mockReturnValue(baseMythsContext);
+    useMythemesContextMock.mockReturnValue(baseMythemesContext);
+    useArchiveLayoutContextMock.mockReturnValue(baseLayoutContext);
   });
 
   it('shows loading UI during initial fetch', () => {
-    useArchiveMock.mockReturnValue({ ...baseContext, isInitialLoad: true });
+    useMythsContextMock.mockReturnValue({ ...baseMythsContext, loading: true });
 
     render(
       <MemoryRouter initialEntries={['/myths/myth-1/variants/variant-1']}>
@@ -56,7 +71,7 @@ describe('VariantDetailPage', () => {
   });
 
   it('shows message when myth is missing', () => {
-    useArchiveMock.mockReturnValue(baseContext);
+    useMythsContextMock.mockReturnValue(baseMythsContext);
 
     render(
       <MemoryRouter initialEntries={['/myths/missing/variants/variant-1']}>
@@ -70,8 +85,8 @@ describe('VariantDetailPage', () => {
   });
 
   it('shows message when variant is missing', () => {
-    useArchiveMock.mockReturnValue({
-      ...baseContext,
+    useMythsContextMock.mockReturnValue({
+      ...baseMythsContext,
       myths: [
         {
           id: 'myth-1',
@@ -100,8 +115,8 @@ describe('VariantDetailPage', () => {
   });
 
   it('renders the variant view when data is available', () => {
-    useArchiveMock.mockReturnValue({
-      ...baseContext,
+    useMythsContextMock.mockReturnValue({
+      ...baseMythsContext,
       myths: [
         {
           id: 'myth-1',

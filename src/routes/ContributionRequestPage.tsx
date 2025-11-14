@@ -61,7 +61,16 @@ const isDraftLikeStatus = (status: 'invited' | 'draft' | 'submitted' | 'expired'
 
 export function ContributionRequestPage() {
   const { token } = useParams<{ token: string }>();
-  const supabase = useMemo(() => getSupabaseClient(), []);
+  const supabase = useMemo<ReturnType<typeof getSupabaseClient> | null>(() => {
+    try {
+      return getSupabaseClient();
+    } catch (error) {
+      if (typeof window === 'undefined') {
+        return null;
+      }
+      throw error;
+    }
+  }, []);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [requestStatus, setRequestStatus] = useState<
@@ -83,7 +92,7 @@ export function ContributionRequestPage() {
   const skipInitialSave = useRef(true);
 
   const loadRequest = useCallback(async () => {
-    if (!token) {
+    if (!token || !supabase) {
       return;
     }
     setLoading(true);
@@ -117,7 +126,7 @@ export function ContributionRequestPage() {
   }, [loadRequest]);
 
   const persistDraft = useCallback(async () => {
-    if (!token || !isDraftLikeStatus(requestStatus)) {
+    if (!token || !isDraftLikeStatus(requestStatus) || !supabase) {
       return;
     }
     setAutosaveState('saving');
@@ -212,7 +221,7 @@ export function ContributionRequestPage() {
   };
 
   const handleSubmit = async () => {
-    if (!token || !isDraftLikeStatus(requestStatus)) {
+    if (!token || !isDraftLikeStatus(requestStatus) || !supabase) {
       return;
     }
     const hasContent = draft.plotPoints.some((point) => point.text.trim().length > 0);
