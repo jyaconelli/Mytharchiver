@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { CalendarClockIcon } from 'lucide-react';
 
-import { useArchive } from './ArchiveLayout';
+import { useMythsContext } from '../providers/MythArchiveProvider';
 import { CanonicalCategoryList } from './canonicalization/CanonicalCategoryList';
 import { DEFAULT_PARAMS } from './canonicalization/constants';
 import { ParameterRail } from './canonicalization/ParameterRail';
@@ -39,8 +39,9 @@ import {
 export function CanonicalizationLabPage() {
   const { mythId } = useParams<{ mythId: string }>();
   const supabase = useMemo(() => getSupabaseClient(), []);
-  const { myths, isInitialLoad, loadArchiveData } = useArchive();
+  const { myths, loading, loadMyths } = useMythsContext();
   const myth = myths.find((candidate) => candidate.id === mythId) ?? null;
+  const isInitialLoad = loading && myths.length === 0;
 
   const [params, setParams] = useState<ParameterState>(DEFAULT_PARAMS);
   const [runs, setRuns] = useState<CanonicalizationRunRow[]>([]);
@@ -261,7 +262,7 @@ export function CanonicalizationLabPage() {
       if (error) {
         throw new Error(error.message ?? 'Failed to apply canonical categories.');
       }
-      await loadArchiveData();
+      await loadMyths();
     } catch (err) {
       setApplyError(
         err instanceof Error ? err.message : 'Failed to apply canonical categories.',
@@ -269,7 +270,7 @@ export function CanonicalizationLabPage() {
     } finally {
       setIsApplying(false);
     }
-  }, [activeRunId, loadArchiveData, supabase]);
+  }, [activeRunId, loadMyths, supabase]);
 
   if (isInitialLoad) {
     return (

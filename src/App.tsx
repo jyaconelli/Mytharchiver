@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { useMemo, type ReactNode } from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { getSupabaseClient } from './lib/supabaseClient';
 import { useSupabaseAuth } from './hooks/useSupabaseAuth';
@@ -11,10 +11,19 @@ import { VariantDetailPage } from './routes/VariantDetailPage';
 import { CanonicalizationLabPage } from './routes/CanonicalizationLabPage';
 import { ContributionRequestPage } from './routes/ContributionRequestPage';
 import { LoadingAnimation } from './components/LoadingAnimation';
+import { MythArchiveProvider } from './providers/MythArchiveProvider';
+
+function ClientNavigate({ to, fallback }: { to: string; fallback?: ReactNode }) {
+  if (typeof window === 'undefined') {
+    return fallback ?? null;
+  }
+
+  return <Navigate to={to} replace />;
+}
 
 export default function App() {
-  const supabase = useMemo(() => getSupabaseClient(), []);
   const { session, authLoading } = useSupabaseAuth();
+  const supabase = useMemo(() => (session ? getSupabaseClient() : null), [session]);
 
   if (authLoading) {
     return (
@@ -24,28 +33,43 @@ export default function App() {
     );
   }
 
+  const renderArchiveRoute = (page: ReactNode) => {
+    if (!session || !supabase) {
+      return <ClientNavigate to="/auth" fallback={<AuthGate />} />;
+    }
+
+    return (
+      <MythArchiveProvider session={session}>
+        <ArchiveLayout session={session} supabaseClient={supabase}>
+          {page}
+        </ArchiveLayout>
+      </MythArchiveProvider>
+    );
+  };
+
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/auth" element={session ? <Navigate to="/" replace /> : <AuthGate />} />
-        <Route
-          path="/"
-          element={
-            session ? (
-              <ArchiveLayout session={session} supabaseClient={supabase} />
-            ) : (
-              <Navigate to="/auth" replace />
-            )
-          }
-        >
-          <Route index element={<MythListPage />} />
-          <Route path="myths/:mythId" element={<MythDetailPage />} />
-          <Route path="myths/:mythId/variants/:variantId" element={<VariantDetailPage />} />
-          <Route path="myths/:mythId/canonicalization" element={<CanonicalizationLabPage />} />
-        </Route>
-        <Route path="/contribute/:token" element={<ContributionRequestPage />} />
-        <Route path="*" element={<Navigate to={session ? '/' : '/auth'} replace />} />
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      <Route
+        path="/auth"
+        element={session ? <ClientNavigate to="/" fallback={<AuthGate />} /> : <AuthGate />}
+      />
+      <Route path="/" element={renderArchiveRoute(<MythListPage />)} />
+      <Route path="/myths/:mythId" element={renderArchiveRoute(<MythDetailPage />)} />
+      <Route
+        path="/myths/:mythId/variants/:variantId"
+        element={renderArchiveRoute(<VariantDetailPage />)}
+      />
+      <Route
+        path="/myths/:mythId/canonicalization"
+        element={renderArchiveRoute(<CanonicalizationLabPage />)}
+      />
+      <Route path="/contribute/:token" element={<ContributionRequestPage />} />
+      <Route
+        path="*"
+        element={
+          <ClientNavigate to={session ? '/' : '/auth'} fallback={session ? null : <AuthGate />} />
+        }
+      />
+    </Routes>
   );
 }

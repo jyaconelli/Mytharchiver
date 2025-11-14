@@ -1,5 +1,8 @@
+import { useMemo } from 'react';
+import { COLORS, getColors } from '../lib/colors';
 import { PlotPoint as PlotPointType, Mytheme } from '../types/myth';
 import { PlotPoint } from './PlotPoint';
+import { cn } from './ui/utils';
 
 interface GridViewProps {
   plotPoints: PlotPointType[];
@@ -35,6 +38,16 @@ export function GridView({
   if (baseCategories.length === 0) {
     baseCategories.push('Uncategorized');
   }
+
+  const colors: { [key: string]: string } = useMemo(
+    () =>
+      COLORS.map((v, i) => ({ key: baseCategories[i], value: `${v[0]} ${v[1]}` })).reduce(
+        (prev, curr) => ({ ...prev, [curr.key]: curr.value }),
+        {},
+      ),
+    [categories.length],
+  );
+  console.log(colors);
 
   const numColumns = Math.max(baseCategories.length, 1);
   const categoryIndexMap = new Map(baseCategories.map((category, index) => [category, index]));
@@ -74,15 +87,8 @@ export function GridView({
   }
 
   const getCategoryHeaderColor = (category: string) => {
-    const colors: Record<string, string> = {
-      Introduction: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
-      Conflict: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
-      Journey: 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300',
-      Transformation: 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300',
-      Resolution: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
-      Aftermath: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
-    };
-    return colors[category] || 'bg-gray-100 text-gray-700';
+    const color = colors[category];
+    return color || 'bg-gray-100 text-gray-700';
   };
 
   return (
@@ -96,7 +102,7 @@ export function GridView({
           {baseCategories.map((category) => (
             <div
               key={category}
-              className={`p-3 rounded-t-lg text-center ${getCategoryHeaderColor(category)}`}
+              className={cn(`p-3 rounded-t-lg text-center`, getCategoryHeaderColor(category))}
             >
               {category}
             </div>

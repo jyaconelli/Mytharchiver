@@ -1,5 +1,5 @@
-import { useCallback, useMemo, useState } from 'react';
-import { Outlet, useNavigate, useOutletContext, useParams } from 'react-router-dom';
+import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import type { Session } from '@supabase/supabase-js';
 
 import { AppHeader } from '../components/AppHeader';
@@ -8,7 +8,12 @@ import { ManageMythemesDialog } from '../components/ManageMythemesDialog';
 import { ManageCategoriesDialog } from '../components/ManageCategoriesDialog';
 import { ManageCollaboratorsDialog } from '../components/ManageCollaboratorsDialog';
 import { Button } from '../components/ui/button';
-import { useMythArchive } from '../hooks/useMythArchive';
+import {
+  useCollaboratorActions,
+  useMythArchive,
+  useMythemesContext,
+  useMythsContext,
+} from '../providers/MythArchiveProvider';
 import { getSupabaseClient } from '../lib/supabaseClient';
 import { CollaboratorCategory, CollaboratorRole, Myth, MythVariant, Mytheme } from '../types/myth';
 import { LoadingAnimation } from '../components/LoadingAnimation';
@@ -16,23 +21,10 @@ import { LoadingAnimation } from '../components/LoadingAnimation';
 type ArchiveLayoutProps = {
   session: Session;
   supabaseClient: ReturnType<typeof getSupabaseClient>;
+  children: ReactNode;
 };
 
-export type ArchiveOutletContext = {
-  myths: Myth[];
-  mythemes: Mytheme[];
-  dataLoading: boolean;
-  isInitialLoad: boolean;
-  dataError: string | null;
-  loadArchiveData: () => Promise<void>;
-  addMyth: (name: string, description: string, contributorInstructions?: string) => Promise<void>;
-  addVariant: (mythId: string, name: string, source: string) => Promise<void>;
-  updateVariant: (mythId: string, variant: MythVariant) => Promise<void>;
-  updateContributorInstructions: (mythId: string, instructions: string) => Promise<void>;
-  addCollaborator: (mythId: string, email: string, role: CollaboratorRole) => Promise<void>;
-  updateCollaboratorRole: (collaboratorId: string, role: CollaboratorRole) => Promise<void>;
-  removeCollaborator: (collaboratorId: string) => Promise<void>;
-  createCollaboratorCategory: (mythId: string, name: string) => Promise<CollaboratorCategory>;
+type ArchiveLayoutContextValue = {
   currentUserEmail: string;
   currentUserDisplayName: string | null;
   currentUserAvatarUrl: string | null;
@@ -40,7 +32,9 @@ export type ArchiveOutletContext = {
   openManageCollaborators: (mythId: string) => void;
 };
 
-export function ArchiveLayout({ session, supabaseClient }: ArchiveLayoutProps) {
+const ArchiveLayoutContext = createContext<ArchiveLayoutContextValue | undefined>(undefined);
+
+export function ArchiveLayout({ session, supabaseClient, children }: ArchiveLayoutProps) {
   const navigate = useNavigate();
   const supabase = supabaseClient;
   const currentUserEmail = session.user.email?.toLowerCase() ?? '';
@@ -56,24 +50,19 @@ export function ArchiveLayout({ session, supabaseClient }: ArchiveLayoutProps) {
     (userMetadata.picture as string | undefined) ??
     null;
 
+  const { dataLoading, dataError, loadArchiveData } = useMythArchive();
   const {
     myths,
-    mythemes,
-    dataLoading,
-    dataError,
-    loadArchiveData,
+    loading: mythsLoading,
     addMyth,
     addVariant,
     updateVariant,
-    addMytheme,
-    deleteMytheme,
-    updateMythCategories,
     updateContributorInstructions,
-    addCollaborator,
-    updateCollaboratorRole,
-    removeCollaborator,
+    updateMythCategories,
     createCollaboratorCategory,
-  } = useMythArchive(session, currentUserEmail);
+  } = useMythsContext();
+  const { mythemes, addMytheme, deleteMytheme } = useMythemesContext();
+  const { addCollaborator, updateCollaboratorRole, removeCollaborator } = useCollaboratorActions();
 
   const { mythId, variantId } = useParams<{ mythId?: string; variantId?: string }>();
 
@@ -118,7 +107,7 @@ export function ArchiveLayout({ session, supabaseClient }: ArchiveLayoutProps) {
     manageCollaboratorsMyth && manageCollaboratorsMyth.ownerId === sessionUserId,
   );
 
-  const isInitialLoad = dataLoading && myths.length === 0 && mythemes.length === 0;
+  const isInitialLoad = (dataLoading || mythsLoading) && myths.length === 0 && mythemes.length === 0;
 
   const handleBack = useCallback(() => {
     if (variantId && mythId) {
@@ -141,27 +130,21 @@ export function ArchiveLayout({ session, supabaseClient }: ArchiveLayoutProps) {
       ? selectedMyth.name
       : 'Structural Taxonomy System';
 
-  const outletContext: ArchiveOutletContext = {
-    myths,
-    mythemes,
-    dataLoading,
-    isInitialLoad,
-    dataError,
-    loadArchiveData,
-    addMyth,
-    addVariant,
-    updateVariant,
-    updateContributorInstructions,
-    addCollaborator,
-    updateCollaboratorRole,
-    removeCollaborator,
-    createCollaboratorCategory,
-    currentUserEmail,
-    currentUserDisplayName,
-    currentUserAvatarUrl,
-    sessionUserId,
-    openManageCollaborators: (mythToManage) => setManageCollaboratorsMythId(mythToManage),
-  };
+  const layoutContextValue = useMemo<ArchiveLayoutContextValue>(
+    () => ({
+      currentUserEmail,
+      currentUserDisplayName,
+      currentUserAvatarUrl,
+      sessionUserId,
+      openManageCollaborators: (mythToManage) => setManageCollaboratorsMythId(mythToManage),
+    }),
+    [
+      currentUserEmail,
+      currentUserDisplayName,
+      currentUserAvatarUrl,
+      sessionUserId,
+    ],
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -207,7 +190,9 @@ export function ArchiveLayout({ session, supabaseClient }: ArchiveLayoutProps) {
                 className="mb-6 flex-row items-center text-left"
               />
             )}
-            <Outlet context={outletContext} />
+            <ArchiveLayoutContext.Provider value={layoutContextValue}>
+              {children}
+            </ArchiveLayoutContext.Provider>
           </>
         )}
       </main>
@@ -255,6 +240,10 @@ export function ArchiveLayout({ session, supabaseClient }: ArchiveLayoutProps) {
   );
 }
 
-export function useArchive() {
-  return useOutletContext<ArchiveOutletContext>();
+export function useArchiveLayoutContext() {
+  const value = useContext(ArchiveLayoutContext);
+  if (!value) {
+    throw new Error('useArchiveLayoutContext must be used within ArchiveLayout');
+  }
+  return value;
 }

@@ -48,7 +48,16 @@ export function AuthGate() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const supabase = useMemo(() => getSupabaseClient(), []);
+  const supabase = useMemo<ReturnType<typeof getSupabaseClient> | null>(() => {
+    try {
+      return getSupabaseClient();
+    } catch (error) {
+      if (typeof window === 'undefined') {
+        return null;
+      }
+      throw error;
+    }
+  }, []);
   const emailRedirectTo = typeof window !== 'undefined' ? `${window.location.origin}/` : undefined;
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -169,6 +178,11 @@ export function AuthGate() {
     setSubmitting(true);
     try {
       if (mode === 'signIn') {
+        if (!supabase) {
+          setError('Authentication client is unavailable. Please refresh the page.');
+          return;
+        }
+
         const { error: signInError } = await supabase.auth.signInWithPassword({
           email,
           password,
@@ -178,6 +192,11 @@ export function AuthGate() {
           setError(signInError.message);
         }
       } else {
+        if (!supabase) {
+          setError('Authentication client is unavailable. Please refresh the page.');
+          return;
+        }
+
         const { error: signUpError } = await supabase.auth.signUp({
           email,
           password,

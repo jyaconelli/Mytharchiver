@@ -466,9 +466,9 @@ describe('UI component snapshots', () => {
     const { asFragment } = render(
       <Calendar
         mode="single"
-        selected={new Date('2024-01-15T00:00:00.000Z')}
+        selected={new Date(2024, 0, 15)}
         onSelect={() => {}}
-        defaultMonth={new Date('2024-01-01T00:00:00.000Z')}
+        defaultMonth={new Date(2024, 0, 1)}
       />,
     );
 
