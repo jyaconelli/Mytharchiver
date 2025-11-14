@@ -4,9 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { MythList } from '../components/MythList';
 import { AddMythDialog } from '../components/AddMythDialog';
 import { useMythsContext } from '../providers/MythArchiveProvider';
+import { LoadingAnimation } from '../components/LoadingAnimation';
 
 export function MythListPage() {
-  const { myths, addMyth } = useMythsContext();
+  const { myths, addMyth, loading } = useMythsContext();
   const navigate = useNavigate();
   const [showAddMyth, setShowAddMyth] = useState(false);
 
@@ -24,6 +25,9 @@ export function MythListPage() {
         onSelectMyth={(mythId) => navigate(`/myths/${mythId}`)}
         onAddMyth={() => setShowAddMyth(true)}
       />
+      {loading && !myths.length && (
+        <LoadingAnimation />
+      )}
       <AddMythDialog
         open={showAddMyth}
         onOpenChange={setShowAddMyth}
