@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { COLORS, getColors } from '../lib/colors';
+import { COLORS } from '../lib/colors';
 import { PlotPoint as PlotPointType, Mytheme } from '../types/myth';
 import { PlotPoint } from './PlotPoint';
 import { cn } from './ui/utils';

@@ -100,9 +100,9 @@ export function ParameterRail({
 
         <div className="space-y-2 rounded-lg border border-border/70 p-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex items-center gap-2 text-sm font-medium">
-              <p>Auto Category Count</p>
+            <div className="flex items-center gap-1 text-sm font-medium">
               <ParameterIndicator level={autoDetectStatus} />
+              <p>Auto Category Count</p>
             </div>
             <InfoTooltip
               label="Explain auto-detect"
@@ -124,9 +124,11 @@ export function ParameterRail({
             />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <Label htmlFor="target-k-input">Target Canonical Count</Label>
-              <ParameterIndicator level={targetStatus} />
+            <div className="flex items-center gap-1 justify-between">
+              <div className="flex items-center gap-1">
+                <ParameterIndicator level={targetStatus} />
+                <Label htmlFor="target-k-input">Target Canonical Count</Label>
+              </div>
               <InfoTooltip
                 label="Explain target canonical count"
                 content={<p className="text-xs">{PARAMETER_TIPS.targetCanonicalCount}</p>}
@@ -148,9 +150,11 @@ export function ParameterRail({
         </div>
 
         <div>
-          <div className="flex items-center gap-2">
-            <Label htmlFor="optimization-select">Optimization Goal</Label>
-            <ParameterIndicator level={optimizationStatus} />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1">
+              <ParameterIndicator level={optimizationStatus} />
+              <Label htmlFor="optimization-select">Optimization Goal</Label>
+            </div>
             <InfoTooltip
               label="Explain optimization goals"
               content={
@@ -188,9 +192,11 @@ export function ParameterRail({
         </div>
 
         <div>
-          <div className="flex items-center gap-2">
-            <Label htmlFor="min-cluster-input">Minimum Cluster Size</Label>
-            <ParameterIndicator level={minClusterStatus} />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1">
+              <ParameterIndicator level={minClusterStatus} />
+              <Label htmlFor="min-cluster-input">Minimum Cluster Size</Label>
+            </div>
             <InfoTooltip
               label="Explain minimum cluster size"
               content={<p className="text-xs">{PARAMETER_TIPS.minClusterSize}</p>}
@@ -249,7 +255,7 @@ function ParameterIndicator({ level }: { level: EnforcementLevel }) {
   const meta = INDICATOR_META[level];
   return (
     <span
-      className={`inline-flex h-2.5 w-2.5 rounded-full ${meta.colorClass}`}
+      className={`inline-flex h-2 w-2 rounded-full ${meta.colorClass}`}
       title={meta.label}
       aria-label={meta.label}
     />
