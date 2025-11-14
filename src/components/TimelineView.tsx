@@ -25,7 +25,7 @@ export function TimelineView({
         <div className="space-y-4 relative">
           {sortedPlotPoints.map((point) => (
             <div key={point.id} className="relative pl-10">
-              <div className="absolute left-2.5 top-4 w-3 h-3 rounded-full bg-blue-500 border-2 border-white dark:border-gray-900" />
+              <div className={`absolute left-2.5 top-4 w-3 h-3 rounded-full bg-blue-500 border-2 border-white dark:border-gray-900`} />
               <PlotPoint
                 plotPoint={point}
                 mythemes={mythemes}

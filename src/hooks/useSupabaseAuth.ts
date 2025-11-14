@@ -4,10 +4,15 @@ import type { Session } from '@supabase/supabase-js';
 import { getSupabaseClient } from '../lib/supabaseClient';
 
 export function useSupabaseAuth() {
+  const isBrowser = typeof window !== 'undefined';
   const [session, setSession] = useState<Session | null>(null);
-  const [authLoading, setAuthLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(isBrowser);
 
   useEffect(() => {
+    if (!isBrowser) {
+      return;
+    }
+
     let isMounted = true;
     const supabase = getSupabaseClient();
 
@@ -37,7 +42,7 @@ export function useSupabaseAuth() {
       isMounted = false;
       subscription.unsubscribe();
     };
-  }, []);
+  }, [isBrowser]);
 
   return { session, authLoading };
 }

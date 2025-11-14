@@ -4,6 +4,10 @@
   "outputDirectory": "build",
   "routes": [
     { "handle": "filesystem" },
+    { "src": "/myths/[^/]+/variants/[^/]+", "dest": "/myths/dynamic-variant/index.html" },
+    { "src": "/myths/[^/]+/canonicalization", "dest": "/myths/dynamic-canonicalization/index.html" },
+    { "src": "/myths/[^/]+", "dest": "/myths/dynamic/index.html" },
+    { "src": "/contribute/[^/]+", "dest": "/contribute/dynamic/index.html" },
     { "src": "/.*", "dest": "/index.html" }
   ],
   "git": {
