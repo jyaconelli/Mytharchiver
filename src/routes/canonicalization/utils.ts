@@ -1,3 +1,4 @@
+import { COLORS, INTENSE_RAW, LIGHT_RAW } from '../../lib/colors';
 import type { Myth } from '../../types/myth';
 import { ALGORITHM_MODE_DETAILS, METRIC_CARD_COPY } from './copy';
 import type {
@@ -133,11 +134,11 @@ function buildContributors(
   const totalCount = entries.reduce((sum, [, count]) => sum + count, 0);
   if (totalCount === 0) return [];
   return entries
-    .map(([categoryId, count]) => ({
+    .map(([categoryId, count], index) => ({
       id: categoryId,
       name: collaboratorLookup.get(categoryId) ?? `Category ${categoryId}`,
       share: count / totalCount,
-      color: getColorForId(categoryId),
+      color: INTENSE_RAW[index],
     }))
     .sort((a, b) => b.share - a.share);
 }
