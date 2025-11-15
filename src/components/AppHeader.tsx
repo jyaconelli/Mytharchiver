@@ -52,7 +52,7 @@ export function AppHeader({
       .join('') || 'MA';
 
   return (
-    <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
+    <header className="bg-gray-300 dark:bg-gray-800 border-b border-gray-500 dark:border-gray-700 sticky top-0 z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
@@ -70,10 +70,8 @@ export function AppHeader({
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <ThemeModeSelector />
             {currentUserEmail && (
               <>
-                <span className="h-6 w-px bg-gray-200 dark:bg-gray-700" aria-hidden="true" />
                 <div className="flex items-center gap-3">
                   <Avatar className="h-9 w-9 border border-indigo-100 bg-white text-sm font-medium text-indigo-600 dark:border-indigo-900/40 dark:bg-gray-900 dark:text-indigo-300">
                     <AvatarImage
@@ -86,23 +84,18 @@ export function AppHeader({
                     <p className="font-medium text-gray-800 dark:text-gray-100">
                       {resolvedDisplayName}
                     </p>
-                    <p className="text-gray-500 dark:text-gray-400">{currentUserEmail}</p>
+                    <p className="text-gray-500 font-robot dark:text-gray-400">{currentUserEmail}</p>
                   </div>
                 </div>
               </>
             )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon">
+                <Button variant="ghost" size="icon">
                   <Settings className="w-5 h-5" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={onOpenManageCategories} disabled={!canManageCategories}>
-                  Manage Categories
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={onOpenManageMythemes}>Manage Mythemes</DropdownMenuItem>
-                <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={onSignOut}>
                   <LogOut className="h-4 w-4" />
                   Sign Out

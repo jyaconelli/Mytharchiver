@@ -107,7 +107,8 @@ export function ArchiveLayout({ session, supabaseClient, children }: ArchiveLayo
     manageCollaboratorsMyth && manageCollaboratorsMyth.ownerId === sessionUserId,
   );
 
-  const isInitialLoad = (dataLoading || mythsLoading) && myths.length === 0 && mythemes.length === 0;
+  const isInitialLoad =
+    (dataLoading || mythsLoading) && myths.length === 0 && mythemes.length === 0;
 
   const handleBack = useCallback(() => {
     if (variantId && mythId) {
@@ -138,16 +139,11 @@ export function ArchiveLayout({ session, supabaseClient, children }: ArchiveLayo
       sessionUserId,
       openManageCollaborators: (mythToManage) => setManageCollaboratorsMythId(mythToManage),
     }),
-    [
-      currentUserEmail,
-      currentUserDisplayName,
-      currentUserAvatarUrl,
-      sessionUserId,
-    ],
+    [currentUserEmail, currentUserDisplayName, currentUserAvatarUrl, sessionUserId],
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <AppHeader
         canGoBack={canGoBack}
         onBack={handleBack}
@@ -169,7 +165,7 @@ export function ArchiveLayout({ session, supabaseClient, children }: ArchiveLayo
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {dataError ? (
           <div className="max-w-xl mx-auto">
-            <div className="rounded-lg border border-red-200 bg-red-50 p-6 dark:border-red-900/50 dark:bg-red-950/40">
+            <div className="border border-red-200 bg-red-50 p-6 dark:border-red-900/50 dark:bg-red-950/40">
               <h2 className="text-lg font-semibold text-red-700 dark:text-red-300">
                 Unable to load archive data
               </h2>

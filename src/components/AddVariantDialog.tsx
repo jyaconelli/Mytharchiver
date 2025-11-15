@@ -73,7 +73,7 @@ export function AddVariantDialog({ open, onOpenChange, onAdd }: AddVariantDialog
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={submitting}>
+            <Button type="submit" disabled={submitting} className="hover:bg-black/70">
               {submitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               Add Variant
             </Button>

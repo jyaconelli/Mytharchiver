@@ -298,7 +298,6 @@ export function CanonicalizationLabPage() {
     <div className="space-y-6" data-testid="canonicalization-lab">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-xs uppercase tracking-wide text-muted-foreground">Canonicalization</p>
           <h2 className="text-2xl font-semibold">{myth.name} · Canonicalization Lab</h2>
           <p className="text-sm text-muted-foreground">
             Launch consolidation runs and inspect collaborator influence without leaving the
@@ -319,7 +318,7 @@ export function CanonicalizationLabPage() {
       </div>
 
       {runsError && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900/50 dark:bg-red-950/20 dark:text-red-200">
+        <div className="border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900/50 dark:bg-red-950/20 dark:text-red-200">
           {runsError}
         </div>
       )}
@@ -339,7 +338,7 @@ export function CanonicalizationLabPage() {
             {summaryCards.map((card) => (
               <div
                 key={card.label}
-                className="rounded-lg border border-border bg-card p-4 shadow-sm dark:border-white/5"
+                className="border border-border bg-card p-4 shadow-sm dark:border-white/5"
               >
                 <div className="flex items-start justify-between gap-2">
                   <p className="text-xs uppercase tracking-wide text-muted-foreground">
@@ -351,12 +350,12 @@ export function CanonicalizationLabPage() {
                     content={<p className="text-xs leading-relaxed">{card.description}</p>}
                   />
                 </div>
-                <p className="mt-2 text-2xl font-semibold">{card.value}</p>
+                <p className="mt-2 text-2xl font-robot">{card.value}</p>
               </div>
             ))}
           </div>
 
-          <div className="rounded-lg border border-dashed border-border bg-muted/20 px-4 py-3">
+          <div className="border border-dashed border-border bg-muted/20 px-4 py-3">
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <div>
                 <p className="text-sm font-medium text-foreground">Apply canonical categories</p>
@@ -367,7 +366,7 @@ export function CanonicalizationLabPage() {
               </div>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button disabled={!activeRunId || isApplying} variant="secondary">
+                  <Button disabled={!activeRunId || isApplying} variant="secondary" className="bg-gray-300 hover:bg-gray-400">
                     {isApplying ? 'Applying…' : 'Apply Canonical Categories'}
                   </Button>
                 </AlertDialogTrigger>
@@ -382,7 +381,7 @@ export function CanonicalizationLabPage() {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => handleApplyCategories()} disabled={isApplying}>
+                    <AlertDialogAction onClick={() => handleApplyCategories()} className="hover:bg-black/70" disabled={isApplying}>
                       {isApplying ? 'Applying…' : 'Apply categories'}
                     </AlertDialogAction>
                   </AlertDialogFooter>
@@ -427,7 +426,7 @@ export function CanonicalizationLabPage() {
                 <h3 id="metrics-table" className="text-lg font-semibold">
                   Metric Snapshot
                 </h3>
-                <div className="mt-3 overflow-x-auto rounded-lg border border-border">
+                <div className="mt-3 overflow-x-auto bg-card border border-border">
                   <table className="min-w-full divide-y divide-border text-sm">
                     <thead className="bg-muted/50 text-left text-xs uppercase tracking-wide text-muted-foreground">
                       <tr>
@@ -438,7 +437,7 @@ export function CanonicalizationLabPage() {
                         <th className="px-4 py-2">Top Contributors</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-border bg-card/30">
+                    <tbody className="divide-y divide-border font-robot bg-card/30">
                       {activeRun.categories.map((category) => (
                         <tr key={`${category.id}-row`}>
                           <td className="px-4 py-2 font-medium">{category.label}</td>

@@ -278,7 +278,7 @@ export function VariantView({
 
   return (
     <div className="space-y-4">
-      <Card className="p-4">
+      <Card className="p-4 bg-transparent">
         <div className="flex items-start justify-between">
           <div>
             <h2>{variant.name}</h2>
@@ -293,7 +293,7 @@ export function VariantView({
             )}
             <Badge variant="outline">{variant.plotPoints.length} plot points</Badge>
             {canEdit && (
-              <Button onClick={() => setShowAddPlotPoint(true)} size="sm">
+              <Button onClick={() => setShowAddPlotPoint(true)} size="sm" className="hover:bg-black/70">
                 <Plus className="w-4 h-4 mr-2" />
                 Add Plot Point
               </Button>

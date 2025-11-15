@@ -319,7 +319,7 @@ export function VariantInsights({ plotPoints, collaborators, viewerEmail }: Vari
 
   if (!totalPlotPoints || !collaboratorEmails.length) {
     return (
-      <CardContent className="rounded-lg border border-dashed border-gray-300 bg-gray-50 py-10 text-center text-sm text-gray-600 dark:border-gray-700 dark:bg-gray-900/40 dark:text-gray-300">
+      <CardContent className="border border-dashed border-gray-300 bg-gray-50 py-10 text-center text-sm text-gray-600 dark:border-gray-700 dark:bg-gray-900/40 dark:text-gray-300">
         Add collaborators and plot point categorizations to see progress insights.
       </CardContent>
     );
@@ -350,22 +350,19 @@ export function VariantInsights({ plotPoints, collaborators, viewerEmail }: Vari
               outerRadius="100%"
             >
               <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
-              <RadialBar
-                dataKey="value"
-                cornerRadius={16}
-                fill="var(--color-completion)"
-                background
-              />
+              <RadialBar dataKey="value" fill="var(--color-completion)" background />
             </RadialBarChart>
           </ChartContainer>
           <div className="text-center">
-            <p className="text-3xl font-semibold">{completionPercentage.toFixed(1)}%</p>
+            <p className="text-3xl font-semibold font-robot">{completionPercentage.toFixed(1)}%</p>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Avg. assignments per plot point: {averageAssignmentsPerPlotPoint.toFixed(1)}
+              Avg. assignments per plot point:{' '}
+              <span className="font-robot">{averageAssignmentsPerPlotPoint.toFixed(1)}</span>
             </p>
             {coverageForViewer && (
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Your coverage: {coverageForViewer.percentage.toFixed(1)}%
+                Your coverage:{' '}
+                <span className="font-robot">{coverageForViewer.percentage.toFixed(1)}%</span>
               </p>
             )}
           </div>
@@ -422,7 +419,7 @@ export function VariantInsights({ plotPoints, collaborators, viewerEmail }: Vari
                   />
                 }
               />
-              <Bar dataKey="percentage" fill="var(--color-coverage)" radius={[8, 8, 0, 0]} />
+              <Bar dataKey="percentage" fill="var(--color-coverage)" />
             </BarChart>
           </ChartContainer>
         </CardContent>
@@ -462,7 +459,7 @@ export function VariantInsights({ plotPoints, collaborators, viewerEmail }: Vari
                   })}
                 </TableRow>
               </TableHeader>
-              <TableBody>
+              <TableBody className="font-robot">
                 {pairwiseAgreements.map((row, rowIndex) => {
                   const email = collaboratorEmails[rowIndex];
                   const displayName = getDisplayName(email);
@@ -503,7 +500,7 @@ export function VariantInsights({ plotPoints, collaborators, viewerEmail }: Vari
           <div className="grid gap-4 text-sm text-gray-600 dark:text-gray-300 md:grid-cols-2">
             <div>
               <p className="font-medium text-gray-900 dark:text-gray-100">Average similarity</p>
-              <p>{agreementSummary.average.toFixed(1)}%</p>
+              <p className="font-robot">{agreementSummary.average.toFixed(1)}%</p>
             </div>
             {agreementSummary.highest && (
               <div>
@@ -511,9 +508,17 @@ export function VariantInsights({ plotPoints, collaborators, viewerEmail }: Vari
                   Most overlapping pair
                 </p>
                 <p>
-                  {getDisplayName(agreementSummary.highest.pair[0])} &amp;{' '}
-                  {getDisplayName(agreementSummary.highest.pair[1])} ·
-                  {(agreementSummary.highest.score * 100).toFixed(1)}%
+                  <span className="font-robot">
+                    {getDisplayName(agreementSummary.highest.pair[0])}
+                  </span>{' '}
+                  &amp;{' '}
+                  <span className="font-robot">
+                    {getDisplayName(agreementSummary.highest.pair[1])}
+                  </span>{' '}
+                  ·
+                  <span className="font-robot">
+                    {(agreementSummary.highest.score * 100).toFixed(1)}%
+                  </span>
                 </p>
               </div>
             )}

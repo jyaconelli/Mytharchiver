@@ -68,14 +68,14 @@ export function CanonicalCategoryList({
               key={category.id}
               value={category.id}
               data-testid="canonical-category-card"
-              className={`rounded-lg border border-border transition data-[state=open]:shadow-md ${
+              className={`border border-border transition ${
                 isSelected
-                  ? 'border-blue-500 bg-blue-50/40 dark:bg-blue-500/10'
+                  ? 'border-orange-500 bg-orange-50/40 dark:bg-blue-500/10'
                   : 'bg-card dark:border-white/5'
               }`}
             >
               <div className="p-4">
-                <AccordionTrigger className="w-full rounded-md p-0 text-left hover:no-underline focus-visible:ring-2 focus-visible:ring-blue-400">
+                <AccordionTrigger className="w-full p-0 text-left hover:no-underline focus-visible:ring-2 focus-visible:ring-blue-400">
                   <div className="flex w-full items-center justify-between text-sm font-medium">
                     <span>{category.label}</span>
                     <span className="text-muted-foreground">{category.size} pts</span>
@@ -115,11 +115,11 @@ export function CanonicalCategoryList({
                     {labelError}
                   </p>
                 )}
-                <div className="mt-3 flex h-3 overflow-hidden rounded bg-muted">
+                <div className="mt-3 flex h-3 overflow-hidden bg-muted">
                   {category.contributors.map((contributor) => (
                     <div
                       key={contributor.id}
-                      className="h-full text-[10px]/3 text-center text-white first:rounded-l last:rounded-r"
+                      className="h-full text-[10px]/3 text-center text-white"
                       style={{
                         width: `${contributor.share * 100}%`,
                         backgroundColor: contributor.color,
@@ -139,7 +139,7 @@ export function CanonicalCategoryList({
                   <section
                     aria-labelledby={`cluster-detail-${category.id}-header`}
                     id={`cluster-detail-${category.id}`}
-                    className="rounded-lg border border-border p-4"
+                    className="border-dashed border-2 border-border p-4"
                   >
                     <h3 id={`cluster-detail-${category.id}-header`} className="text-lg font-semibold">
                       {category.label} · Detail
@@ -190,12 +190,12 @@ export function CanonicalCategoryList({
                         {plotPointsExpanded && (
                           <ul className="mt-2 space-y-2 text-sm">
                             {category.samples.map((sample, index) => (
-                              <li key={`${category.id}-sample-${index}`} className="rounded bg-muted p-3">
+                              <li key={`${category.id}-sample-${index}`} className="bg-muted p-3">
                                 {sample}
                               </li>
                             ))}
                             {category.samples.length === 0 && (
-                              <li className="rounded bg-muted/40 p-3 text-muted-foreground">
+                              <li className="bg-muted/40 p-3 text-muted-foreground">
                                 No sample plot points available.
                               </li>
                             )}

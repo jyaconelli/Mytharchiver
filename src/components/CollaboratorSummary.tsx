@@ -30,7 +30,7 @@ export function CollaboratorSummary({
   const canManage = myth.ownerId === sessionUserId;
 
   return (
-    <section className="mb-6 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+    <section className="mb-6 border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <Users className="h-4 w-4 text-gray-500 dark:text-gray-400" />
@@ -54,7 +54,7 @@ export function CollaboratorSummary({
           collaboratorsForDisplay.map((collaborator) => (
             <div
               key={collaborator.id}
-              className="flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs uppercase tracking-wide dark:border-gray-700 dark:bg-gray-900"
+              className="flex items-center gap-2 border border-gray-200 bg-gray-50 px-3 py-1 text-xs uppercase tracking-wide dark:border-gray-700 dark:bg-gray-900"
             >
               <Avatar className="h-6 w-6 border border-gray-200 text-[0.65rem] font-semibold dark:border-gray-600">
                 <AvatarImage

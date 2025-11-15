@@ -14,18 +14,26 @@ exports[`GridView > renders plot points grouped by category with snapshot 1`] = 
       <div
         class="p-3 rounded-t-lg text-center dark:bg-[#273a14] dark:text-gray-200 bg-[#5ec4d9] text-gray-700"
       >
-        Introduction
+        <span
+          class="bg-white font-robot px-1"
+        >
+          Introduction
+        </span>
       </div>
       <div
         class="p-3 rounded-t-lg text-center dark:bg-[#312e61] dark:text-gray-200 bg-[#e9a59c] text-gray-700"
       >
-        Conflict
+        <span
+          class="bg-white font-robot px-1"
+        >
+          Conflict
+        </span>
       </div>
       <div
         class="min-h-[100px]"
       >
         <div
-          class="h-full border-2 border-dashed border-gray-200 rounded-lg dark:border-gray-700"
+          class="h-full border-2 border-dashed border-gray-200 dark:border-gray-700"
         />
       </div>
       <div
