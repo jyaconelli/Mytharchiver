@@ -126,6 +126,8 @@ function buildPlotPointLookup(variants: Myth['variants']) {
   return lookup;
 }
 
+const mod = (str: string, n: number) => [...str].reduce((a, c) => a + c.charCodeAt(0), 0) % n;
+
 function buildContributors(
   totals: Record<string, number>,
   collaboratorLookup: Map<string, string>,
@@ -138,7 +140,7 @@ function buildContributors(
       id: categoryId,
       name: collaboratorLookup.get(categoryId) ?? `Category ${categoryId}`,
       share: count / totalCount,
-      color: INTENSE_RAW[index],
+      color: INTENSE_RAW[mod(categoryId, INTENSE_RAW.length)],
     }))
     .sort((a, b) => b.share - a.share);
 }
