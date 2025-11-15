@@ -15,7 +15,7 @@ type RunHistorySidebarProps = {
 export function RunHistorySidebar({ runs, selectedRunId, onSelect }: RunHistorySidebarProps) {
   return (
     <aside
-      className="rounded-2xl border border-border bg-card p-4 shadow-sm dark:border-white/5"
+      className="border border-border bg-card p-4 shadow-sm dark:border-white/5"
       data-testid="run-history"
     >
       <h3 className="text-lg font-semibold">Historical Runs</h3>
@@ -86,10 +86,10 @@ export function RunHistorySidebar({ runs, selectedRunId, onSelect }: RunHistoryS
                 }}
                 // disabled={isDisabled}
                 variant="outline"
-                className={`w-full justify-start border px-3 py-8 text-left text-sm transition ${
+                className={`w-full justify-start border px-3 py-8 text-left hover:bg-orange-50/60 text-sm transition ${
                   run.id === selectedRunId
-                    ? 'border-blue-500 bg-blue-50/40 font-semibold dark:bg-blue-500/10'
-                    : 'border-border hover:border-blue-300 dark:border-white/5'
+                    ? 'border-orange-500 bg-orange-50/40 font-semibold dark:bg-blue-500/10'
+                    : 'border-border hover:border-orange-300 dark:border-white/5'
                 } ${isDisabled ? 'opacity-60' : ''}`}
               >
                 <div className="flex w-full flex-col">

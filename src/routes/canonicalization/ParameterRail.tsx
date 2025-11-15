@@ -1,4 +1,4 @@
-import { PlayIcon } from 'lucide-react';
+import { LoaderCircleIcon, PlayIcon } from 'lucide-react';
 
 import { InfoTooltip } from '../../components/InfoTooltip';
 import { Button } from '../../components/ui/button';
@@ -42,7 +42,7 @@ export function ParameterRail({
 
   return (
     <aside
-      className="rounded-2xl border border-border bg-card p-4 shadow-sm dark:border-white/5"
+      className="border border-border bg-card p-4 shadow-sm dark:border-white/5"
       data-testid="parameter-rail"
     >
       <div className="flex items-center justify-between">
@@ -98,7 +98,7 @@ export function ParameterRail({
           </Select>
         </div>
 
-        <div className="space-y-2 rounded-lg border border-border/70 p-3">
+        <div className="space-y-2 border-2 border-dashed border-border/70 p-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-1 text-sm font-medium">
               <ParameterIndicator level={autoDetectStatus} />
@@ -218,12 +218,16 @@ export function ParameterRail({
       </div>
 
       <Button
-        className="mt-6 w-full gap-2"
+        className={`mt-6 w-full hover:bg-black/70`}
         onClick={onRun}
         disabled={disabled || isRunning}
         variant="default"
       >
-        <PlayIcon className="size-4" />
+        {isRunning ? (
+          <LoaderCircleIcon className="size-4 animate-spin" />
+        ) : (
+          <PlayIcon className="size-4" />
+        )}
         {isRunning ? 'Running…' : 'Run Analysis'}
       </Button>
       <ParameterLegend />
@@ -255,7 +259,7 @@ function ParameterIndicator({ level }: { level: EnforcementLevel }) {
   const meta = INDICATOR_META[level];
   return (
     <span
-      className={`inline-flex h-2 w-2 rounded-full ${meta.colorClass}`}
+      className={`inline-flex h-2 w-2 ${meta.colorClass}`}
       title={meta.label}
       aria-label={meta.label}
     />

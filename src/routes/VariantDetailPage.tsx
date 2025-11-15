@@ -61,9 +61,9 @@ export function VariantDetailPage() {
   };
 
   const contributorCard = variant?.contributor ? (
-    <div className="rounded-lg border bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+    <div className="border-dashed border-2 border-gray-400 p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
       <div className="flex flex-wrap items-center gap-3">
-        <UserCircle2 className="h-8 w-8 text-purple-500" />
+        <UserCircle2 className="h-8 w-8 text-black" />
         <div className="flex-1 min-w-0">
           <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
             Contributed by

@@ -16,7 +16,7 @@ export function LoadingAnimation({
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-center gap-3 text-center text-sm text-gray-600 dark:text-gray-300',
+        'flex flex-col text-robot animate-bounce items-center justify-center gap-3 text-center text-sm text-gray-600 dark:text-gray-300',
         className,
       )}
     >
@@ -24,7 +24,7 @@ export function LoadingAnimation({
         src={loadingGif}
         alt="Loading"
         style={{ width: size, height: size }}
-        className="select-none invert"
+        className="select-none"
         role="status"
         draggable={false}
       />

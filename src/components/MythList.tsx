@@ -16,7 +16,7 @@ export function MythList({ myths, selectedMythId, onSelectMyth, onAddMyth }: Myt
   return (
     <div className="space-y-3">
       <div className="flex justify-end">
-        <Button onClick={onAddMyth} size="sm">
+        <Button onClick={onAddMyth} size="sm" className='hover:bg-black/50'>
           <Plus className="w-4 h-4 mr-2" />
           Add Myth Folder
         </Button>
@@ -24,7 +24,7 @@ export function MythList({ myths, selectedMythId, onSelectMyth, onAddMyth }: Myt
       {myths.map((myth) => (
         <Card
           key={myth.id}
-          className={`p-4 cursor-pointer transition-all hover:shadow-md ${
+          className={`p-4 cursor-pointer transition-all hover:border-l-8 border-black ${
             selectedMythId === myth.id
               ? 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-950'
               : ''

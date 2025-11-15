@@ -148,7 +148,7 @@ export function EditPlotPointDialog({
               )}
 
               {showMythemeSelector && (
-                <div className="border rounded-lg p-4 max-h-64 overflow-y-auto space-y-2">
+                <div className="border p-4 max-h-64 overflow-y-auto space-y-2">
                   {mythemes.length === 0 ? (
                     <p className="text-gray-500">No mythemes available. Create some first!</p>
                   ) : (

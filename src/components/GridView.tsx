@@ -104,13 +104,13 @@ export function GridView({
               key={category}
               className={cn(`p-3 rounded-t-lg text-center`, getCategoryHeaderColor(category))}
             >
-              {category}
+              <span className='bg-white font-robot px-1'>{category}</span>
             </div>
           ))}
 
           {/* Data rows */}
           {grid.length === 0 ? (
-            <div className="col-span-full rounded-lg border-2 border-dashed border-gray-200 p-6 text-center text-sm text-gray-500 dark:border-gray-700 dark:text-gray-400">
+            <div className="col-span-full border-2 border-dashed border-gray-200 p-6 text-center text-sm text-gray-500 dark:border-gray-700 dark:text-gray-400">
               {canEdit ? 'No plot points yet.' : 'No plot points to display.'}
             </div>
           ) : (
@@ -127,7 +127,7 @@ export function GridView({
                       viewerEmail={viewerEmail}
                     />
                   ) : (
-                    <div className="h-full border-2 border-dashed border-gray-200 rounded-lg dark:border-gray-700" />
+                    <div className="h-full border-2 border-dashed border-gray-200 dark:border-gray-700" />
                   )}
                 </div>
               )),

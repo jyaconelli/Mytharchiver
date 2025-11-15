@@ -358,7 +358,7 @@ export function ContributionRequestsPanel({
               </div>
             </>
           ) : (
-            <p className="rounded-lg border border-dashed bg-muted/40 p-4 text-sm text-muted-foreground">
+            <p className="border border-dashed bg-muted/40 p-4 text-sm text-muted-foreground">
               {contributorInstructions
                 ? contributorInstructions
                 : 'The owner has not provided contributor instructions yet.'}
@@ -435,7 +435,7 @@ export function ContributionRequestsPanel({
                   <TableBody>
                     {requests.map((request) => (
                       <TableRow key={request.id}>
-                        <TableCell className="font-medium">{request.email}</TableCell>
+                        <TableCell className="font-medium font-robot">{request.email}</TableCell>
                         <TableCell>
                           <Badge variant={statusVariant[request.status]}>
                             {statusLabel[request.status]}

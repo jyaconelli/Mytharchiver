@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Henny+Penny&family=Raleway:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Coral+Pixels&family=Henny+Penny&family=Raleway&display=swap');
+@import url('https://fonts.cdnfonts.com/css/windsor-pro');
 
 @tailwind base;
 @tailwind components;
@@ -7,6 +8,7 @@
 @layer base {
   :root {
     --font-size: 16px;
+    --font-robot: 'Coral Pixels', var(--font-mono);
     --font-sans: 'Raleway', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
       'Segoe UI Symbol', 'Noto Color Emoji';
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
@@ -18,12 +20,12 @@
     --text-xl: 1.25rem;
     --text-2xl: 1.5rem;
     --spacing: 0.25rem;
-    --background: #ffffff;
-    --foreground: oklch(0.145 0 0);
+    --background: #f7f4f2;
+    --foreground: rgb(27, 28, 23);
     --card: #ffffff;
-    --card-foreground: oklch(0.145 0 0);
+    --card-foreground: rgb(27, 28, 23);
     --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
+    --popover-foreground: rgb(27, 28, 23);
     --primary: #030213;
     --primary-foreground: oklch(1 0 0);
     --secondary: oklch(0.95 0.0058 264.53);
@@ -32,7 +34,7 @@
     --muted-foreground: #717182;
     --accent: #e9ebef;
     --accent-foreground: #030213;
-    --destructive: #d4183d;
+    --destructive: #dc2828;
     --destructive-foreground: #ffffff;
     --border: rgba(0, 0, 0, 0.1);
     --input: transparent;
@@ -48,11 +50,11 @@
     --chart-5: oklch(0.769 0.188 70.08);
     --radius: 0.625rem;
     --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
+    --sidebar-foreground: rgb(27, 28, 23);
     --sidebar-primary: #030213;
     --sidebar-primary-foreground: oklch(0.985 0 0);
     --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
+    --sidebar-accent-foreground: rgb(27, 28, 23);
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.708 0 0);
   }
@@ -162,6 +164,10 @@
 
 @layer utilities {
   .font-display {
-    font-family: 'Henny Penny', var(--font-sans);
+    font-family: "Windsor Pro", var(--font-sans);
+    font-weight: 750;
+  }
+  .font-robot {
+    font-family: var(--font-robot);
   }
 }

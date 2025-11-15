@@ -1,15 +1,74 @@
-import { ChangeEvent, FormEvent, useCallback, useMemo, useRef, useState } from 'react';
+import { ChangeEvent, FormEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AlertCircle, CheckCircle2, Loader2, Check, X } from 'lucide-react';
 import Cropper, { Area } from 'react-easy-crop';
 
 import { getSupabaseClient } from '../lib/supabaseClient';
 import { Button } from './ui/button';
-import { Card } from './ui/card';
+import { Card, CardHeader } from './ui/card';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from './ui/dialog';
+import { TypewriterText } from './TypewriterText';
 import { Slider } from './ui/slider';
 import logoUrl from '../assets/logo.png';
+
+const TYPEWRITER_TEXT = `a myth can be understood as a culturally embedded narrative form that simultaneously serves
+        as a mode of knowing, a symbolic vocabulary, a metaphysical architecture, a social charter,
+        a psychological projection, a structural mechanism, a ritual script, and an
+        identity-generating device and it accomplishes all of these simultaneously because myths
+        articulate cosmological assumptions about how the world came into being, why it has the
+        shape it does, and what kinds of causal or supernatural forces sustain it while also
+        transforming chaotic reality into an ordered cosmos through narratives that do not pretend
+        to empirical truth yet achieve a deeper kind of explanatory resonance, and at the same time
+        myth functions, in the Malinowskian sense, as a “charter” that legitimizes kinship systems,
+        gender roles, authority structures, ritual obligations, and systems of economic or political
+        power by rooting them in primordial precedent or divine sanction so that what a society does
+        becomes framed as necessary, timeless, and natural rather than contingent or contestable,
+        and simultaneously myths operate in the psychoanalytic sense as symbolic externalizations of
+        unconscious processes so that the heroic journeys, sacrifices, metamorphoses, descents to
+        the underworld, divine mothers, trickster figures, and cosmic battles all reflect archetypal
+        patterns of anxiety, desire, individuation, loss, maturation, and reconciliation, thus
+        making myth a kind of shared dreamwork in which individual and collective psyches converge,
+        and simultaneously myths in the Lévi-Straussian structuralist model function not primarily
+        as stories but as systems of binary oppositions (nature/culture, life/death, chaos/order,
+        male/female, sky/earth, raw/cooked, sacred/profane) which are endlessly recombined in order
+        to mediate contradictions embedded in the social world so that myth becomes a symbolic
+        machine that produces intellectual resolution where practical resolution is impossible, and
+        simultaneously myth in the ritualist and phenomenological frameworks (Eliade, Turner, etc.)
+        is not only something told but something enacted such that reciting or performing a myth
+        allows participants to reenter mythic time—an atemporal sacred interval that collapses
+        historical sequence into a perennial origin point—thereby regenerating the cosmos, the
+        community, and the self through periodic reactivation of foundational narratives, making
+        myth a temporal bridge between “then” and “now,” and simultaneously myth functions as a
+        medium of identity formation by offering populations a coherent genealogy and symbolic
+        vocabulary through which they define who they are, where they come from, what unites them,
+        and what boundaries distinguish them from outsiders, so that national myths, ancestral
+        myths, founding epics, and heroic genealogies become indispensable tools for shaping
+        collective memory and belonging, and simultaneously myth persists in modernity, even in
+        ostensibly rational and scientific societies, by migrating into new forms such as consumer
+        culture’s narratives of transformation and salvation through commodities, technology
+        culture’s utopian myths of innovation and disruption, political movements’ mythic framings
+        of corruption, purity, rebirth, struggle, and destiny, and media franchises that produce new
+        pantheons of superheroes, invented cosmologies, and secular creation stories that satisfy
+        the same deep narrative impulses once met by divine sagas, and because all these dimensions
+        coexist and interweave, a myth can be synthesized as a culturally authoritative,
+        symbolically dense, ritually reactivatable narrative-structure that encodes fundamental
+        patterns of meaning, resolves or conceals structural contradictions, provides frameworks for
+        collective identity, legitimizes social organization, articulates unconscious psychic life,
+        and sustains a community’s sense of reality, meaning that myth is simultaneously story,
+        explanation, ideology, ritual, dream, symbol, cognitive schema, and existential scaffold,
+        all operating at once without requiring internal consistency, historical accuracy, or
+        logical coherence, so that ultimately a myth may be described as an enormous,
+        ever-recycling, boundary-blurring narrative-symbolic-ritual apparatus through which human
+        beings, across all cultures and eras, transform chaos into order, uncertainty into
+        intelligibility, contingency into necessity, and existence into something that feels
+        coherent, purposeful, and livable, even if that coherence is produced through narrative
+        rather than fact, through symbolism rather than reason, and through collective imagination
+        rather than empirical demonstration, and thus myth is both ancient and modern, both
+        psychological and sociological, both structural and poetic, both sacred and political, and
+        it continues to operate beneath, within, and alongside all systems of human meaning whether
+        we acknowledge it or not because myth is not something cultures once had but something they
+        cannot stop generating.`;
 
 type AuthMode = 'signIn' | 'signUp';
 
@@ -48,6 +107,13 @@ export function AuthGate() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [textLength, setTextLength] = useState<number>(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => setTextLength((n) => n + Math.round(Math.random())), 50);
+    return () => clearInterval(interval);
+  }, []);
+
   const supabase = useMemo<ReturnType<typeof getSupabaseClient> | null>(() => {
     try {
       return getSupabaseClient();
@@ -261,20 +327,65 @@ export function AuthGate() {
 
   const allRequirementsMet = passwordHints.length > 0 && passwordHints.every((hint) => hint.ok);
   const passwordsMatch = password === confirmPassword;
-
   return (
-    <div className="min-h-screen grid grid-cols-3 max-md:grid-cols-1 max-md:px-4 text-gray-900 dark:bg-gray-800 dark:text-gray-100">
-      <div className="col-start-2 max-md:col-start-1 flex w-full max-w-4xl flex-col items-center space-y-6 py-4 text-center">
+    <div className="min-h-screen bg-white grid grid-cols-3 max-md:grid-cols-1 max-md:px-4 text-gray-900 dark:bg-gray-800 dark:text-gray-100">
+      <div className="h-screen w-screen grid grid-cols-7 gap-2 opacity-30">
+        <div className="overflow-hidden flex font-robot text-justify z-0">
+          {TYPEWRITER_TEXT.substring(
+            Math.floor(textLength / 2),
+            (textLength + textLength / 2) % TYPEWRITER_TEXT.length,
+          )}
+        </div>
+        <div className="overflow-hidden flex font-robot text-justify z-0">
+          {TYPEWRITER_TEXT.substring(
+            textLength % TYPEWRITER_TEXT.length,
+            (2 * textLength) % TYPEWRITER_TEXT.length,
+          )}
+        </div>
+        <div className="overflow-hidden flex font-robot text-justify z-0">
+          {TYPEWRITER_TEXT.substring(
+            (2 * textLength) % TYPEWRITER_TEXT.length,
+            (3 * textLength) % TYPEWRITER_TEXT.length,
+          )}
+        </div>
+        <div className="overflow-hidden flex font-robot text-justify z-0">
+          {TYPEWRITER_TEXT.substring(
+            (3 * textLength) % TYPEWRITER_TEXT.length,
+            (4 * textLength) % TYPEWRITER_TEXT.length,
+          )}
+        </div>
+        <div className="overflow-hidden flex font-robot text-justify z-0">
+          {TYPEWRITER_TEXT.substring(
+            (4 * textLength) % TYPEWRITER_TEXT.length,
+            (5 * textLength) % TYPEWRITER_TEXT.length,
+          )}
+        </div>
+        <div className="overflow-hidden flex font-robot text-justify z-0">
+          {TYPEWRITER_TEXT.substring(
+            (6 * textLength) % TYPEWRITER_TEXT.length,
+            (7 * textLength) % TYPEWRITER_TEXT.length,
+          )}
+        </div>
+        <div className="overflow-hidden flex font-robot text-justify z-0">
+          {TYPEWRITER_TEXT.substring(
+            (7 * textLength) % TYPEWRITER_TEXT.length,
+            (8 * textLength) % TYPEWRITER_TEXT.length,
+          )}
+        </div>
+      </div>
+      <div className="z-10 col-start-2 max-md:col-start-1 flex w-full max-w-4xl flex-col items-center space-y-6 py-4 text-center">
         <img
           src={logoUrl}
           alt="Myth Archive"
           className="h-48 w-48 object-contain dark:border-gray-800"
         />
-        <div className="space-y-2">
-          <h1 className="font-display text-4xl text-gray-900 dark:text-gray-100">Myth Archive</h1>
-        </div>
 
-        <Card className="w-full gap-6 border border-gray-200 bg-white p-6 text-left shadow-lg dark:border-gray-800 dark:bg-gray-900">
+        <Card className="w-full bg-background gap-6 border border-black p-6 text-left dark:border-gray-800 dark:bg-gray-900">
+          <CardHeader>
+            <h1 className="font-display bg-background px-2 text-6xl text-foreground dark:text-gray-100">
+              Myth Archive
+            </h1>
+          </CardHeader>
           <form onSubmit={handleSubmit} className="col-span-4 space-y-4 md:col-span-3">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -429,7 +540,7 @@ export function AuthGate() {
             <Button
               type="submit"
               size="lg"
-              className="w-full rounded-xl bg-blue-500 text-base font-semibold text-white shadow-[0_8px_18px_-8px_rgba(37,99,235,0.65)] hover:bg-blue-400 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:bg-blue-400 dark:hover:bg-blue-300 dark:focus-visible:ring-blue-300 dark:focus-visible:ring-offset-gray-900"
+              className="w-full text-base font-semibold text-white hover:bg-black/70 focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
               disabled={submitting}
             >
               {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -439,14 +550,14 @@ export function AuthGate() {
 
           <div className="col-span-4 space-y-3 text-sm md:col-span-1">
             {error && (
-              <div className="flex items-center gap-2 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-red-700 dark:border-red-900/50 dark:bg-red-950/50 dark:text-red-200">
+              <div className="flex items-center gap-2 border border-red-200 bg-red-50 px-3 py-2 text-red-700 dark:border-red-900/50 dark:bg-red-950/50 dark:text-red-200">
                 <AlertCircle className="h-4 w-4" />
                 <span>{error}</span>
               </div>
             )}
 
             {message && (
-              <div className="flex items-center gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-950/50 dark:text-emerald-200">
+              <div className="flex items-center gap-2 border border-emerald-200 bg-emerald-50 px-3 py-2 text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-950/50 dark:text-emerald-200">
                 <CheckCircle2 className="h-4 w-4" />
                 <span>{message}</span>
               </div>
@@ -454,12 +565,12 @@ export function AuthGate() {
           </div>
         </Card>
 
-        <p className="text-sm text-gray-600 dark:text-gray-400">
+        <p className="text-sm text-gray-600 dark:text-gray-400 bg-background p-3">
           {mode === 'signIn' ? "Don't have an account?" : 'Already registered?'}{' '}
           <button
             type="button"
             onClick={toggleMode}
-            className="font-medium text-blue-600 hover:underline dark:text-blue-400"
+            className="font-medium font-robot text-blue-600 hover:opacity-50 animate-bounce underline dark:text-blue-400"
           >
             {mode === 'signIn' ? 'Create one' : 'Sign in'}
           </button>
@@ -472,7 +583,7 @@ export function AuthGate() {
             <DialogTitle>Crop profile image</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="relative h-64 w-full overflow-hidden rounded-lg bg-gray-900/80">
+            <div className="relative h-64 w-full overflow-hidden bg-gray-900/80">
               {avatarSource ? (
                 <Cropper
                   image={avatarSource}

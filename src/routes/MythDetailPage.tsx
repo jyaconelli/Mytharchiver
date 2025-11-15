@@ -73,17 +73,17 @@ export function MythDetailPage() {
 
       {isOwner && (
         <div
-          className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-900 dark:border-blue-900/50 dark:bg-blue-950/20 dark:text-blue-100"
+          className="flex flex-wrap items-center justify-between gap-3 border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-blue-900 dark:border-blue-900/50 dark:bg-blue-950/20 dark:text-blue-100"
           data-testid="canonicalization-callout"
         >
           <div>
-            <p className="font-medium">Canonicalization Lab</p>
-            <p className="text-xs text-blue-900/80 dark:text-blue-200/80">
+            <p className="font-semibold">Canonicalization Lab</p>
+            <p className="text-s font-robot text-blue-900/80 dark:text-blue-200/80">
               Run category consolidation experiments and review contributor statistics.
             </p>
           </div>
           <Link
-            className="rounded-md border border-blue-400 bg-white px-3 py-1.5 text-sm font-medium text-blue-700 transition hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-900/40 dark:text-blue-100"
+            className="border border-blue-900 bg-yellow-50 px-3 py-1.5 text-sm font-medium text-blue-900 transition hover:bg-yellow-100 dark:border-blue-800 dark:bg-blue-900/40 dark:text-blue-100"
             to={`/myths/${myth.id}/canonicalization`}
           >
             Open Lab

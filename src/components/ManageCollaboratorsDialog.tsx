@@ -7,7 +7,7 @@ import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Badge } from './ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Loader2, ShieldAlert, UserMinus } from 'lucide-react';
+import { Loader2, ShieldAlert, Trash2 } from 'lucide-react';
 
 interface ManageCollaboratorsDialogProps {
   open: boolean;
@@ -142,7 +142,7 @@ export function ManageCollaboratorsDialog({
             {canManage ? (
               <form
                 onSubmit={handleAdd}
-                className="space-y-3 rounded-lg border border-dashed border-gray-300 p-4 dark:border-gray-600"
+                className="space-y-3 border-2 border-dashed border-gray-400 p-4 dark:border-gray-600"
               >
                 <div className="grid gap-3 sm:grid-cols-[2fr,1fr]">
                   <div className="space-y-1">
@@ -198,7 +198,7 @@ export function ManageCollaboratorsDialog({
                 <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300">
                   Current collaborators
                 </h3>
-                <Badge variant="secondary" className="text-xs uppercase">
+                <Badge variant="secondary" className="rounded-none text-xs uppercase bg-slate-50">
                   {collaborators.length} total
                 </Badge>
               </div>
@@ -223,7 +223,7 @@ export function ManageCollaboratorsDialog({
                     return (
                       <li
                         key={collaborator.id}
-                        className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-gray-200 p-4 dark:border-gray-700"
+                        className="flex flex-wrap bg-white tems-center justify-between gap-3 border border-gray-200 p-4 dark:border-gray-700"
                       >
                         <div className="flex min-w-0 items-center gap-3">
                           <Avatar className="h-10 w-10 border border-gray-200 text-sm font-semibold dark:border-gray-600">
@@ -281,7 +281,7 @@ export function ManageCollaboratorsDialog({
                               {removingId === collaborator.id ? (
                                 <Loader2 className="h-4 w-4 animate-spin" />
                               ) : (
-                                <UserMinus className="h-4 w-4" />
+                                <Trash2 className="h-4 w-4" />
                               )}
                             </Button>
                           </div>

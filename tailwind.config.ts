@@ -17,7 +17,7 @@ const config: Config = {
         background: 'var(--background)',
         foreground: 'var(--foreground)',
         border: 'var(--border)',
-        input: 'var(--input)',
+        input: 'var(--foreground)',
         'input-background': 'var(--input-background)',
         ring: 'var(--ring)',
         card: {
@@ -72,9 +72,25 @@ const config: Config = {
         sm: 'calc(var(--radius) - 4px)',
       },
       fontFamily: {
-        sans: ['var(--font-sans)', ...defaultTheme.fontFamily.sans],
+        sans: ['var(--font-mono)', ...defaultTheme.fontFamily.sans],
         mono: ['var(--font-mono)', ...defaultTheme.fontFamily.mono],
-        display: ['"Henny Penny"', ...defaultTheme.fontFamily.sans],
+        display: ['"Windsor Pro"', ...defaultTheme.fontFamily.sans],
+      },
+      keyframes: {
+        typewriter: {
+          '0%': { clipPath: 'inset(0 100% 0 0)' },
+          '100%': { clipPath: 'inset(0 0 0 0)' },
+        },
+        'typewriter-cursor': {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0' },
+        },
+      },
+      animation: {
+        typewriter:
+          'typewriter var(--tw-typewriter-duration, 4s) steps(var(--tw-typewriter-steps, 40)) forwards',
+        'typewriter-cursor':
+          'typewriter-cursor var(--tw-typewriter-cursor-duration, 1s) steps(2, start) infinite',
       },
     },
   },
