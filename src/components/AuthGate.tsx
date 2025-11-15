@@ -329,7 +329,7 @@ export function AuthGate() {
   const passwordsMatch = password === confirmPassword;
   return (
     <div className="min-h-screen bg-white grid grid-cols-3 max-md:grid-cols-1 max-md:px-4 text-gray-900 dark:bg-gray-800 dark:text-gray-100">
-      <div className="h-screen w-screen grid grid-cols-7 gap-2 opacity-30">
+      <div className="h-screen w-screen fixed grid grid-cols-7 gap-2 opacity-30">
         <div className="overflow-hidden flex font-robot text-justify z-0">
           {TYPEWRITER_TEXT.substring(
             Math.floor(textLength / 2),

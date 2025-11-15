@@ -5,7 +5,7 @@ exports[`AuthGate > renders initial sign-in view 1`] = `
   class="min-h-screen bg-white grid grid-cols-3 max-md:grid-cols-1 max-md:px-4 text-gray-900 dark:bg-gray-800 dark:text-gray-100"
 >
   <div
-    class="h-screen w-screen grid grid-cols-7 gap-2 opacity-30"
+    class="h-screen w-screen fixed grid grid-cols-7 gap-2 opacity-30"
   >
     <div
       class="overflow-hidden flex font-robot text-justify z-0"
