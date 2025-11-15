@@ -8,6 +8,12 @@
       <title>Myth Archiving Tool</title>
       <script>
         (function () {
+          var darkModeEnabled = '%VITE_ENABLE_DARK_MODE%' === 'true';
+          if (!darkModeEnabled) {
+            document.documentElement.classList.remove('dark');
+            return;
+          }
+
           var cookieMatch = document.cookie.match(/(?:^|; )themePreference=([^;]*)/);
           var storedPreference = cookieMatch ? decodeURIComponent(cookieMatch[1]) : null;
           var preference = storedPreference === 'light' || storedPreference === 'dark' || storedPreference === 'system' ? storedPreference : 'system';

@@ -1,5 +1,7 @@
 import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
+import { DARK_MODE_ENABLED, DEFAULT_THEME } from '../config/theme';
+
 export type ThemePreference = 'light' | 'dark' | 'system';
 type ResolvedTheme = 'light' | 'dark';
 
@@ -49,12 +51,18 @@ const getSystemPrefersDark = () => {
   return window.matchMedia('(prefers-color-scheme: dark)').matches;
 };
 
+const DISABLED_RESOLVED_THEME: ResolvedTheme = DEFAULT_THEME === 'dark' ? 'dark' : 'light';
+
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [preference, setPreferenceState] = useState<ThemePreference>(() => readPreferenceFromCookie() ?? 'system');
-  const [systemPrefersDark, setSystemPrefersDark] = useState<boolean>(() => getSystemPrefersDark());
+  const [preference, setPreferenceState] = useState<ThemePreference>(() =>
+    DARK_MODE_ENABLED ? readPreferenceFromCookie() ?? 'system' : DEFAULT_THEME,
+  );
+  const [systemPrefersDark, setSystemPrefersDark] = useState<boolean>(() =>
+    DARK_MODE_ENABLED ? getSystemPrefersDark() : DISABLED_RESOLVED_THEME === 'dark',
+  );
 
   useEffect(() => {
-    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+    if (!DARK_MODE_ENABLED || typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
       return undefined;
     }
 
@@ -67,10 +75,21 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     return () => mediaQueryList.removeEventListener('change', handleChange);
   }, []);
 
-  const resolvedTheme: ResolvedTheme = preference === 'system' ? (systemPrefersDark ? 'dark' : 'light') : preference;
+  const resolvedTheme: ResolvedTheme = !DARK_MODE_ENABLED
+    ? DISABLED_RESOLVED_THEME
+    : preference === 'system'
+      ? systemPrefersDark
+        ? 'dark'
+        : 'light'
+      : preference;
 
   useEffect(() => {
     if (typeof document === 'undefined') {
+      return;
+    }
+
+    if (!DARK_MODE_ENABLED) {
+      document.documentElement.classList.remove('dark');
       return;
     }
 
@@ -78,10 +97,18 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   }, [resolvedTheme]);
 
   useEffect(() => {
+    if (!DARK_MODE_ENABLED) {
+      return;
+    }
+
     writePreferenceToCookie(preference);
   }, [preference]);
 
   const setPreference = useCallback((nextPreference: ThemePreference) => {
+    if (!DARK_MODE_ENABLED) {
+      return;
+    }
+
     setPreferenceState(nextPreference);
   }, []);
 
@@ -101,9 +128,12 @@ export const useThemePreference = () => {
   const context = useContext(ThemeContext);
 
   if (!context) {
+    const fallbackPreference: ThemePreference = DARK_MODE_ENABLED ? 'system' : DEFAULT_THEME;
+    const fallbackResolved: ResolvedTheme = DARK_MODE_ENABLED ? 'light' : DISABLED_RESOLVED_THEME;
+
     return {
-      preference: 'system' as ThemePreference,
-      resolvedTheme: 'light' as ResolvedTheme,
+      preference: fallbackPreference,
+      resolvedTheme: fallbackResolved,
       setPreference: () => {
         // no-op outside provider; primarily for tests that render isolated components
       },
