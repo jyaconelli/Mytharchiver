@@ -4,14 +4,12 @@ import { BrowserRouter } from 'react-router-dom';
 
 import App from './App.tsx';
 import './index.css';
-import { ThemeProvider } from './providers/ThemeProvider';
+// import { ThemeProvider } from './providers/ThemeProvider';
 
 const app = (
   <StrictMode>
     <BrowserRouter>
-      <ThemeProvider>
         <App />
-      </ThemeProvider>
     </BrowserRouter>
   </StrictMode>
 );
