@@ -1,9 +1,5 @@
 # Myth Archiving Tool
 
-This is a code bundle for Myth Archiving Tool. The original project is available at https://www.figma.com/design/huJUlPLWN9gLJzOmh5EZWB/Myth-Archiving-Tool.
-
-The app now persists data and handles authentication through Supabase.
-
 ## Quickstart
 
 1. Install dependencies
