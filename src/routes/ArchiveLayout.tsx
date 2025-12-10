@@ -181,7 +181,7 @@ export function ArchiveLayout({ session, supabaseClient, children }: ArchiveLayo
           <>
             {dataLoading && !isInitialLoad && (
               <LoadingAnimation
-                message="Syncing with Supabase…"
+                message="Syncing…"
                 size={48}
                 className="mb-6 flex-row items-center text-left"
               />

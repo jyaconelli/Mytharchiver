@@ -48,7 +48,6 @@ export function ParameterRail({
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-lg font-semibold">Parameters</h3>
-          <p className="text-xs text-muted-foreground">Runs execute via Supabase Edge Functions.</p>
         </div>
         <Button
           size="icon"

@@ -19,7 +19,7 @@ export function RunHistorySidebar({ runs, selectedRunId, onSelect }: RunHistoryS
       data-testid="run-history"
     >
       <h3 className="text-lg font-semibold">Historical Runs</h3>
-      <p className="text-xs text-muted-foreground">Latest {RUN_LIMIT} results from Supabase.</p>
+      <p className="text-xs text-muted-foreground">Latest {RUN_LIMIT} results.</p>
       <div className="mt-4 space-y-3">
         {runs.length === 0 && (
           <p className="text-sm text-muted-foreground">No runs recorded yet.</p>
@@ -78,7 +78,7 @@ export function RunHistorySidebar({ runs, selectedRunId, onSelect }: RunHistoryS
           );
 
           return (
-            <div key={run.id} className="flex items-start gap-2">
+            <div key={run.id} className="flex items-start">
               <Button
                 type="button"
                 onClick={() => {
@@ -86,15 +86,15 @@ export function RunHistorySidebar({ runs, selectedRunId, onSelect }: RunHistoryS
                 }}
                 // disabled={isDisabled}
                 variant="outline"
-                className={`w-full justify-start border px-3 py-8 text-left hover:bg-orange-50/60 text-sm transition ${
+                className={`flex-1 w-full justify-between border px-3 py-8 hover:bg-orange-50/60 text-sm transition ${
                   run.id === selectedRunId
                     ? 'border-orange-500 bg-orange-50/40 font-semibold dark:bg-blue-500/10'
                     : 'border-border hover:border-orange-300 dark:border-white/5'
                 } ${isDisabled ? 'opacity-60' : ''}`}
               >
-                <div className="flex w-full flex-col">
-                  <span>{label}</span>
-                  <span className="text-xs text-muted-foreground capitalize">
+                <div className="flex flex-1 min-w-0 flex-col text-start">
+                  <span className="truncate">{label}</span>
+                  <span className="truncate text-xs text-muted-foreground capitalize">
                     {formatShortTimestamp(run.created_at)} · {run.status}
                   </span>
                 </div>
