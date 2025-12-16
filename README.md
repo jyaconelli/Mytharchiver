@@ -10,9 +10,23 @@
 2. Configure environment variables (see `.env.example`)
 3. Run a development server
    ```bash
-   yarn dev
-   # or: npm run dev
-   ```
+yarn dev
+# or: npm run dev
+```
+
+## Scripts
+
+- `yarn dev`: Run the app in development mode
+- `yarn build`: Build the app for production
+- `yarn lint`: Run linting
+- `yarn lint:fix`: Run linting and fix issues
+- `yarn format`: Format the codebase
+- `yarn format:check`: Check codebase formatting
+- `yarn test`: Run the test suite
+- `yarn test:watch`: Run the test suite in watch mode
+- `yarn test:coverage`: Run the test suite with coverage report
+- `yarn storybook`: Start Storybook at http://localhost:6006
+- `yarn build-storybook`: Build the static Storybook site
 
 ## Supabase configuration
 
