@@ -5,6 +5,7 @@ import { Checkbox } from './checkbox';
 import { Label } from './label';
 
 const meta = {
+  title: 'UI/Checkbox',
   component: Checkbox,
   argTypes: {
     onCheckedChange: { action: 'checkedChange' },

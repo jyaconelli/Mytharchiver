@@ -43,6 +43,7 @@ const otherEditorPlotPoint: PlotPointType = {
 };
 
 const meta = {
+  title: 'Components/PlotPoint',
   component: PlotPoint,
   args: {
     plotPoint: basePlotPoint,
