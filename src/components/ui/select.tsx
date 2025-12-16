@@ -1,8 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import * as SelectPrimitive from '@radix-ui/react-select@2.1.6';
-import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react@0.487.0';
+import * as SelectPrimitive from '@radix-ui/react-select';
+import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 
 import { cn } from './utils';
 
@@ -26,15 +26,20 @@ function SelectTrigger({
 }: React.ComponentProps<typeof SelectPrimitive.Trigger> & {
   size?: 'sm' | 'default';
 }) {
+  const { 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledby, ...rest } = props;
+  const defaultAriaLabel = ariaLabel ?? (ariaLabelledby ? undefined : 'Select an option');
+
   return (
     <SelectPrimitive.Trigger
       data-slot="select-trigger"
+      aria-label={defaultAriaLabel}
+      aria-labelledby={ariaLabelledby}
       data-size={size}
       className={cn(
         "border-input font-robot data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive flex w-full items-center justify-between gap-2 border bg-input-background text-foreground hover:bg-input-background/80 dark:bg-input dark:text-foreground dark:hover:bg-input/80 px-3 py-2 text-sm whitespace-nowrap transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
-      {...props}
+      {...rest}
     >
       {children}
       <SelectPrimitive.Icon asChild>
