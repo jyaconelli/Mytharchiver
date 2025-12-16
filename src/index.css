@@ -9,9 +9,11 @@
   :root {
     --font-size: 16px;
     --font-robot: 'Coral Pixels', var(--font-mono);
-    --font-sans: 'Raleway', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans:
+      'Raleway', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
       'Segoe UI Symbol', 'Noto Color Emoji';
-    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    --font-mono:
+      ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
       monospace;
     --text-xs: 0.75rem;
     --text-sm: 0.875rem;
@@ -31,7 +33,7 @@
     --secondary: oklch(0.95 0.0058 264.53);
     --secondary-foreground: #030213;
     --muted: #ececf0;
-    --muted-foreground: #717182;
+    --muted-foreground: #666674;
     --accent: #e9ebef;
     --accent-foreground: #030213;
     --destructive: #dc2828;
@@ -164,7 +166,7 @@
 
 @layer utilities {
   .font-display {
-    font-family: "Windsor Pro", var(--font-sans);
+    font-family: 'Windsor Pro', var(--font-sans);
     font-weight: 750;
   }
   .font-robot {
