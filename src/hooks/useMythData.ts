@@ -1,11 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { Session } from '@supabase/supabase-js';
-
-import { getSupabaseClient } from '../lib/supabaseClient';
+import * as API from '../lib/supabase';
 import {
   CollaboratorCategory,
   CollaboratorCategoryAssignment,
-  CollaboratorRole,
   DEFAULT_CATEGORIES,
   Myth,
   MythCategory,
@@ -15,82 +13,15 @@ import {
   VariantContributor,
   VariantContributorType,
 } from '../types/myth';
-
-type MythRow = {
-  id: string;
-  name: string | null;
-  description: string | null;
-  contributor_instructions: string | null;
-  variants: MythVariant[] | null;
-  user_id: string;
-  categories: string[] | null;
-};
-
-type CollaboratorRow = {
-  id: string;
-  myth_id: string;
-  email: string | null;
-  role: CollaboratorRole;
-};
-
-type UserProfileRow = {
-  id: string;
-  email: string | null;
-  display_name: string | null;
-  avatar_url: string | null;
-};
-
-type ProfileSettingsRow = {
-  categories: string[] | null;
-};
-
-type MythCategoryRow = {
-  id: string;
-  myth_id: string;
-  name: string;
-  sort_order: number | null;
-};
-
-type PlotPointCategoryRow = {
-  plot_point_id: string;
-  category_id: string;
-};
-
-type CollaboratorCategoryRow = {
-  id: string;
-  myth_id: string;
-  collaborator_email: string;
-  name: string;
-};
-
-type CollaboratorPlotPointCategoryRow = {
-  plot_point_id: string;
-  collaborator_category_id: string;
-};
-
-type MythVariantRow = {
-  id: string;
-  myth_id: string;
-  name: string;
-  source: string;
-  sort_order: number | null;
-  created_at: string;
-  created_by_user_id: string | null;
-  contributor_email: string | null;
-  contributor_name: string | null;
-  contributor_type: string | null;
-  contribution_request_id: string | null;
-};
-
-type PlotPointRow = {
-  id: string;
-  variant_id: string;
-  position: number | null;
-  text: string | null;
-  category: string | null;
-  canonical_category_id: string | null;
-  mytheme_refs: string[] | null;
-};
+import type {
+  CollaboratorCategoryRow,
+  CollaboratorPlotPointCategoryRow,
+  MythCategoryRow,
+  MythRow,
+  MythVariantRow,
+  PlotPointCategoryRow,
+  ProfileSettingsRow,
+} from '../lib/supabase/types';
 
 const createLocalId = () =>
   typeof crypto !== 'undefined' && 'randomUUID' in crypto
@@ -141,28 +72,7 @@ const mapVariantContributor = (row: MythVariantRow): VariantContributor | null =
   };
 };
 
-type PostgrestErrorLike = {
-  message?: string;
-  details?: string | null;
-  hint?: string | null;
-  code?: string;
-};
-
-const createSupabaseError = (context: string, error: PostgrestErrorLike) => {
-  const segments = [
-    error.message,
-    error.details,
-    error.hint,
-    error.code ? `code: ${error.code}` : null,
-  ].filter(Boolean);
-  const description = segments.length > 0 ? segments.join(' | ') : 'Unknown error';
-  const enriched = new Error(`${context} failed: ${description}`);
-  (enriched as any).cause = error;
-  return enriched;
-};
-
 export function useMythData(session: Session | null, currentUserEmail: string) {
-  const supabase = getSupabaseClient();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [myths, setMyths] = useState<Myth[]>([]);
@@ -175,74 +85,16 @@ export function useMythData(session: Session | null, currentUserEmail: string) {
     setLoading(true);
     setError(null);
 
-    let lastStep = 'start';
     try {
-      lastStep = 'normalizing session email';
       const normalizedEmail = session.user.email?.toLowerCase() ?? null;
+      const settingsResult = await API.fetchSettings(session.user.id);
 
-      lastStep = 'loading owned myths';
-      const ownedMythsResult = await supabase
-        .from('myth_folders')
-        .select('id, name, description, contributor_instructions, variants, user_id, categories')
-        .eq('user_id', session.user.id)
-        .order('created_at', { ascending: true });
-
-      if (ownedMythsResult.error) {
-        throw createSupabaseError('myth_folders (owned myths)', ownedMythsResult.error);
-      }
-
-      let collaboratorLinksResult:
-        | { data: { myth_id: string }[] | null; error: { message: string; code: string } | null }
-        | { data: { myth_id: string }[]; error: null };
-
-      if (normalizedEmail) {
-        lastStep = 'loading collaborator links';
-        collaboratorLinksResult = (await supabase
-          .from('myth_collaborators')
-          .select('myth_id')
-          .eq('email', normalizedEmail)) as typeof collaboratorLinksResult;
-
-        if (collaboratorLinksResult.error) {
-          throw createSupabaseError(
-            'myth_collaborators (collaborator links)',
-            collaboratorLinksResult.error,
-          );
-        }
-      } else {
-        collaboratorLinksResult = { data: [], error: null };
-      }
-
-      lastStep = 'loading profile settings';
-      const settingsResult = await supabase
-        .from('profile_settings')
-        .select('categories')
-        .eq('user_id', session.user.id)
-        .maybeSingle();
-
-      if (settingsResult.error && settingsResult.error.code !== 'PGRST116') {
-        throw createSupabaseError('profile_settings', settingsResult.error);
-      }
-
-      const ownedMythRows = (ownedMythsResult.data as MythRow[] | null) ?? [];
-      const collaboratorMythIds = collaboratorLinksResult.data?.map((link) => link.myth_id) ?? [];
-
-      let collaboratorMythRows: MythRow[] = [];
-      if (collaboratorMythIds.length > 0) {
-        lastStep = 'loading collaborator myths';
-        const collaboratorMythsResult = await supabase
-          .from('myth_folders')
-          .select('id, name, description, contributor_instructions, variants, user_id, categories')
-          .in('id', collaboratorMythIds)
-          .order('created_at', { ascending: true });
-
-        if (collaboratorMythsResult.error && collaboratorMythsResult.error.code !== 'PGRST116') {
-          throw createSupabaseError(
-            'myth_folders (collaborator myths)',
-            collaboratorMythsResult.error,
-          );
-        }
-        collaboratorMythRows = (collaboratorMythsResult.data as MythRow[] | null) ?? [];
-      }
+      const ownedMythRows = await API.fetchOwnedMyths(session.user.id);
+      const collaboratorLinks = normalizedEmail
+        ? await API.fetchCollaboratorLinksByEmail(normalizedEmail)
+        : [];
+      const collaboratorMythIds = collaboratorLinks.map((link) => link.myth_id);
+      const collaboratorMythRows = await API.fetchMythsByIds(collaboratorMythIds);
 
       const allMythRowsMap = new Map<string, MythRow>();
       ownedMythRows.forEach((row) => {
@@ -256,41 +108,11 @@ export function useMythData(session: Session | null, currentUserEmail: string) {
 
       const mythIds = Array.from(allMythRowsMap.keys());
 
-      let variantRows: MythVariantRow[] = [];
-      if (mythIds.length > 0) {
-        lastStep = 'loading myth variants';
-        const { data, error } = await supabase
-          .from('myth_variants')
-          .select(
-            'id, myth_id, name, source, sort_order, created_at, created_by_user_id, contributor_email, contributor_name, contributor_type, contribution_request_id',
-          )
-          .in('myth_id', mythIds)
-          .order('sort_order', { ascending: true, nullsFirst: false })
-          .order('created_at', { ascending: true });
-
-        if (error && error.code !== 'PGRST116') {
-          throw createSupabaseError('myth_variants', error);
-        }
-        variantRows = (data as MythVariantRow[] | null) ?? [];
-      }
+      const variantRows = await API.fetchVariantsByMythIds(mythIds);
 
       const variantIds = variantRows.map((row) => row.id);
 
-      let plotPointRows: PlotPointRow[] = [];
-      if (variantIds.length > 0) {
-        lastStep = 'loading plot points';
-        const { data, error } = await supabase
-          .from('myth_plot_points')
-          .select('id, variant_id, position, text, category, canonical_category_id, mytheme_refs')
-          .in('variant_id', variantIds)
-          .order('position', { ascending: true, nullsFirst: false })
-          .order('created_at', { ascending: true });
-
-        if (error && error.code !== 'PGRST116') {
-          throw createSupabaseError('myth_plot_points', error);
-        }
-        plotPointRows = (data as PlotPointRow[] | null) ?? [];
-      }
+      const plotPointRows = await API.fetchPlotPointsByVariantIds(variantIds);
 
       const plotPointsByVariant = new Map<string, PlotPoint[]>();
       plotPointRows.forEach((row) => {
@@ -365,21 +187,7 @@ export function useMythData(session: Session | null, currentUserEmail: string) {
         );
       });
 
-      let collaboratorRows: CollaboratorRow[] = [];
-      if (mythIds.length > 0) {
-        lastStep = 'loading collaborator list';
-        const collaboratorListResult = await supabase
-          .from('myth_collaborators')
-          .select('id, myth_id, email, role')
-          .in('myth_id', mythIds)
-          .order('created_at', { ascending: true });
-
-        if (collaboratorListResult.error && collaboratorListResult.error.code !== 'PGRST116') {
-          throw createSupabaseError('myth_collaborators (list)', collaboratorListResult.error);
-        }
-
-        collaboratorRows = (collaboratorListResult.data as CollaboratorRow[] | null) ?? [];
-      }
+      const collaboratorRows = await API.fetchCollaboratorsByMythIds(mythIds);
 
       const collaboratorEmails = new Set<string>();
       collaboratorRows.forEach((row) => {
@@ -397,17 +205,8 @@ export function useMythData(session: Session | null, currentUserEmail: string) {
       >();
       if (collaboratorEmails.size > 0) {
         try {
-          lastStep = 'loading collaborator profiles';
-          const { data: profileData, error: profileError } = await supabase
-            .from('profiles')
-            .select('id, email, display_name, avatar_url')
-            .in('email', Array.from(collaboratorEmails));
-
-          if (profileError && profileError.code !== 'PGRST116') {
-            throw createSupabaseError('profiles', profileError);
-          }
-
-          (profileData as UserProfileRow[] | null)?.forEach((profile) => {
+          const profileData = await API.fetchProfilesByEmails(Array.from(collaboratorEmails));
+          profileData.forEach((profile) => {
             const email = (profile.email ?? '').toLowerCase();
             if (!email) return;
             profileMap.set(email, {
@@ -505,56 +304,27 @@ export function useMythData(session: Session | null, currentUserEmail: string) {
 
       let canonicalCategoryRows: MythCategoryRow[] = [];
       if (mythIdsList.length > 0) {
-        lastStep = 'loading canonical categories';
-        const { data, error } = await supabase
-          .from('myth_categories')
-          .select('id, myth_id, name, sort_order')
-          .in('myth_id', mythIdsList)
-          .order('sort_order', { ascending: true });
-        if (error) {
-          throw createSupabaseError('myth_categories', error);
-        }
-        canonicalCategoryRows = (data as MythCategoryRow[]) ?? [];
+        canonicalCategoryRows = await API.fetchMythCategoriesByMythIds(mythIdsList);
       }
 
       let canonicalAssignmentRows: PlotPointCategoryRow[] = [];
       if (allPlotPointIds.length > 0) {
-        lastStep = 'loading canonical assignments';
-        const { data, error } = await supabase
-          .from('myth_plot_point_categories')
-          .select('plot_point_id, category_id')
-          .in('plot_point_id', allPlotPointIds);
-        if (error) {
-          throw createSupabaseError('myth_plot_point_categories', error);
-        }
-        canonicalAssignmentRows = (data as PlotPointCategoryRow[]) ?? [];
+        canonicalAssignmentRows =
+          await API.fetchPlotPointCategoryAssignmentsByPlotPointIds(allPlotPointIds);
       }
 
       let collaboratorCategoryRows: CollaboratorCategoryRow[] = [];
       if (mythIdsList.length > 0) {
-        lastStep = 'loading collaborator categories';
-        const { data, error } = await supabase
-          .from('myth_collaborator_categories')
-          .select('id, myth_id, collaborator_email, name')
-          .in('myth_id', mythIdsList);
-        if (error) {
-          throw createSupabaseError('myth_collaborator_categories', error);
-        }
-        collaboratorCategoryRows = (data as CollaboratorCategoryRow[]) ?? [];
+        collaboratorCategoryRows = await API.fetchCollaboratorCategoriesByMythIds(mythIdsList);
       }
 
       let collaboratorAssignmentRows: CollaboratorPlotPointCategoryRow[] = [];
       const collaboratorCategoryIds = collaboratorCategoryRows.map((row) => row.id);
       if (collaboratorCategoryIds.length > 0) {
-        lastStep = 'loading collaborator category assignments';
-        const { data, error } = await supabase
-          .from('myth_collaborator_plot_point_categories')
-          .select('plot_point_id, collaborator_category_id')
-          .in('collaborator_category_id', collaboratorCategoryIds);
-        if (error) {
-          throw createSupabaseError('myth_collaborator_plot_point_categories', error);
-        }
-        collaboratorAssignmentRows = (data as CollaboratorPlotPointCategoryRow[]) ?? [];
+        collaboratorAssignmentRows =
+          await API.fetchCollaboratorPlotPointCategoryAssignmentsByCategoryIds(
+            collaboratorCategoryIds,
+          );
       }
 
       const canonicalCategoriesByMyth = new Map<string, MythCategory[]>();
@@ -664,7 +434,6 @@ export function useMythData(session: Session | null, currentUserEmail: string) {
 
       setMyths(enrichedMyths);
     } catch (error) {
-      console.error(`loadMyths failed during step "${lastStep}"`, error);
       if (error instanceof Error && 'cause' in error) {
         const cause = (error as Error & { cause?: unknown }).cause;
         if (cause) {
@@ -675,7 +444,7 @@ export function useMythData(session: Session | null, currentUserEmail: string) {
     } finally {
       setLoading(false);
     }
-  }, [session, supabase, currentUserEmail]);
+  }, [session, currentUserEmail]);
 
   useEffect(() => {
     if (!session) {
@@ -694,24 +463,13 @@ export function useMythData(session: Session | null, currentUserEmail: string) {
         throw new Error('You must be signed in to add myths.');
       }
 
-      const { data, error } = await supabase
-        .from('myth_folders')
-        .insert({
-          name,
-          description,
-          contributor_instructions: contributorInstructions,
-          variants: [],
-          categories: DEFAULT_CATEGORIES,
-          user_id: session.user.id,
-        })
-        .select('id, name, description, contributor_instructions, variants, user_id')
-        .single();
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      const mythRow = data as MythRow;
+      const mythRow = await API.createMythFolder({
+        name,
+        description,
+        contributorInstructions,
+        categories: DEFAULT_CATEGORIES,
+        userId: session.user.id,
+      });
       const myth = parseMythRow(mythRow);
 
       let collaborators: MythCollaborator[] = myth.collaborators;
@@ -728,49 +486,29 @@ export function useMythData(session: Session | null, currentUserEmail: string) {
           (userMetadata.picture as string | undefined) ??
           null;
 
-        const { data: ownerCollaboratorData, error: ownerCollaboratorError } = await supabase
-          .from('myth_collaborators')
-          .insert({
-            myth_id: myth.id,
-            email: currentUserEmail,
-            role: 'owner',
-          })
-          .select('id, myth_id, email, role')
-          .single();
+        const ownerCollaboratorRow = await API.insertMythCollaborator({
+          mythId: myth.id,
+          email: currentUserEmail,
+          role: 'owner',
+        });
 
-        if (!ownerCollaboratorError && ownerCollaboratorData) {
-          const ownerRow = ownerCollaboratorData as CollaboratorRow;
-          collaborators = [
-            {
-              id: ownerRow.id,
-              mythId: ownerRow.myth_id,
-              email: (ownerRow.email ?? '').toLowerCase(),
-              role: ownerRow.role,
-              displayName,
-              avatarUrl,
-            },
-          ];
-        }
+        collaborators = [
+          {
+            id: ownerCollaboratorRow.id,
+            mythId: ownerCollaboratorRow.myth_id,
+            email: (ownerCollaboratorRow.email ?? '').toLowerCase(),
+            role: ownerCollaboratorRow.role,
+            displayName,
+            avatarUrl,
+          },
+        ];
       }
 
       myth.collaborators = collaborators;
-      const { data: insertedCategories, error: categoriesError } = await supabase
-        .from('myth_categories')
-        .insert(
-          DEFAULT_CATEGORIES.map((name, index) => ({
-            myth_id: myth.id,
-            name,
-            sort_order: index,
-          })),
-        )
-        .select('id, myth_id, name, sort_order');
-
-      if (categoriesError) {
-        throw new Error(categoriesError.message);
-      }
+      const insertedCategories = await API.insertCanonicalCategories(myth.id, DEFAULT_CATEGORIES);
 
       const canonicalCategories =
-        (insertedCategories as MythCategoryRow[] | null)?.map((row) => ({
+        insertedCategories.map((row) => ({
           id: row.id,
           mythId: row.myth_id,
           name: row.name,
@@ -812,29 +550,18 @@ export function useMythData(session: Session | null, currentUserEmail: string) {
           ? currentUserEmail
           : (session.user.email?.toLowerCase() ?? null);
 
-      const { data, error } = await supabase
-        .from('myth_variants')
-        .insert({
-          id: newVariantId,
-          myth_id: mythId,
-          name,
-          source,
-          sort_order: sortOrder,
-          created_by_user_id: session.user.id,
-          contributor_email: normalizedContributorEmail,
-          contributor_name: contributorName,
-          contributor_type: contributorType,
-        })
-        .select(
-          'id, name, source, sort_order, created_by_user_id, contributor_email, contributor_name, contributor_type, contribution_request_id',
-        )
-        .single();
+      const row = await API.insertVariant({
+        id: newVariantId,
+        mythId,
+        name,
+        source,
+        sortOrder,
+        createdByUserId: session.user.id,
+        contributorEmail: normalizedContributorEmail,
+        contributorName,
+        contributorType,
+      });
 
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      const row = data as MythVariantRow;
       const newVariant: MythVariant = {
         id: row.id,
         name: row.name ?? name,
@@ -853,7 +580,7 @@ export function useMythData(session: Session | null, currentUserEmail: string) {
         prev.map((m) => (m.id === mythId ? { ...m, variants: [...m.variants, newVariant] } : m)),
       );
     },
-    [session, myths, supabase],
+    [session, myths],
   );
 
   const updateVariant = useCallback(
@@ -901,53 +628,7 @@ export function useMythData(session: Session | null, currentUserEmail: string) {
           return existing;
         }
 
-        const { data, error } = await supabase
-          .from('myth_collaborator_categories')
-          .insert({
-            myth_id: mythId,
-            collaborator_email: normalizedEmail,
-            name: normalizedName,
-          })
-          .select('id, myth_id, collaborator_email, name')
-          .single();
-
-        if (error) {
-          if (error.code === '23505') {
-            const { data: existingRow, error: fetchError } = await supabase
-              .from('myth_collaborator_categories')
-              .select('id, myth_id, collaborator_email, name')
-              .eq('myth_id', mythId)
-              .eq('collaborator_email', normalizedEmail)
-              .eq('name', normalizedName)
-              .maybeSingle();
-
-            if (fetchError) {
-              throw new Error(fetchError.message);
-            }
-
-            if (existingRow) {
-              const existingCategory: CollaboratorCategory = {
-                id: existingRow.id,
-                mythId: existingRow.myth_id,
-                collaboratorEmail: normalizeEmail(existingRow.collaborator_email),
-                name: existingRow.name,
-              };
-
-              const alreadyTracked = existingCollaboratorCategories.some(
-                (category) => category.id === existingCategory.id,
-              );
-              if (!alreadyTracked) {
-                existingCollaboratorCategories.push(existingCategory);
-              }
-              collaboratorCategoryCache.set(cacheKey, existingCategory);
-              return existingCategory;
-            }
-          }
-
-          throw new Error(error.message);
-        }
-
-        const row = data as CollaboratorCategoryRow;
+        const row = await API.ensureCollaboratorCategory(mythId, normalizedEmail, normalizedName);
         const newCategory: CollaboratorCategory = {
           id: row.id,
           mythId: row.myth_id,
@@ -955,7 +636,12 @@ export function useMythData(session: Session | null, currentUserEmail: string) {
           name: row.name,
         };
 
-        existingCollaboratorCategories.push(newCategory);
+        const alreadyTracked = existingCollaboratorCategories.some(
+          (category) => category.id === newCategory.id,
+        );
+        if (!alreadyTracked) {
+          existingCollaboratorCategories.push(newCategory);
+        }
         collaboratorCategoryCache.set(cacheKey, newCategory);
         return newCategory;
       };
@@ -1068,30 +754,12 @@ export function useMythData(session: Session | null, currentUserEmail: string) {
         plotPoints: normalizedPlotPoints,
       };
 
-      const { error: variantUpdateError } = await supabase
-        .from('myth_variants')
-        .update({
-          name: normalizedVariant.name,
-          source: normalizedVariant.source,
-        })
-        .eq('id', normalizedVariant.id);
+      await API.updateVariantMetadata(normalizedVariant.id, {
+        name: normalizedVariant.name,
+        source: normalizedVariant.source,
+      });
 
-      if (variantUpdateError) {
-        throw new Error(variantUpdateError.message);
-      }
-
-      const { data: existingPlotPointRows, error: existingPlotPointError } = await supabase
-        .from('myth_plot_points')
-        .select('id')
-        .eq('variant_id', normalizedVariant.id);
-
-      if (existingPlotPointError && existingPlotPointError.code !== 'PGRST116') {
-        throw new Error(existingPlotPointError.message);
-      }
-
-      const existingIds = new Set(
-        ((existingPlotPointRows as { id: string }[] | null) ?? []).map((row) => row.id),
-      );
+      const existingIds = new Set(await API.fetchPlotPointIdsByVariantId(normalizedVariant.id));
       const incomingIds = new Set(plotPointRecords.map((record) => record.id));
       const idsToDelete: string[] = [];
       existingIds.forEach((id) => {
@@ -1101,64 +769,26 @@ export function useMythData(session: Session | null, currentUserEmail: string) {
       });
 
       if (idsToDelete.length > 0) {
-        const { error: deletePointsError } = await supabase
-          .from('myth_plot_points')
-          .delete()
-          .in('id', idsToDelete);
-        if (deletePointsError) {
-          throw new Error(deletePointsError.message);
-        }
+        await API.deletePlotPointsByIds(idsToDelete);
       }
 
       if (plotPointRecords.length > 0) {
-        const { error: upsertError } = await supabase
-          .from('myth_plot_points')
-          .upsert(plotPointRecords, { onConflict: 'id' });
-        if (upsertError) {
-          throw new Error(upsertError.message);
-        }
+        await API.upsertPlotPoints(plotPointRecords);
       }
 
       const cleanupIds = Array.from(new Set([...incomingIds, ...idsToDelete]));
 
       if (cleanupIds.length > 0) {
-        const { error: deleteCanonicalError } = await supabase
-          .from('myth_plot_point_categories')
-          .delete()
-          .in('plot_point_id', cleanupIds);
-
-        if (deleteCanonicalError) {
-          throw new Error(deleteCanonicalError.message);
-        }
-
-        const { error: deleteCollaboratorError } = await supabase
-          .from('myth_collaborator_plot_point_categories')
-          .delete()
-          .in('plot_point_id', cleanupIds);
-
-        if (deleteCollaboratorError) {
-          throw new Error(deleteCollaboratorError.message);
-        }
+        await API.deletePlotPointCategoryAssignmentsByPlotPointIds(cleanupIds);
+        await API.deleteCollaboratorPlotPointCategoryAssignmentsByPlotPointIds(cleanupIds);
       }
 
       if (canonicalInserts.length > 0) {
-        const { error: insertCanonicalError } = await supabase
-          .from('myth_plot_point_categories')
-          .insert(canonicalInserts);
-
-        if (insertCanonicalError) {
-          throw new Error(insertCanonicalError.message);
-        }
+        await API.insertPlotPointCategoryAssignments(canonicalInserts);
       }
 
       if (collaboratorInserts.length > 0) {
-        const { error: insertCollaboratorError } = await supabase
-          .from('myth_collaborator_plot_point_categories')
-          .insert(collaboratorInserts);
-
-        if (insertCollaboratorError) {
-          throw new Error(insertCollaboratorError.message);
-        }
+        await API.insertCollaboratorPlotPointCategoryAssignments(collaboratorInserts);
       }
 
       const updatedVariants = myth.variants.map((variant) =>
@@ -1173,7 +803,7 @@ export function useMythData(session: Session | null, currentUserEmail: string) {
 
       setMyths((prev) => prev.map((m) => (m.id === mythId ? updatedMyth : m)));
     },
-    [session, myths, supabase, currentUserEmail],
+    [session, myths, currentUserEmail],
   );
 
   const updateMythCategories = useCallback(
@@ -1212,17 +842,7 @@ export function useMythData(session: Session | null, currentUserEmail: string) {
       );
 
       if (categoriesToDelete.length > 0) {
-        const { error: deleteError } = await supabase
-          .from('myth_categories')
-          .delete()
-          .in(
-            'id',
-            categoriesToDelete.map((category) => category.id),
-          );
-
-        if (deleteError) {
-          throw new Error(deleteError.message);
-        }
+        await API.deleteMythCategories(categoriesToDelete.map((category) => category.id));
       }
 
       for (let index = 0; index < uniqueNames.length; index += 1) {
@@ -1231,53 +851,27 @@ export function useMythData(session: Session | null, currentUserEmail: string) {
         const existing = existingByName.get(lower);
 
         if (existing) {
-          const { error: updateError } = await supabase
-            .from('myth_categories')
-            .update({ name, sort_order: index })
-            .eq('id', existing.id);
-
-          if (updateError) {
-            throw new Error(updateError.message);
-          }
+          await API.updateMythCategory(existing.id, name, index);
         } else {
-          const { error: insertError } = await supabase.from('myth_categories').insert({
-            myth_id: mythId,
-            name,
-            sort_order: index,
-          });
-
-          if (insertError) {
-            throw new Error(insertError.message);
-          }
+          await API.insertMythCategory({ myth_id: mythId, name, sort_order: index });
         }
       }
 
-      const { data: refreshedCategoriesData, error: refreshedCategoriesError } = await supabase
-        .from('myth_categories')
-        .select('id, myth_id, name, sort_order')
-        .eq('myth_id', mythId)
-        .order('sort_order', { ascending: true });
-
-      if (refreshedCategoriesError) {
-        throw new Error(refreshedCategoriesError.message);
-      }
-
-      const refreshedCategories =
-        (refreshedCategoriesData as MythCategoryRow[] | null)?.map((row) => ({
-          id: row.id,
-          mythId: row.myth_id,
-          name: row.name,
-          sortOrder: row.sort_order ?? 0,
-        })) ?? [];
-
+      const refreshedCategories = await API.fetchCategoriesForMyth(mythId);
+      const canonicalCategories: MythCategory[] = refreshedCategories.map((category) => ({
+        id: category.id,
+        mythId: category.myth_id,
+        name: category.name,
+        sortOrder: category.sort_order ?? 0,
+      }));
       const canonicalNameById = new Map(
-        refreshedCategories.map((category) => [category.id, category.name]),
+        canonicalCategories.map((category) => [category.id, category.name]),
       );
 
-      await supabase
-        .from('myth_folders')
-        .update({ categories: refreshedCategories.map((category) => category.name) })
-        .eq('id', mythId);
+      await API.updateMythFolderCategories(
+        mythId,
+        refreshedCategories.map((category) => category.name),
+      );
 
       setMyths((prev) =>
         prev.map((m) => {
@@ -1312,8 +906,8 @@ export function useMythData(session: Session | null, currentUserEmail: string) {
           return {
             ...m,
             variants,
-            canonicalCategories: refreshedCategories,
-            categories: refreshedCategories.map((category) => category.name),
+            canonicalCategories,
+            categories: canonicalCategories.map((category) => category.name),
           };
         }),
       );
@@ -1327,14 +921,7 @@ export function useMythData(session: Session | null, currentUserEmail: string) {
         throw new Error('You must be signed in to update contributor instructions.');
       }
 
-      const { error } = await supabase
-        .from('myth_folders')
-        .update({ contributor_instructions: instructions })
-        .eq('id', mythId);
-
-      if (error) {
-        throw new Error(error.message);
-      }
+      await API.updateContributorInstructions(mythId, instructions);
 
       setMyths((prev) =>
         prev.map((myth) =>
@@ -1342,7 +929,7 @@ export function useMythData(session: Session | null, currentUserEmail: string) {
         ),
       );
     },
-    [session, supabase],
+    [session],
   );
 
   const createCollaboratorCategory = useCallback(
@@ -1373,67 +960,7 @@ export function useMythData(session: Session | null, currentUserEmail: string) {
         return existing;
       }
 
-      const { data, error } = await supabase
-        .from('myth_collaborator_categories')
-        .insert({
-          myth_id: mythId,
-          collaborator_email: normalizedEmail,
-          name: normalizedName,
-        })
-        .select('id, myth_id, collaborator_email, name')
-        .single();
-
-      if (error) {
-        if (error.code === '23505') {
-          const { data: existingRow, error: existingError } = await supabase
-            .from('myth_collaborator_categories')
-            .select('id, myth_id, collaborator_email, name')
-            .eq('myth_id', mythId)
-            .eq('collaborator_email', normalizedEmail)
-            .eq('name', normalizedName)
-            .maybeSingle();
-
-          if (existingError) {
-            throw new Error(existingError.message);
-          }
-
-          if (existingRow) {
-            const existingCategory: CollaboratorCategory = {
-              id: existingRow.id,
-              mythId: existingRow.myth_id,
-              collaboratorEmail: normalizeEmail(existingRow.collaborator_email),
-              name: existingRow.name,
-            };
-
-            const hasCategory =
-              myth.collaboratorCategories?.some(
-                (category) => category.id === existingCategory.id,
-              ) ?? false;
-
-            if (!hasCategory) {
-              setMyths((prev) =>
-                prev.map((m) =>
-                  m.id === mythId
-                    ? {
-                        ...m,
-                        collaboratorCategories: [
-                          ...(m.collaboratorCategories ?? []),
-                          existingCategory,
-                        ],
-                      }
-                    : m,
-                ),
-              );
-            }
-
-            return existingCategory;
-          }
-        }
-
-        throw new Error(error.message);
-      }
-
-      const row = data as CollaboratorCategoryRow;
+      const row = await API.ensureCollaboratorCategory(mythId, normalizedEmail, normalizedName);
       const newCategory: CollaboratorCategory = {
         id: row.id,
         mythId: row.myth_id,
@@ -1442,14 +969,24 @@ export function useMythData(session: Session | null, currentUserEmail: string) {
       };
 
       setMyths((prev) =>
-        prev.map((m) =>
-          m.id === mythId
-            ? {
-                ...m,
-                collaboratorCategories: [...(m.collaboratorCategories ?? []), newCategory],
-              }
-            : m,
-        ),
+        prev.map((m) => {
+          if (m.id !== mythId) {
+            return m;
+          }
+
+          const hasCategory =
+            (m.collaboratorCategories ?? []).some((category) => category.id === newCategory.id) ??
+            false;
+
+          if (hasCategory) {
+            return m;
+          }
+
+          return {
+            ...m,
+            collaboratorCategories: [...(m.collaboratorCategories ?? []), newCategory],
+          };
+        }),
       );
 
       return newCategory;

@@ -4,13 +4,7 @@ import type { Session } from '@supabase/supabase-js';
 import { useMythData } from '../hooks/useMythData';
 import { useMythemeData } from '../hooks/useMythemeData';
 import { useCollaboratorManagement } from '../hooks/useCollaboratorManagement';
-import {
-  CollaboratorCategory,
-  CollaboratorRole,
-  Myth,
-  MythVariant,
-  Mytheme,
-} from '../types/myth';
+import { CollaboratorCategory, CollaboratorRole, Myth, MythVariant, Mytheme } from '../types/myth';
 
 export type MythDataContextValue = {
   myths: Myth[];
@@ -155,19 +149,14 @@ export function MythArchiveProvider({ session, children }: MythArchiveProviderPr
     <MythsContext.Provider value={mythDataValue}>
       <MythemesContext.Provider value={mythemeDataValue}>
         <CollaboratorContext.Provider value={collaboratorValue}>
-          <MythArchiveContext.Provider value={archiveValue}>
-            {children}
-          </MythArchiveContext.Provider>
+          <MythArchiveContext.Provider value={archiveValue}>{children}</MythArchiveContext.Provider>
         </CollaboratorContext.Provider>
       </MythemesContext.Provider>
     </MythsContext.Provider>
   );
 }
 
-function useRequiredContext<T>(
-  context: Context<T | undefined>,
-  hookName: string,
-): T {
+function useRequiredContext<T>(context: Context<T | undefined>, hookName: string): T {
   const value = useContext(context);
   if (!value) {
     throw new Error(`${hookName} must be used within a MythArchiveProvider`);
